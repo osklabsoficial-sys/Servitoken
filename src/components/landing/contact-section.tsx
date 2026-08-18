@@ -1,141 +1,83 @@
 "use client";
 
-import { motion } from "framer-motion";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import { socialLinks, supportChannels, faqs } from "@/lib/token-data";
+import { SectionHeading, Reveal } from "@/components/landing/section-primitives";
 import { LucideIconByName } from "@/components/landing/lucide-icon";
+import { socialChannels } from "@/lib/token-data";
 
 export function ContactSection() {
   return (
     <section
       id="contacto"
-      className="relative scroll-mt-16 border-t border-slate-100 bg-white"
+      className="relative scroll-mt-16 border-t border-white/5 bg-gradient-to-b from-background to-navy-2/40"
     >
-      <div className="mx-auto w-full max-w-7xl px-4 py-20 sm:px-6 sm:py-24 lg:px-8">
-        <div className="mx-auto max-w-2xl text-center">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-600">
-            Contacto
-          </p>
-          <h2 className="mt-2 text-balance text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-            Conéctate con la comunidad y el soporte
-          </h2>
-          <p className="mt-3 text-pretty text-base leading-relaxed text-slate-600">
-            Sigue las redes oficiales para estar al día con las novedades del
-            proyecto y contacta con el equipo de soporte si necesitas ayuda.
-          </p>
-        </div>
+      <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute left-1/2 top-0 h-[300px] w-[600px] -translate-x-1/2 rounded-full bg-electric/10 blur-[120px]" />
+      </div>
 
-        <div className="mt-12 grid gap-8 lg:grid-cols-2">
-          {/* Redes sociales oficiales */}
-          <div className="rounded-3xl border border-slate-200 bg-gradient-to-b from-white to-slate-50/60 p-6 sm:p-8">
-            <h3 className="text-lg font-semibold text-slate-900">
-              Redes sociales oficiales
-            </h3>
-            <p className="mt-1.5 text-sm text-slate-600">
-              Únete y mantente informado sobre el proyecto.
-            </p>
+      <div className="relative mx-auto w-full max-w-7xl px-4 py-20 sm:px-6 sm:py-24 lg:px-8">
+        <SectionHeading
+          eyebrow="Contacto"
+          title="Conecta con la comunidad"
+          description="Conoce las novedades, actualizaciones y próximos desarrollos de Servitoken."
+        />
 
-            <div className="mt-6 grid gap-3 sm:grid-cols-2">
-              {socialLinks.map((social, i) => (
-                <motion.a
-                  key={social.name}
-                  href={social.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  initial={{ opacity: 0, y: 16 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-60px" }}
-                  transition={{ duration: 0.4, delay: i * 0.06 }}
-                  className="group flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-3.5 transition-all hover:-translate-y-0.5 hover:border-emerald-300 hover:shadow-sm"
+        <div className="mx-auto mt-12 grid max-w-4xl grid-cols-2 gap-4 sm:grid-cols-3">
+          {socialChannels.map((channel, i) => {
+            const active = channel.url.trim().length > 0;
+            const Wrapper = active ? "a" : "div";
+            return (
+              <Reveal key={channel.name} delay={i * 0.06}>
+                <Wrapper
+                  {...(active
+                    ? {
+                        href: channel.url,
+                        target: "_blank",
+                        rel: "noopener noreferrer",
+                      }
+                    : {})}
+                  className={`group flex h-full flex-col items-center gap-3 rounded-2xl border p-5 text-center transition-all duration-300 ${
+                    active
+                      ? "border-white/8 bg-white/[0.02] hover:-translate-y-1 hover:border-electric/30 hover:bg-electric/[0.04]"
+                      : "cursor-default border-white/[0.06] bg-white/[0.01] opacity-70"
+                  }`}
                 >
-                  <span className="flex size-10 items-center justify-center rounded-lg bg-slate-100 text-slate-700 transition-colors group-hover:bg-emerald-50 group-hover:text-emerald-600">
-                    <LucideIconByName name={social.icon} className="size-5" />
-                  </span>
-                  <span className="min-w-0 flex-1">
-                    <span className="block text-sm font-semibold text-slate-900">
-                      {social.name}
-                    </span>
-                    <span className="block truncate font-mono text-xs text-slate-500">
-                      {social.handle}
-                    </span>
-                  </span>
-                </motion.a>
-              ))}
-            </div>
-          </div>
-
-          {/* Canales de soporte */}
-          <div className="rounded-3xl border border-slate-200 bg-gradient-to-b from-white to-slate-50/60 p-6 sm:p-8">
-            <h3 className="text-lg font-semibold text-slate-900">
-              Canales de soporte
-            </h3>
-            <p className="mt-1.5 text-sm text-slate-600">
-              Dudas, incidencias o colaboración: escríbenos por cualquiera de
-              estos medios.
-            </p>
-
-            <div className="mt-6 grid gap-3 sm:grid-cols-2">
-              {supportChannels.map((channel, i) => (
-                <motion.a
-                  key={channel.name}
-                  href={channel.url}
-                  target={channel.url.startsWith("mailto:") ? undefined : "_blank"}
-                  rel="noopener noreferrer"
-                  initial={{ opacity: 0, y: 16 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-60px" }}
-                  transition={{ duration: 0.4, delay: i * 0.06 }}
-                  className="group flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-3.5 transition-all hover:-translate-y-0.5 hover:border-emerald-300 hover:shadow-sm"
-                >
-                  <span className="flex size-10 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600 transition-colors group-hover:bg-emerald-100">
+                  <span
+                    className={`flex size-11 items-center justify-center rounded-xl ring-1 ${
+                      active
+                        ? "bg-electric/15 text-electric-bright ring-electric/20 transition-colors group-hover:bg-electric/25"
+                        : "bg-white/5 text-muted-foreground ring-white/10"
+                    }`}
+                  >
                     <LucideIconByName name={channel.icon} className="size-5" />
                   </span>
-                  <span className="min-w-0 flex-1">
-                    <span className="block text-sm font-semibold text-slate-900">
+                  <div>
+                    <p className="text-sm font-semibold text-foreground">
                       {channel.name}
-                    </span>
-                    <span className="block truncate text-xs text-slate-500">
-                      {channel.detail}
-                    </span>
+                    </p>
+                    <p className="mt-0.5 truncate font-mono text-[11px] text-muted-foreground">
+                      {channel.handle}
+                    </p>
+                  </div>
+                  <span
+                    className={`mt-1 text-[10px] font-medium ${
+                      active ? "text-brand-green" : "text-muted-foreground/70"
+                    }`}
+                  >
+                    {active ? "Disponible" : "Próximamente"}
                   </span>
-                </motion.a>
-              ))}
-            </div>
-          </div>
+                </Wrapper>
+              </Reveal>
+            );
+          })}
         </div>
 
-        {/* FAQ */}
-        <div className="mx-auto mt-16 max-w-3xl">
-          <h3 className="text-center text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
-            Preguntas frecuentes
-          </h3>
-          <Accordion
-            type="single"
-            collapsible
-            defaultValue="item-0"
-            className="mt-8 space-y-3"
-          >
-            {faqs.map((faq, i) => (
-              <AccordionItem
-                key={faq.question}
-                value={`item-${i}`}
-                className="rounded-2xl border border-slate-200 bg-white px-5 data-[state=open]:border-emerald-200 data-[state=open]:bg-emerald-50/30"
-              >
-                <AccordionTrigger className="py-5 text-left text-[15px] font-semibold text-slate-900 hover:no-underline">
-                  {faq.question}
-                </AccordionTrigger>
-                <AccordionContent className="pb-5 text-sm leading-relaxed text-slate-600">
-                  {faq.answer}
-                </AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
-        </div>
+        <Reveal delay={0.2}>
+          <p className="mx-auto mt-10 max-w-2xl text-center text-xs leading-relaxed text-muted-foreground">
+            Los canales oficiales se habilitarán conforme el cliente los
+            confirme. Mientras tanto, solo se muestran los canales confirmados
+            como activos.
+          </p>
+        </Reveal>
       </div>
     </section>
   );

@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster as SonnerToaster } from "@/components/ui/sonner";
-import { token } from "@/lib/token-data";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,28 +14,28 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: `${token.name} (${token.ticker}) · Token para pago de servicios`,
-  description: token.description,
+  title: "Servitoken · Token de utilidad para pagos de servicios",
+  description:
+    "Servitoken es un token de utilidad diseñado para conectar usuarios, servicios y comercios dentro de un ecosistema digital de pagos.",
   keywords: [
-    token.ticker,
-    token.name,
-    "token",
-    "pago de servicios",
-    "BEP-20",
-    "BNB Smart Chain",
-    "criptomoneda",
+    "Servitoken",
+    "token de utilidad",
+    "pagos de servicios",
     "blockchain",
+    "ecosistema de pagos",
   ],
-  authors: [{ name: token.name }],
+  authors: [{ name: "Servitoken" }],
   openGraph: {
-    title: `${token.name} (${token.ticker})`,
-    description: token.description,
+    title: "Servitoken · Token de utilidad para pagos de servicios",
+    description:
+      "Un token de utilidad diseñado para conectar usuarios, servicios y comercios dentro de un ecosistema digital.",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: `${token.name} (${token.ticker})`,
-    description: token.description,
+    title: "Servitoken",
+    description:
+      "Token de utilidad diseñado para conectar usuarios, servicios y comercios dentro de un ecosistema digital de pagos.",
   },
 };
 
@@ -51,7 +50,16 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}
       >
         {children}
-        <SonnerToaster position="top-center" richColors />
+        <SonnerToaster
+          position="top-center"
+          toastOptions={{
+            style: {
+              background: "#0C1426",
+              border: "1px solid rgba(255,255,255,0.1)",
+              color: "#E8EDF6",
+            },
+          }}
+        />
       </body>
     </html>
   );

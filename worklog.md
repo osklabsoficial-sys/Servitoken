@@ -34,3 +34,46 @@ Stage Summary:
 - Toda la información configurable centralizada en `src/lib/token-data.ts` para facilitar la personalización con datos reales.
 - Datos de ejemplo neutros (Token de Servicios / SVS, contrato placeholder, plataformas y redes con URLs de ejemplo) listos para reemplazar.
 - Verificación end-to-end con Agent Browser superada: render + interacciones (copiar, acordeón, navegación, menú móvil) funcionando.
+
+---
+Task ID: 10-16
+Agent: Z.ai Code (main)
+Task: Transformar la landing page existente en una landing profesional premium para el proyecto de token "Servitoken". Mantener arquitectura, reutilizar lo que funciona, mejorar visualmente. Estética premium Web3/Fintech (navy muy oscuro + azul eléctrico + dorado + blanco, acentos verdes puntuales). NO inventar datos reales: usar placeholders "Por confirmar" para precio, contrato, supply, red, decimales, URLs de compra y redes sociales. 100% responsive.
+
+Work Log:
+- Analicé el código existente (worklog Task 1-9) y la estructura del proyecto. El logo.svg del scaffold no es de Servitoken → creé un componente Logo placeholder limpio (marcador geométrico) estructurado para reemplazo fácil, sin generar un logo automáticamente.
+- Reescribí `src/lib/token-data.ts` con contenido de Servitoken: navLinks (7), hero, whatIs, utilityCards (4: Pagos/Beneficios/Ecosistema/Blockchain), howItWorks (3 pasos), externalPlatforms (PancakeSwap/MetaMask, url=""), benefits (3), faqs (7 preguntas con respuestas honestas sin inventar datos), socialChannels (6: X/Telegram/Instagram/Facebook/WhatsApp/Email, url=""). Campos por confirmar (contractAddress, network, totalSupply, decimals, price, buyUrl, explorerBaseUrl) definidos como `""` con helper `display()` que muestra "Por confirmar".
+- Reescribí `src/app/globals.css`: paleta premium (navy #060A14 / electric #2E6BFF / gold #D4B06A / green #2DD4A7) mapeada a tokens shadcn + utilidades (.text-gradient-gold, .glass-card, .bg-grid, .glow-electric, .glow-gold, animaciones float/breathe sutiles). Scrollbar premium.
+- Creé `src/components/landing/logo.tsx`: LogoMark SVG placeholder (anillo dorado + monograma S azul) + wordmark "Servitoken", con comentario claro de cómo reemplazar por el logo oficial.
+- Creé `src/components/landing/section-primitives.tsx`: Reveal (fade-in sutil) y SectionHeading reutilizables para consistencia entre secciones.
+- Actualicé `src/components/landing/lucide-icon.tsx`: añadí Gift, Share2, Boxes, Coins, ShoppingBag, Handshake, Layers, Instagram, Facebook, Copy, Check, ExternalLink, ArrowRight, ArrowUpRight, Sparkles.
+- Reescribí `src/components/landing/site-header.tsx`: nav de 7 enlaces (Inicio, ¿Qué es Servitoken?, Utilidad, Cómo funciona, Precio y compra, FAQ, Contacto) + CTA "Comprar Servitoken" + menú móvil Sheet. Sticky con cambio de fondo al scroll.
+- Reescribí `src/components/landing/hero-section.tsx`: título "Pagos de servicios, ahora con Servitoken" (gold gradient), subtítulo, botones "Comprar Servitoken" + "Conocer el proyecto", indicadores (Supply/Red/Decimales/Contrato = Por confirmar) y composición visual premium a la derecha (tarjeta de pago glassmorphism + coin flotante + chip blockchain, todo CSS/SVG).
+- Creé `src/components/landing/what-is-section.tsx` (#que-es): título + body + 3 puntos + diagrama de ecosistema (coin central + nodos Usuarios/Comercios/Proveedores con líneas conectoras SVG).
+- Reescribí `src/components/landing/utility-section.tsx` (#utilidad): 4 tarjetas con hover suave (Pagos, Beneficios, Ecosistema, Blockchain).
+- Creé `src/components/landing/how-it-works-section.tsx` (#como-funciona): 3 pasos con círculos numerados + línea conectora horizontal.
+- Reescribí `src/components/landing/pricing-section.tsx` (#precio): "Adquiere Servitoken" con campos Precio/Red/Contrato = Por confirmar, botón "Comprar Servitoken" deshabilitado (preparado para buyUrl) y tarjeta "Dirección del contrato" con botón Copiar (deshabilitado cuando contrato vacío) + "Ver en explorador".
+- Creé `src/components/landing/external-platforms-section.tsx` (#plataformas): PancakeSwap y MetaMask con botones "Enlace por confirmar" deshabilitados (url="").
+- Creé `src/components/landing/contract-section.tsx`: "Ver contrato" con badges de confianza + dirección (Por confirmar) + Copiar/Ver en explorador (deshabilitados hasta confirmar).
+- Creé `src/components/landing/benefits-section.tsx`: 3 beneficios (Pagos sencillos, Beneficios para usuarios, Conexiones entre usuarios y comercios) sin promesas financieras.
+- Creé `src/components/landing/faq-section.tsx` (#faq): 7 preguntas en acordeón premium.
+- Reescribí `src/components/landing/contact-section.tsx` (#contacto): "Conecta con la comunidad" + 6 canales sociales (todos en estado "Próximamente" hasta que el cliente confirme url).
+- Reescribí `src/components/landing/site-footer.tsx`: logo + navegación (6 enlaces) + redes + aviso discreto informativo + "© 2026 Servitoken. Todos los derechos reservados."
+- Actualicé `src/app/page.tsx`: ensamblé las 10 secciones en orden (Hero, Qué es, Utilidad, Cómo funciona, Precio, Plataformas, Contrato, Beneficios, FAQ, Contacto) con wrapper flex min-h-screen para footer sticky.
+- Actualicé `src/app/layout.tsx`: metadatos Servitoken + lang="es" + Toaster sonner con estilo dark.
+- Ejecuté `bun run lint`: 0 errores.
+- Verificación con Agent Browser (obligatoria):
+  - Página carga con título "Servitoken · Token de utilidad para pagos de servicios". Sin errores de consola ni de página.
+  - Todas las secciones renderizan (nav 7 enlaces, hero, qué es, utilidad 4 cards, cómo funciona 3 pasos, precio, plataformas, contrato, beneficios 3, FAQ 7, contacto 6 canales, footer).
+  - Botones de datos no confirmados correctamente deshabilitados (Comprar, Copiar contrato, Ver en explorador, enlaces PancakeSwap/MetaMask) respetando "no inventar datos".
+  - Acordeón FAQ expande/contrae correctamente. ✓
+  - Navegación por anclas funciona (#que-es). ✓
+  - Sin scroll horizontal en 375/390/430/768/1024/1440 (scrollWidth == innerWidth en todos). ✓
+  - Menú hamburguesa móvil abre Sheet con los 7 enlaces + CTA "Comprar Servitoken". ✓
+
+Stage Summary:
+- Landing de Servitoken completa, premium y profesional con estética Web3/Fintech (navy + azul eléctrico + dorado).
+- Arquitectura conservada y mejorada: mismos componentes shadcn/ui, misma estructura de carpetas, primitivas reutilizables nuevas (SectionHeading, Reveal, Logo, LucideIconByName).
+- Toda la información por confirmar (precio, contrato, supply, red, decimales, URLs de compra, redes sociales) está como placeholder estructurado en `src/lib/token-data.ts` (campos vacíos → UI muestra "Por confirmar" y deshabilita las acciones). El cliente solo reemplaza los valores vacíos para activar los botones.
+- Logo placeholder (no auto-generado) integrado en navbar y hero, con instrucciones claras para reemplazo.
+- Verificación end-to-end con Agent Browser superada: render + interacciones + responsive en los 6 breakpoints requeridos.
