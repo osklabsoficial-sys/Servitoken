@@ -160,3 +160,30 @@ Stage Summary:
 - Paleta respetada: navy #060A14 como base (70%), azul eléctrico #2E6BFF para CTAs e interacciones (20%), dorado #D4B06A para logo + acentos puntuales (10%), blanco para texto. Sin exceso de dorado ni de glow ni de gradientes.
 - Verificación end-to-end con Agent Browser + VLM superada en 6 breakpoints + interacciones (FAQ acordeón, botones deshabilitados, sin scroll horizontal, sin errores de runtime).
 - 13 screenshots de verificación guardados en `/home/z/my-project/.verify-shots/`.
+
+---
+Task ID: 22
+Agent: Z.ai Code (main)
+Task: Subir todo el proyecto de Servitoken a GitHub en el repositorio https://github.com/osklabsoficial-sys/Servitoken (rama main).
+
+Work Log:
+- Verifiqué el estado de git: working tree clean, 5 commits previos en main, sin remoto configurado, .gitignore ya excluía node_modules, .next, .env*, dev.log, etc.
+- Detecté que la carpeta `.verify-shots/` (6 capturas de verificación con Agent Browser, ~770KB) había sido trackeada en commit 57d761f (auto-commit). La añadí a `.gitignore` y la desastracé con `git rm -r --cached .verify-shots`. Commit `fb49ace` "chore: untrack verification screenshots (dev artifacts)".
+- Detecté que `.env` estaba trackeada en GitHub aunque el .gitignore tenía `.env*`. Revisé el contenido: solo contenía `DATABASE_URL=file:/home/z/my-project/db/custom.db` (ruta local SQLite, SIN secretos reales). Aun así la desastracé por buenas prácticas. Commit `2d17669` "chore: untrack .env (local-only SQLite path, no secrets)".
+- Añadí remote `origin` apuntando a https://github.com/osklabsoficial-sys/Servitoken.git.
+- Hice push inicial con PAT del cliente (token usado inline, NO persistido en .git/config). Branch main creada en remoto.
+- Tras push, limpié el remote URL para que NO contenga el token (solo https://github.com/...).
+- Hice segundo push (commit de limpieza .env) con URL temporal con token → inmediatamente reseteada a URL limpia.
+- Verificación vía GitHub API:
+  · Repo público: `osklabsoficial-sys/Servitoken` (private=false), default_branch=main, pushed_at=2026-08-18T23:56:00Z.
+  · Último commit en GitHub: `2d17669aa956dbd5301d73cad158786d1341f03d` ("chore: untrack .env...") ✓ coincide con HEAD local.
+  · `.env` ya NO está en el repo (API devuelve 404 Not Found). ✓
+  · 19 archivos/carpetas raíz visibles: .gitignore, .zscripts, Caddyfile, bun.lock, components.json, db, download, eslint.config.mjs, examples, mini-services, next.config.ts, package.json, postcss.config.mjs, prisma, public, scripts, src, tailwind.config.ts, tests, tsconfig.json, upload, worklog.md.
+- Remote URL final en .git/config: `https://github.com/osklabsoficial-sys/Servitoken.git` (sin token). El PAT del cliente NO quedó almacenado en ningún archivo del proyecto.
+
+Stage Summary:
+- Proyecto completo de Servitoken subido a https://github.com/osklabsoficial-sys/Servitoken (rama main, repo público).
+- 7 commits en GitHub (5 previos + 2 de limpieza de este task).
+- .env y capturas de verificación desastracados por seguridad/higiene.
+- PAT del cliente NO persistida en .git/config (URL limpia). Recomendación al cliente: revocar/regenerar el PAT en https://github.com/settings/tokens ya que se compartió en el chat.
+- Estructura visible: Next.js 16 + TypeScript + Tailwind 4 + shadcn/ui + Prisma + Caddyfile + mini-services + 12 componentes de landing en src/components/landing/ + logo optimizado en public/ + worklog.md con todo el historial de tareas.
