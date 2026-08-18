@@ -77,3 +77,29 @@ Stage Summary:
 - Toda la información por confirmar (precio, contrato, supply, red, decimales, URLs de compra, redes sociales) está como placeholder estructurado en `src/lib/token-data.ts` (campos vacíos → UI muestra "Por confirmar" y deshabilita las acciones). El cliente solo reemplaza los valores vacíos para activar los botones.
 - Logo placeholder (no auto-generado) integrado en navbar y hero, con instrucciones claras para reemplazo.
 - Verificación end-to-end con Agent Browser superada: render + interacciones + responsive en los 6 breakpoints requeridos.
+
+---
+Task ID: 17-19
+Agent: Z.ai Code (main)
+Task: Integrar el logo oficial de la empresa (subido por el usuario) en la landing de Servitoken, sustituyendo el placeholder geométrico. Optimizar la imagen y dejar la estructura preparada para reemplazos futuros.
+
+Work Log:
+- Inspeccioné el archivo subido `upload/pasted_image_1787095759403.png`: PNG 1254x1254, 8-bit RGB, SIN canal alfa (fondo sólido), 1.4MB.
+- Analicé el logo con la skill VLM (CLI `z-ai vision`): emblema circular con anillo dorado + "S" estilizada (mitad dorada + mitad azul eléctrico) + estrella dorada; fondo negro puro (#000000); sin texto.
+- Como el fondo era negro puro, lo eliminé limpiamente con `sharp` (script `scripts/optimize-logo.mjs`): redimensioné a 512px + 128px, quité el negro puro (threshold por canal + feathering de bordes transicionales) conservando el disco navy interior, y generé PNG con transparencia.
+- Salida: `public/servitoken-logo.png` (512px, 74KB, alpha) y `public/servitoken-logo-sm.png` (128px, 8.9KB). Reducción de 1.4MB → ~83KB total.
+- Verifiqué el logo procesado con VLM: 8/10 (fondo transparente correcto, anillo dorado intacto, disco navy completo sin huecos, S y estrella bien; halo residual mínimo invisible sobre el navy).
+- Reescribí `src/components/landing/logo.tsx`: el `LogoMark` ahora renderiza la imagen real (`/servitoken-logo.png` / `-sm.png`) con `object-contain` y tamaños sm/md/lg. Comenté claramente cómo reemplazar por una nueva versión (sustituir los archivos en /public manteniendo transparencia).
+- Añadí el logo como favicon y apple-touch-icon en los metadatos del `layout.tsx`.
+- Ejecuté `bun run lint`: limpio (0 errores, 0 warnings tras quitar una directiva eslint innecesaria).
+- Verificación con Agent Browser:
+  - Sin errores de consola ni de página.
+  - 5 instancias del logo renderizan (navbar, hero card "Servitoken Pay", hero coin flotante, nodo central del diagrama ecosistema, footer), todas con `naturalWidth>0` (cargadas correctamente).
+  - Confirmación visual con VLM sobre captura real: logo visible en navbar ✓, visible en hero ✓, SIN cuadro negro alrededor ✓ (el recorte de fondo funcionó), identidad navy+dorado+azul percibida ✓, integración 9/10.
+
+Stage Summary:
+- Logo oficial de Servitoken integrado en navbar, hero (tarjeta de pago + coin flotante), diagrama del ecosistema y footer, con fondo transparente (sin caja negra) sobre el fondo navy premium.
+- Imagen optimizada: de 1.4MB a 74KB (512px) + 8.9KB (128px), formatos PNG con alpha.
+- Estructura preparada para reemplazo futuro: basta con sustituir `/public/servitoken-logo.png` y `-sm.png` (manteniendo transparencia) o actualizar las constantes `LOGO_SRC`/`LOGO_SRC_SM` en `logo.tsx`.
+- Script de pipeline `scripts/optimize-logo.mjs` conservado como utilidad para re-procesar cuando el cliente envíe una nueva versión del logo.
+- Favicon actualizado al logo de Servitoken.

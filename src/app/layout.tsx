@@ -25,6 +25,10 @@ export const metadata: Metadata = {
     "ecosistema de pagos",
   ],
   authors: [{ name: "Servitoken" }],
+  icons: {
+    icon: "/servitoken-logo-sm.png",
+    apple: "/servitoken-logo.png",
+  },
   openGraph: {
     title: "Servitoken · Token de utilidad para pagos de servicios",
     description:
