@@ -54,3 +54,4 @@ server.log
 /skills/
 # Verification screenshots (dev artifacts)
 .verify-shots/
+.env
