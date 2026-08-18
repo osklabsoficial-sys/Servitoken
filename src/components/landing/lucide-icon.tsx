@@ -44,6 +44,8 @@ import {
   ArrowRight,
   ArrowUpRight,
   Sparkles,
+  Hash,
+  FileText,
   type LucideIcon,
 } from "lucide-react";
 
@@ -91,6 +93,8 @@ const registry: Record<string, LucideIcon> = {
   ArrowRight,
   ArrowUpRight,
   Sparkles,
+  Hash,
+  FileText,
 };
 
 export function LucideIconByName({

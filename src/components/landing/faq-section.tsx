@@ -7,7 +7,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { SectionHeading, Reveal } from "@/components/landing/section-primitives";
-import { faqs } from "@/lib/token-data";
+import { faqs, faqSection } from "@/lib/token-data";
 
 export function FaqSection() {
   return (
@@ -17,9 +17,9 @@ export function FaqSection() {
     >
       <div className="mx-auto w-full max-w-3xl px-4 py-20 sm:px-6 sm:py-24 lg:px-8">
         <SectionHeading
-          eyebrow="Preguntas frecuentes"
-          title="Resolvemos tus dudas"
-          description="Encuentra respuestas claras sobre Servitoken. Si falta información, se irá actualizando conforme se confirmen los datos oficiales."
+          eyebrow={faqSection.eyebrow}
+          title={faqSection.title}
+          description={faqSection.subtitle}
         />
 
         <Reveal delay={0.1}>
@@ -33,7 +33,7 @@ export function FaqSection() {
               <AccordionItem
                 key={faq.question}
                 value={`item-${i}`}
-                className="rounded-xl border border-white/8 bg-white/[0.02] px-5 transition-colors data-[state=open]:border-electric/30 data-[state=open]:bg-electric/[0.04]"
+                className="rounded-xl border border-white/[0.08] bg-white/[0.02] px-5 transition-colors data-[state=open]:border-electric/30 data-[state=open]:bg-electric/[0.04]"
               >
                 <AccordionTrigger className="py-5 text-left text-[15px] font-medium text-foreground hover:no-underline">
                   {faq.question}

@@ -4,8 +4,8 @@
  * ============================================================
  *  Toda la información configurable del proyecto se concentra
  *  en este archivo. Los campos marcados como `""` (vacíos)
- *  significan "Por confirmar" y se muestran automáticamente con
- *  la etiqueta `PLACEHOLDER` en la interfaz.
+ *  significan "Por confirmar" y se muestran automáticamente
+ *  con la etiqueta `PLACEHOLDER` en la interfaz.
  *
  *  >>> REEMPLAZAR con datos oficiales cuando el cliente los
  *  proporcione. NO inventar datos reales. <<<
@@ -13,6 +13,10 @@
  */
 
 export const PLACEHOLDER = "Por confirmar";
+
+/** Mensaje estándar cuando la información no está disponible todavía. */
+export const PENDING_INFO =
+  "Esta información será publicada próximamente en los canales oficiales.";
 
 /** Devuelve el valor si existe; si no, el placeholder "Por confirmar". */
 export const display = (value?: string | null) =>
@@ -25,31 +29,21 @@ export const project = {
     "Token de utilidad diseñado para conectar usuarios, servicios y comercios dentro de un ecosistema digital de pagos.",
 
   // ---- DATOS POR CONFIRMAR (vacío = "Por confirmar") ----
-  // Dirección del contrato. Vacío hasta que el cliente la proporcione.
-  contractAddress: "",
-  // Red blockchain del token (ej. "BNB Smart Chain (BEP-20)"). Vacío = Por confirmar.
-  network: "",
-  // Suminuro total. Vacío = Por confirmar.
-  totalSupply: "",
-  // Decimales del token. Vacío = Por confirmar.
-  decimals: "",
-  // Precio actual. Vacío = Por confirmar.
-  price: "",
-  // URL oficial de compra del token. Vacío = botón deshabilitado.
-  buyUrl: "",
-  // URL base del explorador de bloques para el botón "Ver en explorador".
-  // Ejemplo BscScan: "https://bscscan.com/address/"
+  contractAddress: "", // Dirección del contrato.
+  network: "", // Red blockchain (ej. "BNB Smart Chain (BEP-20)").
+  totalSupply: "", // Suministro total.
+  decimals: "", // Decimales del token.
+  price: "", // Precio actual.
+  buyUrl: "", // URL oficial de compra (botón deshabilitado si vacío).
+  // URL base del explorador de bloques. Ej: "https://bscscan.com/address/"
   explorerBaseUrl: "",
 } as const;
 
-export type NavLink = {
-  label: string;
-  href: string;
-};
+export type NavLink = { label: string; href: string };
 
 export const navLinks: NavLink[] = [
   { label: "Inicio", href: "#inicio" },
-  { label: "¿Qué es Servitoken?", href: "#que-es" },
+  { label: "¿Qué es?", href: "#que-es" },
   { label: "Utilidad", href: "#utilidad" },
   { label: "Cómo funciona", href: "#como-funciona" },
   { label: "Precio y compra", href: "#precio" },
@@ -59,25 +53,52 @@ export const navLinks: NavLink[] = [
 
 export const footerLinks: NavLink[] = [
   { label: "Inicio", href: "#inicio" },
-  { label: "Información", href: "#que-es" },
+  { label: "¿Qué es?", href: "#que-es" },
   { label: "Utilidad", href: "#utilidad" },
   { label: "Cómo funciona", href: "#como-funciona" },
-  { label: "Compra", href: "#precio" },
+  { label: "Precio y compra", href: "#precio" },
+  { label: "FAQ", href: "#faq" },
   { label: "Contacto", href: "#contacto" },
 ];
 
-// Indicadores del hero. Todos "Por confirmar" salvo que el cliente confirme.
-export type Indicator = { label: string; value: string };
+// ---- Indicadores / datos del token (tarjeta horizontal premium) ----
+export type Indicator = {
+  label: string;
+  value: string;
+  // nombre de icono lucide minimalista
+  icon: string;
+  hint: string;
+};
 
-export const heroIndicators: Indicator[] = [
-  { label: "Supply total", value: project.totalSupply },
-  { label: "Red", value: project.network },
-  { label: "Decimales", value: project.decimals },
-  { label: "Contrato", value: project.contractAddress },
+export const tokenStats: Indicator[] = [
+  {
+    label: "Supply total",
+    value: project.totalSupply,
+    icon: "Coins",
+    hint: "Suministro total del token",
+  },
+  {
+    label: "Red",
+    value: project.network,
+    icon: "Network",
+    hint: "Red blockchain del token",
+  },
+  {
+    label: "Decimales",
+    value: project.decimals,
+    icon: "Hash",
+    hint: "Cantidad de decimales",
+  },
+  {
+    label: "Contrato",
+    value: project.contractAddress,
+    icon: "FileText",
+    hint: "Dirección del contrato",
+  },
 ];
 
 export type FeatureCard = {
-  icon: string; // nombre de icono lucide
+  icon: string;
   title: string;
   description: string;
 };
@@ -87,7 +108,7 @@ export const utilityCards: FeatureCard[] = [
     icon: "CreditCard",
     title: "Pagos",
     description:
-      "Utiliza Servitoken como una alternativa de pago en servicios y comercios participantes.",
+      "Utiliza Servitoken como alternativa de pago en servicios y comercios participantes.",
   },
   {
     icon: "Gift",
@@ -105,7 +126,7 @@ export const utilityCards: FeatureCard[] = [
     icon: "Boxes",
     title: "Blockchain",
     description:
-      "Las operaciones utilizan tecnología blockchain para registrar las transacciones.",
+      "Utiliza tecnología blockchain para registrar las operaciones.",
   },
 ];
 
@@ -120,22 +141,19 @@ export const howItWorks: Step[] = [
   {
     step: "01",
     title: "Adquiere Servitoken",
-    description:
-      "El usuario adquiere el token mediante las plataformas oficiales disponibles.",
+    description: "Compra el token mediante las plataformas oficiales disponibles.",
     icon: "Coins",
   },
   {
     step: "02",
     title: "Conecta tu wallet",
-    description:
-      "El usuario administra sus tokens utilizando una wallet compatible.",
+    description: "Administra tus tokens utilizando una wallet compatible.",
     icon: "Wallet",
   },
   {
     step: "03",
     title: "Utiliza Servitoken",
-    description:
-      "Utiliza el token en los servicios o comercios participantes.",
+    description: "Utiliza el token en servicios y comercios participantes.",
     icon: "ShoppingBag",
   },
 ];
@@ -143,8 +161,7 @@ export const howItWorks: Step[] = [
 export type ExternalPlatform = {
   name: string;
   description: string;
-  // URL oficial. Vacío = no disponible todavía (botón deshabilitado).
-  url: string;
+  url: string; // Vacío = no disponible todavía (botón deshabilitado).
   icon: string;
   accent: string; // clases tailwind para el icono
 };
@@ -153,14 +170,14 @@ export const externalPlatforms: ExternalPlatform[] = [
   {
     name: "PancakeSwap",
     description: "DEX para intercambiar tokens de forma descentralizada.",
-    url: "", // TODO: URL oficial del cliente
+    url: "",
     icon: "Cookie",
     accent: "bg-amber-400/10 text-amber-300 ring-1 ring-amber-400/20",
   },
   {
     name: "MetaMask",
     description: "Wallet compatible para administrar tus Servitoken.",
-    url: "", // TODO: URL oficial del cliente
+    url: "",
     icon: "Wallet",
     accent: "bg-orange-400/10 text-orange-300 ring-1 ring-orange-400/20",
   },
@@ -177,26 +194,23 @@ export const benefits: Benefit[] = [
     icon: "Zap",
     title: "Pagos sencillos",
     description:
-      "Una experiencia de pago clara y directa para los servicios y comercios participantes.",
+      "Una experiencia de pago pensada para ser clara y accesible.",
   },
   {
     icon: "Gift",
-    title: "Beneficios para usuarios",
+    title: "Beneficios",
     description:
-      "Acceso a beneficios o descuentos ofrecidos por los comercios participantes del ecosistema.",
+      "Posibles beneficios y descuentos en comercios participantes.",
   },
   {
     icon: "Handshake",
-    title: "Conexiones entre usuarios y comercios",
+    title: "Conexiones reales",
     description:
-      "Un puente digital entre usuarios, proveedores y comercios dentro del ecosistema Servitoken.",
+      "Un ecosistema que busca conectar usuarios y proveedores.",
   },
 ];
 
-export type Faq = {
-  question: string;
-  answer: string;
-};
+export type Faq = { question: string; answer: string };
 
 export const faqs: Faq[] = [
   {
@@ -205,34 +219,29 @@ export const faqs: Faq[] = [
       "Servitoken es un token de utilidad creado con la visión de conectar usuarios y proveedores dentro de un ecosistema de servicios digitales, facilitando nuevas formas de pago y beneficios para los usuarios.",
   },
   {
-    question: "¿Para qué puedo utilizar Servitoken?",
+    question: "¿Para qué sirve Servitoken?",
     answer:
       "Servitoken está diseñado para utilizarse como medio de pago en servicios y comercios participantes, donde también puede ofrecer acceso a beneficios o descuentos. La disponibilidad depende de cada comercio participante.",
   },
   {
     question: "¿Dónde puedo adquirirlo?",
-    answer:
-      "Podrás adquirir Servitoken a través de las plataformas oficiales que se anunciarán próximamente. Mantente atento a los canales oficiales para conocer los detalles del lanzamiento.",
+    answer: PENDING_INFO,
   },
   {
     question: "¿Qué wallet puedo utilizar?",
-    answer:
-      "Podrás administrar tus Servitoken con wallets compatibles con la red del token (por ejemplo, MetaMask). La red oficial será confirmada próximamente.",
+    answer: PENDING_INFO,
   },
   {
     question: "¿Cuál es la red del token?",
-    answer:
-      "La red oficial del token será confirmada a través de los canales oficiales del proyecto. Esta información se actualizará en esta página cuando esté disponible.",
+    answer: PENDING_INFO,
   },
   {
     question: "¿Dónde puedo consultar el contrato?",
-    answer:
-      "La dirección del contrato se publicará en esta página y en los canales oficiales cuando esté disponible, e incluirá un enlace al explorador correspondiente para su verificación.",
+    answer: PENDING_INFO,
   },
   {
-    question: "¿Qué servicios o comercios aceptan Servitoken?",
-    answer:
-      "Los servicios y comercios aceptantes se darán a conocer a través de los canales oficiales del proyecto conforme el ecosistema crezca. Utiliza Servitoken en los comercios participantes cuando esté disponible.",
+    question: "¿Qué servicios aceptan Servitoken?",
+    answer: PENDING_INFO,
   },
 ];
 
@@ -247,42 +256,12 @@ export type SocialChannel = {
 // Redes sociales y canales de contacto.
 // url = "" significa que el cliente todavía no lo ha confirmado.
 export const socialChannels: SocialChannel[] = [
-  {
-    name: "X / Twitter",
-    handle: "@Servitoken",
-    url: "",
-    icon: "Twitter",
-  },
-  {
-    name: "Telegram",
-    handle: "t.me/Servitoken",
-    url: "",
-    icon: "Send",
-  },
-  {
-    name: "Instagram",
-    handle: "@Servitoken",
-    url: "",
-    icon: "Instagram",
-  },
-  {
-    name: "Facebook",
-    handle: "Servitoken",
-    url: "",
-    icon: "Facebook",
-  },
-  {
-    name: "WhatsApp",
-    handle: "Servitoken",
-    url: "",
-    icon: "MessageCircle",
-  },
-  {
-    name: "Email",
-    handle: "contacto@servitoken.com",
-    url: "",
-    icon: "Mail",
-  },
+  { name: "X / Twitter", handle: "@Servitoken", url: "", icon: "Twitter" },
+  { name: "Telegram", handle: "t.me/Servitoken", url: "", icon: "Send" },
+  { name: "Instagram", handle: "@Servitoken", url: "", icon: "Instagram" },
+  { name: "Facebook", handle: "Servitoken", url: "", icon: "Facebook" },
+  { name: "WhatsApp", handle: "Servitoken", url: "", icon: "MessageCircle" },
+  { name: "Email", handle: "contacto@servitoken.com", url: "", icon: "Mail" },
 ];
 
 // Datos del hero
@@ -297,8 +276,10 @@ export const hero = {
 
 // Datos "¿Qué es Servitoken?"
 export const whatIs = {
+  eyebrow: "Un token de utilidad",
   title: "¿Qué es Servitoken?",
   body: "Servitoken es un token de utilidad creado con la visión de conectar usuarios y proveedores dentro de un ecosistema de servicios digitales, facilitando nuevas formas de pago y beneficios para los usuarios.",
+  cta: "Conocer el proyecto",
   points: [
     {
       icon: "ShieldCheck",
@@ -316,4 +297,62 @@ export const whatIs = {
       text: "Las transacciones se registran utilizando tecnología blockchain.",
     },
   ],
+};
+
+// Datos "Utilidad"
+export const utility = {
+  eyebrow: "Utilidad",
+  title: "Una nueva forma de conectar servicios",
+  subtitle:
+    "Servitoken busca facilitar la interacción entre usuarios, comercios y proveedores dentro de un ecosistema digital.",
+};
+
+// Datos "Cómo funciona"
+export const howItWorksSection = {
+  eyebrow: "Cómo funciona",
+  title: "¿Cómo funciona?",
+};
+
+// Datos "Precio y compra"
+export const pricingSection = {
+  eyebrow: "Precio y compra",
+  title: "Adquiere Servitoken",
+};
+
+// Datos "Plataformas"
+export const platformsSection = {
+  eyebrow: "Plataformas",
+  title: "Compra desde plataformas oficiales",
+  subtitle:
+    "La adquisición de Servitoken podrá realizarse a través de plataformas y wallets externas. Los enlaces oficiales se habilitarán cuando el cliente los confirme.",
+};
+
+// Datos "Contrato"
+export const contractSection = {
+  eyebrow: "Contrato",
+  title: "Consulta el contrato",
+  subtitle:
+    "Verifica la información oficial del token directamente desde la blockchain.",
+};
+
+// Datos "Beneficios"
+export const benefitsSection = {
+  eyebrow: "Beneficios",
+  title: "Más utilidad. Más posibilidades.",
+};
+
+// Datos "FAQ"
+export const faqSection = {
+  eyebrow: "Preguntas frecuentes",
+  title: "Resolvemos tus dudas",
+  subtitle:
+    "Encuentra respuestas claras sobre Servitoken. Si falta información, se irá actualizando conforme se confirmen los datos oficiales.",
+};
+
+// Datos "Contacto"
+export const contactSection = {
+  eyebrow: "Contacto",
+  title: "Conecta con Servitoken",
+  subtitle:
+    "Conoce las novedades, actualizaciones y próximos desarrollos del proyecto.",
 };

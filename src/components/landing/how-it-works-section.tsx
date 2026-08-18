@@ -2,7 +2,7 @@
 
 import { SectionHeading, Reveal } from "@/components/landing/section-primitives";
 import { LucideIconByName } from "@/components/landing/lucide-icon";
-import { howItWorks } from "@/lib/token-data";
+import { howItWorks, howItWorksSection } from "@/lib/token-data";
 
 export function HowItWorksSection() {
   return (
@@ -12,19 +12,31 @@ export function HowItWorksSection() {
     >
       <div className="mx-auto w-full max-w-7xl px-4 py-20 sm:px-6 sm:py-24 lg:px-8">
         <SectionHeading
-          eyebrow="Cómo funciona"
-          title="Tres pasos para empezar"
-          description="Un flujo sencillo para que cualquier usuario pueda adquirir y utilizar Servitoken dentro del ecosistema."
+          eyebrow={howItWorksSection.eyebrow}
+          title={howItWorksSection.title}
         />
 
         <div className="relative mt-14">
-          {/* Línea conectora horizontal (desktop) */}
+          {/* Línea conectora horizontal elegante (desktop) */}
           <div
             aria-hidden
-            className="absolute left-0 right-0 top-[52px] hidden h-px bg-gradient-to-r from-electric/0 via-electric/40 to-gold/0 lg:block"
+            className="absolute left-[16.66%] right-[16.66%] top-[52px] hidden h-px bg-gradient-to-r from-electric/30 via-gold/40 to-electric/30 lg:block"
+          />
+          {/* Puntos de la línea */}
+          <div
+            aria-hidden
+            className="absolute left-[16.66%] top-[50px] hidden size-3 -translate-x-1/2 rounded-full border border-gold/40 bg-navy-2 lg:block"
+          />
+          <div
+            aria-hidden
+            className="absolute left-1/2 top-[50px] hidden size-3 -translate-x-1/2 rounded-full border border-gold/40 bg-navy-2 lg:block"
+          />
+          <div
+            aria-hidden
+            className="absolute left-[83.33%] top-[50px] hidden size-3 -translate-x-1/2 rounded-full border border-gold/40 bg-navy-2 lg:block"
           />
 
-          <div className="grid gap-6 lg:grid-cols-3 lg:gap-8">
+          <div className="grid gap-10 lg:grid-cols-3 lg:gap-8">
             {howItWorks.map((step, i) => (
               <Reveal key={step.step} delay={i * 0.1}>
                 <div className="relative flex flex-col items-center text-center">

@@ -2,16 +2,25 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Check, Copy, ExternalLink, Lock, ArrowRight } from "lucide-react";
+import {
+  Check,
+  Copy,
+  ExternalLink,
+  Lock,
+  ArrowRight,
+  CircleDollarSign,
+  Network,
+  FileText,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Reveal, SectionHeading } from "@/components/landing/section-primitives";
-import { project, display } from "@/lib/token-data";
+import { project, display, pricingSection } from "@/lib/token-data";
 import { toast } from "sonner";
 
 const dataFields = [
-  { label: "Precio actual", value: project.price, icon: "CircleDollarSign" as const },
-  { label: "Red", value: project.network, icon: "Network" as const },
-  { label: "Contrato", value: project.contractAddress, icon: "FileText" as const },
+  { label: "Precio actual", value: project.price, icon: CircleDollarSign },
+  { label: "Red", value: project.network, icon: Network },
+  { label: "Contrato", value: project.contractAddress, icon: FileText },
 ];
 
 export function PricingSection() {
@@ -37,14 +46,18 @@ export function PricingSection() {
       className="relative scroll-mt-16 border-t border-white/5 bg-background"
     >
       {/* Glow de fondo */}
-      <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute left-1/2 top-0 h-[320px] w-[640px] -translate-x-1/2 rounded-full bg-electric/10 blur-[120px]" />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 overflow-hidden"
+      >
+        <div className="absolute left-1/2 top-0 h-[320px] w-[760px] -translate-x-1/2 rounded-full bg-electric/10 blur-[130px]" />
+        <div className="absolute right-1/4 bottom-0 h-[260px] w-[360px] rounded-full bg-gold/8 blur-[110px]" />
       </div>
 
       <div className="relative mx-auto w-full max-w-7xl px-4 py-20 sm:px-6 sm:py-24 lg:px-8">
         <SectionHeading
-          eyebrow="Precio y compra"
-          title="Adquiere Servitoken"
+          eyebrow={pricingSection.eyebrow}
+          title={pricingSection.title}
           description="Toda la información para adquirir el token estará disponible aquí cuando se confirme oficialmente."
         />
 
@@ -57,19 +70,38 @@ export function PricingSection() {
                 Información de compra
               </p>
 
-              <dl className="mt-6 space-y-3">
-                {dataFields.map((field) => (
+              {/* Precio destacado */}
+              <div className="mt-6 rounded-2xl border border-white/[0.08] bg-gradient-to-br from-electric/[0.08] via-white/[0.02] to-transparent p-5">
+                <div className="flex items-center justify-between">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                    Precio actual
+                  </p>
+                  <span className="inline-flex items-center gap-1 rounded-full border border-brand-green/20 bg-brand-green/10 px-2 py-0.5 text-[10px] font-medium text-brand-green">
+                    <span className="size-1.5 rounded-full bg-brand-green" />
+                    En vivo
+                  </span>
+                </div>
+                <p className="mt-3 font-mono text-3xl font-semibold leading-none text-foreground sm:text-4xl">
+                  {display(project.price)}
+                </p>
+                <p className="mt-2 text-xs text-muted-foreground">
+                  Se mostrará cuando se confirme oficialmente.
+                </p>
+              </div>
+
+              {/* Red + Contrato */}
+              <dl className="mt-3 space-y-3">
+                {dataFields.slice(1).map((field) => (
                   <div
                     key={field.label}
-                    className="flex items-center justify-between gap-4 rounded-xl border border-white/8 bg-white/[0.02] px-4 py-3.5"
+                    className="flex items-center justify-between gap-4 rounded-xl border border-white/[0.08] bg-white/[0.02] px-4 py-3.5"
                   >
-                    <dt className="text-sm text-muted-foreground">
+                    <dt className="flex items-center gap-2.5 text-sm text-muted-foreground">
+                      <field.icon className="size-4 text-electric-bright/80" />
                       {field.label}
                     </dt>
-                    <dd className="flex items-center gap-2 text-right">
-                      <span className="font-mono text-sm font-semibold text-foreground/90">
-                        {display(field.value)}
-                      </span>
+                    <dd className="font-mono text-sm font-semibold text-foreground/90">
+                      {display(field.value)}
                     </dd>
                   </div>
                 ))}
@@ -81,7 +113,7 @@ export function PricingSection() {
                   <Button
                     asChild
                     size="lg"
-                    className="h-12 w-full bg-gradient-to-r from-electric to-electric-bright text-white shadow-[0_10px_30px_-10px_rgba(46,107,255,0.8)] hover:opacity-95"
+                    className="h-12 w-full bg-gradient-to-r from-electric to-electric-bright text-white shadow-[0_12px_36px_-10px_rgba(46,107,255,0.85)] transition-transform hover:-translate-y-0.5"
                   >
                     <a
                       href={project.buyUrl}
@@ -122,8 +154,9 @@ export function PricingSection() {
 
               <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
                 Aquí se mostrará la dirección completa del contrato de
-                Servitoken cuando el cliente la proporcione. Incluirá el botón
-                de copiar y el enlace al explorador de la red correspondiente.
+                Servitoken cuando el cliente la proporcione, junto con el
+                botón de copiar y el enlace al explorador de la red
+                correspondiente.
               </p>
 
               {/* Campo de dirección */}

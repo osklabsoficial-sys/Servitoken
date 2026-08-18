@@ -228,4 +228,10 @@
   .animate-float-slow {
     animation: sv-float 10s ease-in-out infinite;
   }
+
+  /* Rotación lenta para anillos orbitales del hero */
+  @keyframes sv-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
 }

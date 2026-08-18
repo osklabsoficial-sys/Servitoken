@@ -103,3 +103,60 @@ Stage Summary:
 - Estructura preparada para reemplazo futuro: basta con sustituir `/public/servitoken-logo.png` y `-sm.png` (manteniendo transparencia) o actualizar las constantes `LOGO_SRC`/`LOGO_SRC_SM` en `logo.tsx`.
 - Script de pipeline `scripts/optimize-logo.mjs` conservado como utilidad para re-procesar cuando el cliente envíe una nueva versión del logo.
 - Favicon actualizado al logo de Servitoken.
+
+---
+Task ID: 20-21
+Agent: Z.ai Code (main)
+Task: MODIFICAR radicalmente el diseño visual de la landing de Servitoken (no desde cero). Conservar estructura y componentes que funcionan. Mejorar visual, completar la página con copys exactos del spec, estética premium Web3+Fintech (navy + dorado + azul eléctrico + blanco). NO inventar datos (todo "Por confirmar"). NO prometer rentabilidad. 6 breakpoints responsive (375/390/430/768/1024/1440). Animaciones muy sutiles.
+
+Work Log:
+- Leí el worklog previo (Task 17-19): logo oficial ya integrado en navbar, hero, diagrama ecosistema y footer. Servidor dev corriendo en :3000.
+- Leí los 13 componentes existentes (site-header, hero, what-is, utility, how-it-works, pricing, external-platforms, contract, benefits, faq, contact, site-footer, logo, section-primitives) + token-data.ts + globals.css + page.tsx + layout.tsx.
+- Task 20 · Actualicé `src/lib/token-data.ts` con copys EXACTOS del spec:
+  · navLinks (7) con etiquetas cortas (¿Qué es? / Cómo funciona / Precio y compra / FAQ)
+  · footerLinks (7) alineados al spec (Inicio / ¿Qué es? / Utilidad / Cómo funciona / Precio y compra / FAQ / Contacto)
+  · tokenStats (nueva estructura) con 4 campos (Supply total/Red/Decimales/Contrato) + iconos + hint para la nueva tarjeta horizontal premium
+  · utilityCards (4: Pagos/Beneficios/Ecosistema/Blockchain) con descripciones exactas del spec
+  · howItWorks (3 pasos) con descripciones reformuladas ("Compra el token..." / "Administra tus tokens..." / "Utiliza el token...")
+  · benefits (3 NUEVOS): Pagos sencillos / Beneficios / Conexiones reales, con descripciones exactas del spec
+  · faqs (7 EXACTAS): ¿Qué es Servitoken? / ¿Para qué sirve Servitoken? / ¿Dónde puedo adquirirlo? / ¿Qué wallet puedo utilizar? / ¿Cuál es la red del token? / ¿Dónde puedo consultar el contrato? / ¿Qué servicios aceptan Servitoken?
+  · 5 de las 7 FAQs usan PENDING_INFO = "Esta información será publicada próximamente en los canales oficiales." (no inventar datos)
+  · whatIs con eyebrow "Un token de utilidad" + cta "Conocer el proyecto"
+  · Nuevos objetos: utility, howItWorksSection, pricingSection, platformsSection, contractSection, benefitsSection, faqSection, contactSection con títulos EXACTOS del spec
+  · Hero con título exacto "Pagos de servicios, ahora con Servitoken" + subtitle exacta
+- Añadí iconos Hash y FileText al registro lucide-icon.
+- Task 20 · globals.css: añadí keyframe `sv-spin` para rotación lenta de anillos orbitales del hero (28s lineal).
+- Task 20 · CREÉ `src/components/landing/token-data-section.tsx` (NUEVO): tarjeta horizontal premium con 4 datos del token (Supply/Red/Decimales/Contrato) extraída del hero, con bordes suaves, fondo ligeramente diferente, iconos minimalistas y buen espaciado. Indicadores con divisor en grid 2 cols mobile / 4 cols desktop. Hover con brillo superior. Campo "Por confirmar" se resalta en dorado.
+- Task 20 · REESCRIBÍ `src/components/landing/hero-section.tsx`: eliminé los 4 indicadores del hero (ahora viven en TokenDataSection). Nueva composición visual premium centrada en el logo: anillos orbitales concéntricos, aro giratorio lento (28s) con 4 puntos (2 azules + 2 dorados), logo central grande con halo dorado + animación float 6s, 2 chips flotantes glassmorphism (Blockchain + Token de utilidad) con animaciones contrapuestas, pequeños puntos decorativos dorado/azul. SVG con radial gradient + líneas radiales sutiles. Botones h-12 con hover -translate-y-0.5 y shadow eléctrico. Título con `<br>` desktop + gold gradient en "Servitoken".
+- Task 20 · Actualicé `src/components/landing/what-is-section.tsx`: eyebrow "Un token de utilidad" + botón "Conocer el proyecto" (hacia #utilidad). Diagrama de ecosistema con animación float en nodo central.
+- Task 20 · Actualicé `src/components/landing/utility-section.tsx`: título "Una nueva forma de conectar servicios" + subtitle exacto del spec. Añadí pequeño acento dorado en esquina superior derecha de cada tarjeta.
+- Task 20 · Actualicé `src/components/landing/how-it-works-section.tsx`: título "¿Cómo funciona?" + línea conectora elegante con gradient navy→gold→navy y 3 puntos dorados.
+- Task 20 · Actualicé `src/components/landing/pricing-section.tsx`: añadí bloque de precio destacado (3xl/4xl mono + badge "En vivo" verde), red + contrato en filas con iconos. CTA "Comprar Servitoken →" con hover -translate-y-0.5.
+- Task 20 · Actualicé `src/components/landing/external-platforms-section.tsx`: título "Compra desde plataformas oficiales".
+- Task 20 · Actualicé `src/components/landing/contract-section.tsx`: id="contrato", título "Consulta el contrato", texto exacto "Verifica la información oficial del token directamente desde la blockchain.".
+- Task 20 · Actualicé `src/components/landing/benefits-section.tsx`: título "Más utilidad. Más posibilidades." + 3 bloques nuevos (Pagos sencillos / Beneficios / Conexiones reales).
+- Task 20 · Actualicé `src/components/landing/faq-section.tsx`: 7 preguntas exactas del spec.
+- Task 20 · Actualicé `src/components/landing/contact-section.tsx`: título "Conecta con Servitoken", subtítulo "Conoce las novedades, actualizaciones y próximos desarrollos del proyecto."
+- Task 20 · Actualicé `src/components/landing/site-footer.tsx`: footerLinks (7) alineados al spec, "© 2026 Servitoken. Todos los derechos reservados."
+- Task 20 · Actualicé `src/app/page.tsx`: añadí `TokenDataSection` entre `HeroSection` y `WhatIsSection` en el orden exacto del spec (Hero → Datos → Qué es → Utilidad → Cómo funciona → Precio → Plataformas → Contrato → Beneficios → FAQ → Contacto → Footer).
+- Task 21 · FIX responsive: los chips flotantes del hero usaban `-right-1`/`-left-1` en mobile, lo que los dejaba ligeramente cortados. Cambiado a `right-2/left-2 sm:right-0/left-0 lg:-right-2/-left-2` para mantenerlos dentro del viewport en mobile y sobresalir sutilmente en desktop.
+- Ejecuté `bun run lint`: 0 errores, 0 warnings.
+- Verificación con Agent Browser:
+  - Página carga en / con título "Servitoken · Token de utilidad para pagos de servicios". Sin errores de página ni de runtime (dev.log solo muestra "✓ Compiled" y "GET / 200").
+  - Snapshot interactivo: los 7 nav links + CTA + 12 headings de sección + 4 botones de datos (Comprar/Copiar/Ver en explorador ×2) + 2 botones de plataformas + 3 beneficios + 7 FAQ items (todas deshabilitadas correctamente hasta que el cliente confirme datos).
+  - Acordeón FAQ: clic en "¿Para qué sirve Servitoken?" (@e48) expande esa pregunta y colapsa la anterior (modo single-collapsible funciona). ✓
+  - Responsive 6 breakpoints (scrollWidth === innerWidth en todos): 375/390/430/768/1024/1440 → SIN scroll horizontal. ✓
+  - VLM desktop hero: 9.2/10 → "premium, logo como protagonista, líneas orbitales + detalles blockchain, paleta navy+dorado+azul equilibrada sin exceso de dorado, no genérico ni vacío".
+  - VLM mobile hero (375px) post-fix: 8.5/10 → "chips Blockchain y Token de utilidad visibles dentro del viewport, hero vertical, botones full-width apilados, tipografía legible, paleta coherente".
+  - VLM desktop hero post-fix final: 8.7/10 → "composición orbital excelente, chips bien posicionados sobre anillos, equilibrio cromático 70/20/10 (navy/azul/dorado), sensación premium Web3+Fintech lista para producción".
+
+Stage Summary:
+- Landing de Servitoken radicalmente mejorada: MISMA arquitectura y componentes (13 secciones), pero con rediseño visual premium completo y copys EXACTOS del spec del cliente.
+- Hero transformado: eliminados los indicadores del hero (que se sentían vacíos) → nueva composición visual centrada en el LOGO con anillos orbitales, aro giratorio lento, chips glassmorphism flotantes y detalles dorados/azules.
+- NUEVA sección `TokenDataSection` (tarjeta horizontal premium con Supply/Red/Decimales/Contrato) entre Hero y "Qué es", como pedía el spec.
+- TODOS los datos por confirmar (precio, supply, red, decimales, contrato, URLs de compra, redes sociales) siguen como placeholder "Por confirmar" estructurado en `token-data.ts`; los botones relacionados están deshabilitados hasta que el cliente reemplace los valores vacíos.
+- FAQ usa `PENDING_INFO` ("Esta información será publicada próximamente en los canales oficiales.") en 5 de 7 preguntas sin inventar datos.
+- Animaciones muy sutiles: fade-in al scroll (framer-motion Reveal), hover translate-y en tarjetas/botones, float 6s en logo central + chips, rotación 28s en aro orbital, brillo superior en hover.
+- Paleta respetada: navy #060A14 como base (70%), azul eléctrico #2E6BFF para CTAs e interacciones (20%), dorado #D4B06A para logo + acentos puntuales (10%), blanco para texto. Sin exceso de dorado ni de glow ni de gradientes.
+- Verificación end-to-end con Agent Browser + VLM superada en 6 breakpoints + interacciones (FAQ acordeón, botones deshabilitados, sin scroll horizontal, sin errores de runtime).
+- 13 screenshots de verificación guardados en `/home/z/my-project/.verify-shots/`.

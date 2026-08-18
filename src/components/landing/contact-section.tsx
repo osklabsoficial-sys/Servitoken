@@ -2,7 +2,7 @@
 
 import { SectionHeading, Reveal } from "@/components/landing/section-primitives";
 import { LucideIconByName } from "@/components/landing/lucide-icon";
-import { socialChannels } from "@/lib/token-data";
+import { socialChannels, contactSection } from "@/lib/token-data";
 
 export function ContactSection() {
   return (
@@ -10,15 +10,18 @@ export function ContactSection() {
       id="contacto"
       className="relative scroll-mt-16 border-t border-white/5 bg-gradient-to-b from-background to-navy-2/40"
     >
-      <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 overflow-hidden"
+      >
         <div className="absolute left-1/2 top-0 h-[300px] w-[600px] -translate-x-1/2 rounded-full bg-electric/10 blur-[120px]" />
       </div>
 
       <div className="relative mx-auto w-full max-w-7xl px-4 py-20 sm:px-6 sm:py-24 lg:px-8">
         <SectionHeading
-          eyebrow="Contacto"
-          title="Conecta con la comunidad"
-          description="Conoce las novedades, actualizaciones y próximos desarrollos de Servitoken."
+          eyebrow={contactSection.eyebrow}
+          title={contactSection.title}
+          description={contactSection.subtitle}
         />
 
         <div className="mx-auto mt-12 grid max-w-4xl grid-cols-2 gap-4 sm:grid-cols-3">

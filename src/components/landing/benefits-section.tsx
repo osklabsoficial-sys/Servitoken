@@ -2,21 +2,26 @@
 
 import { SectionHeading, Reveal } from "@/components/landing/section-primitives";
 import { LucideIconByName } from "@/components/landing/lucide-icon";
-import { benefits } from "@/lib/token-data";
+import { benefits, benefitsSection } from "@/lib/token-data";
 
 export function BenefitsSection() {
   return (
-    <section className="relative scroll-mt-16 border-t border-white/5 bg-background">
-      <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+    <section
+      id="beneficios"
+      className="relative scroll-mt-16 border-t border-white/5 bg-background"
+    >
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 overflow-hidden"
+      >
         <div className="absolute left-1/4 top-10 h-[300px] w-[400px] rounded-full bg-gold/5 blur-[120px]" />
         <div className="absolute right-1/4 bottom-10 h-[300px] w-[400px] rounded-full bg-electric/8 blur-[120px]" />
       </div>
 
       <div className="relative mx-auto w-full max-w-7xl px-4 py-20 sm:px-6 sm:py-24 lg:px-8">
         <SectionHeading
-          eyebrow="Beneficios"
-          title="Diseñado para la utilidad, no para la especulación"
-          description="Ventajas prácticas para los usuarios dentro del ecosistema de Servitoken."
+          eyebrow={benefitsSection.eyebrow}
+          title={benefitsSection.title}
         />
 
         <div className="mt-12 grid gap-5 md:grid-cols-3">

@@ -1,10 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Copy, ExternalLink, Lock, ShieldCheck, Eye, Boxes } from "lucide-react";
+import {
+  Check,
+  Copy,
+  ExternalLink,
+  Lock,
+  ShieldCheck,
+  Eye,
+  Boxes,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Reveal, SectionHeading } from "@/components/landing/section-primitives";
-import { project, display } from "@/lib/token-data";
+import { project, display, contractSection } from "@/lib/token-data";
 import { toast } from "sonner";
 
 const trustBadges = [
@@ -31,12 +39,15 @@ export function ContractSection() {
   };
 
   return (
-    <section className="relative scroll-mt-16 border-t border-white/5 bg-gradient-to-b from-background to-navy-2/40">
+    <section
+      id="contrato"
+      className="relative scroll-mt-16 border-t border-white/5 bg-gradient-to-b from-background to-navy-2/40"
+    >
       <div className="mx-auto w-full max-w-5xl px-4 py-20 sm:px-6 sm:py-24 lg:px-8">
         <SectionHeading
-          eyebrow="Transparencia"
-          title="Ver contrato"
-          description="La dirección del contrato de Servitoken se publicará aquí cuando esté disponible, junto al enlace al explorador de la red correspondiente para su verificación."
+          eyebrow={contractSection.eyebrow}
+          title={contractSection.title}
+          description={contractSection.subtitle}
         />
 
         <Reveal delay={0.1}>
@@ -64,9 +75,7 @@ export function ContractSection() {
               <div className="mx-auto mt-3 max-w-xl">
                 <div className="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-navy/60 px-4 py-4">
                   <code className="block w-full break-all text-center font-mono text-xs text-foreground/90 sm:text-sm">
-                    {hasContract
-                      ? project.contractAddress
-                      : "Por confirmar"}
+                    {hasContract ? project.contractAddress : "Por confirmar"}
                   </code>
                   <button
                     type="button"

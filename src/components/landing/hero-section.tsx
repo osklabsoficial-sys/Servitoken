@@ -2,16 +2,10 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowRight, ShieldCheck, Check, Zap } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/landing/logo";
-import { Reveal } from "@/components/landing/section-primitives";
-import {
-  hero,
-  heroIndicators,
-  project,
-  display,
-} from "@/lib/token-data";
+import { hero } from "@/lib/token-data";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 22 },
@@ -28,16 +22,27 @@ export function HeroSection() {
       id="inicio"
       className="relative overflow-hidden bg-background"
     >
-      {/* Fondo decorativo */}
-      <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute inset-0 bg-grid bg-grid-fade opacity-60" />
-        <div className="absolute -top-40 left-1/2 h-[460px] w-[760px] -translate-x-1/2 rounded-full bg-electric/15 blur-[120px]" />
-        <div className="absolute right-[-160px] top-24 h-[360px] w-[360px] rounded-full bg-gold/10 blur-[120px]" />
+      {/* Fondo decorativo: navy + gradientes sutiles + geometría blockchain */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 overflow-hidden"
+      >
+        {/* Grid sutil */}
+        <div className="absolute inset-0 bg-grid bg-grid-fade opacity-50" />
+        {/* Glow eléctrico */}
+        <div className="absolute -top-40 left-1/2 h-[480px] w-[820px] -translate-x-1/2 rounded-full bg-electric/12 blur-[140px]" />
+        {/* Glow dorado */}
+        <div className="absolute right-[-160px] top-32 h-[360px] w-[360px] rounded-full bg-gold/8 blur-[120px]" />
+        {/* Glow verde muy puntual */}
+        <div className="absolute bottom-[-80px] left-[-100px] h-[260px] w-[260px] rounded-full bg-brand-green/5 blur-[100px]" />
+        {/* Línea horizontal superior */}
         <div className="absolute bottom-0 left-1/2 h-px w-full max-w-3xl -translate-x-1/2 bg-gradient-to-r from-transparent via-white/15 to-transparent" />
+        {/* Línea decorativa diagonal */}
+        <div className="absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-gradient-to-b from-transparent via-electric/8 to-transparent" />
       </div>
 
-      <div className="relative mx-auto w-full max-w-7xl px-4 pb-16 pt-14 sm:px-6 sm:pb-24 sm:pt-20 lg:px-8 lg:pt-24">
-        <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-10">
+      <div className="relative mx-auto w-full max-w-7xl px-4 pb-20 pt-16 sm:px-6 sm:pb-28 sm:pt-20 lg:px-8 lg:pt-28">
+        <div className="grid items-center gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-10">
           {/* Columna izquierda */}
           <div className="flex flex-col items-start">
             <motion.div
@@ -47,7 +52,10 @@ export function HeroSection() {
               custom={0}
               className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-medium text-muted-foreground backdrop-blur-sm"
             >
-              <span className="size-1.5 rounded-full bg-brand-green" />
+              <span className="relative flex size-1.5">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand-green opacity-60" />
+                <span className="relative inline-flex size-1.5 rounded-full bg-brand-green" />
+              </span>
               {hero.eyebrow}
             </motion.div>
 
@@ -56,9 +64,10 @@ export function HeroSection() {
               initial="hidden"
               animate="show"
               custom={1}
-              className="mt-5 text-balance text-[2rem] font-semibold leading-[1.1] tracking-tight text-foreground sm:text-4xl lg:text-[3rem] lg:leading-[1.05]"
+              className="mt-5 text-balance text-[2.1rem] font-semibold leading-[1.08] tracking-tight text-foreground sm:text-[2.6rem] lg:text-[3.15rem] lg:leading-[1.04]"
             >
-              Pagos de servicios, ahora con{" "}
+              Pagos de servicios,
+              <br className="hidden sm:block" /> ahora con{" "}
               <span className="text-gradient-gold">Servitoken</span>
             </motion.h1>
 
@@ -82,7 +91,7 @@ export function HeroSection() {
               <Button
                 asChild
                 size="lg"
-                className="h-11 bg-gradient-to-r from-electric to-electric-bright px-6 text-white shadow-[0_10px_30px_-10px_rgba(46,107,255,0.8)] hover:opacity-95"
+                className="h-12 bg-gradient-to-r from-electric to-electric-bright px-7 text-[15px] text-white shadow-[0_12px_36px_-10px_rgba(46,107,255,0.85)] transition-transform hover:-translate-y-0.5 hover:shadow-[0_18px_44px_-10px_rgba(46,107,255,0.9)]"
               >
                 <Link href="#precio">
                   {hero.primaryCta}
@@ -93,39 +102,19 @@ export function HeroSection() {
                 asChild
                 size="lg"
                 variant="outline"
-                className="h-11 border-white/15 bg-white/5 px-6 text-foreground backdrop-blur-sm hover:bg-white/10"
+                className="h-12 border-white/15 bg-white/[0.04] px-7 text-[15px] text-foreground backdrop-blur-sm transition-colors hover:bg-white/[0.08] hover:border-white/25"
               >
                 <Link href="#que-es">{hero.secondaryCta}</Link>
               </Button>
             </motion.div>
-
-            {/* Indicadores del token */}
-            <motion.dl
-              variants={fadeUp}
-              initial="hidden"
-              animate="show"
-              custom={4}
-              className="mt-10 grid w-full grid-cols-2 gap-px overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] sm:grid-cols-4"
-            >
-              {heroIndicators.map((ind) => (
-                <div key={ind.label} className="bg-transparent px-4 py-3.5">
-                  <dt className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
-                    {ind.label}
-                  </dt>
-                  <dd className="mt-1 truncate font-mono text-sm font-semibold text-foreground/90">
-                    {display(ind.value)}
-                  </dd>
-                </div>
-              ))}
-            </motion.dl>
           </div>
 
-          {/* Columna derecha: composición visual premium */}
+          {/* Columna derecha: composición visual premium con el logo */}
           <motion.div
-            initial={{ opacity: 0, y: 30, scale: 0.98 }}
+            initial={{ opacity: 0, y: 30, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ duration: 0.7, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-            className="relative mx-auto w-full max-w-md lg:max-w-none"
+            transition={{ duration: 0.75, delay: 0.18, ease: [0.22, 1, 0.36, 1] }}
+            className="relative mx-auto w-full max-w-[440px] sm:max-w-[480px] lg:max-w-none"
             aria-hidden="true"
           >
             <HeroVisual />
@@ -136,84 +125,161 @@ export function HeroSection() {
   );
 }
 
+/**
+ * Composición visual premium del hero.
+ * Centra el logo de Servitoken como protagonista, rodeado por
+ * líneas orbitales, detalles geométricos de blockchain y pequeños
+ * elementos dorados/azules. Todo CSS/SVG, sin imágenes genéricas.
+ */
 function HeroVisual() {
   return (
-    <div className="relative">
-      {/* Glow base */}
-      <div className="absolute inset-6 -z-10 rounded-[2rem] bg-gradient-to-br from-electric/20 via-gold/10 to-transparent blur-2xl" />
+    <div className="relative mx-auto aspect-square w-full max-w-[480px]">
+      {/* Glow base detrás del conjunto */}
+      <div className="absolute inset-8 -z-10 rounded-full bg-gradient-to-br from-electric/25 via-gold/12 to-transparent blur-3xl" />
 
-      {/* Tarjeta de pago premium (mockup de interfaz) */}
-      <div className="glass-card relative rounded-[1.75rem] p-5 shadow-[0_24px_60px_-28px_rgba(0,0,0,0.6)] sm:p-6">
-        {/* Cabecera */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <Logo size="sm" showWordmark={false} />
-            <div className="leading-none">
-              <p className="text-sm font-semibold text-foreground">Servitoken Pay</p>
-              <p className="mt-1 text-[11px] text-muted-foreground">
-                Interfaz de pago
-              </p>
-            </div>
-          </div>
-          <span className="inline-flex items-center gap-1 rounded-full border border-brand-green/20 bg-brand-green/10 px-2 py-0.5 text-[10px] font-medium text-brand-green">
-            <span className="size-1.5 rounded-full bg-brand-green" />
-            En línea
-          </span>
-        </div>
+      {/* Anillos orbitales */}
+      <div className="absolute inset-0 rounded-full border border-white/[0.08]" />
+      <div className="absolute inset-10 rounded-full border border-white/[0.06]" />
+      <div className="absolute inset-[88px] rounded-full border border-gold/[0.10]" />
 
-        {/* Comercio + importe */}
-        <div className="mt-5 rounded-2xl border border-white/8 bg-white/[0.02] p-4">
-          <div className="flex items-center justify-between text-[11px] text-muted-foreground">
-            <span>Comercio participante</span>
-            <span className="inline-flex items-center gap-1">
-              <ShieldCheck className="size-3 text-brand-green" /> Verificado
-            </span>
-          </div>
-          <p className="mt-2 text-sm font-medium text-foreground">
-            Servicios digitales
-          </p>
-          <div className="mt-3 flex items-end justify-between">
-            <div>
-              <p className="text-[11px] text-muted-foreground">Importe</p>
-              <p className="mt-0.5 font-mono text-2xl font-semibold text-foreground">
-                — —
-              </p>
-            </div>
-            <span className="font-mono text-xs text-gold">SVT</span>
-          </div>
-        </div>
-
-        {/* Detalle red */}
-        <div className="mt-3 flex items-center justify-between rounded-2xl border border-white/8 bg-white/[0.02] px-4 py-3 text-[11px]">
-          <span className="text-muted-foreground">Red</span>
-          <span className="font-mono text-muted-foreground">{display(project.network)}</span>
-        </div>
-
-        {/* Botón confirmar (decorativo) */}
-        <div className="mt-4 flex h-11 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-electric to-electric-bright text-sm font-medium text-white">
-          <Check className="size-4" /> Confirmar pago
-        </div>
+      {/* Aro animado giratorio con elementos */}
+      <div
+        className="absolute inset-4"
+        style={{
+          animation: "sv-spin 28s linear infinite",
+        }}
+      >
+        <div className="absolute left-1/2 top-0 size-2 -translate-x-1/2 rounded-full bg-electric shadow-[0_0_12px_rgba(46,107,255,0.8)]" />
+        <div className="absolute bottom-0 left-1/2 size-1.5 -translate-x-1/2 rounded-full bg-gold shadow-[0_0_10px_rgba(212,176,106,0.7)]" />
+        <div className="absolute left-0 top-1/2 size-1.5 -translate-y-1/2 rounded-full bg-gold/80 shadow-[0_0_10px_rgba(212,176,106,0.6)]" />
+        <div className="absolute right-0 top-1/2 size-2 -translate-y-1/2 rounded-full bg-electric-bright shadow-[0_0_12px_rgba(77,133,255,0.7)]" />
       </div>
 
-      {/* Coin flotante */}
-      <div className="animate-float absolute -right-3 -top-5 sm:-right-6 sm:-top-7">
-        <div className="glow-gold rounded-2xl border border-gold/30 bg-navy-2/80 p-2 backdrop-blur-sm">
-          <Logo size="md" showWordmark={false} />
-        </div>
+      {/* Líneas conectoras (SVG) hacia el centro */}
+      <svg
+        viewBox="0 0 400 400"
+        className="absolute inset-0 size-full"
+        aria-hidden="true"
+      >
+        <defs>
+          <radialGradient id="sv-rg" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="#2E6BFF" stopOpacity="0.25" />
+            <stop offset="100%" stopColor="#2E6BFF" stopOpacity="0" />
+          </radialGradient>
+        </defs>
+        <circle cx="200" cy="200" r="80" fill="url(#sv-rg)" />
+        {/* Líneas radiales sutiles */}
+        <g stroke="rgba(255,255,255,0.10)" strokeWidth="1">
+          <line x1="200" y1="40" x2="200" y2="160" strokeDasharray="2 6" />
+          <line x1="360" y1="200" x2="240" y2="200" strokeDasharray="2 6" />
+          <line x1="200" y1="360" x2="200" y2="240" strokeDasharray="2 6" />
+          <line x1="40" y1="200" x2="160" y2="200" strokeDasharray="2 6" />
+        </g>
+      </svg>
+
+      {/* Logo central de Servitoken */}
+      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+        <motion.div
+          animate={{ y: [0, -8, 0] }}
+          transition={{
+            duration: 6,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+          className="relative"
+        >
+          {/* Halo dorado */}
+          <div className="absolute -inset-3 -z-10 rounded-full bg-gold/10 blur-xl" />
+          <div className="glow-gold rounded-full border border-gold/25 bg-navy-2/60 p-2 backdrop-blur-md">
+            <Logo size="lg" showWordmark={false} />
+          </div>
+        </motion.div>
       </div>
 
-      {/* Chip blockchain flotante */}
-      <div className="animate-float-slow absolute -left-3 bottom-8 sm:-left-6">
+      {/* Chip flotante: "Blockchain" */}
+      <motion.div
+        animate={{ y: [0, -6, 0] }}
+        transition={{
+          duration: 7,
+          repeat: Infinity,
+          ease: "easeInOut",
+          delay: 0.5,
+        }}
+        className="absolute right-2 top-6 sm:right-0 lg:-right-2"
+      >
         <div className="glass-card flex items-center gap-2 rounded-xl px-3 py-2">
-          <span className="flex size-7 items-center justify-center rounded-lg bg-electric/15 text-electric-bright">
-            <Zap className="size-3.5" />
+          <span className="flex size-7 items-center justify-center rounded-lg bg-electric/15 text-electric-bright ring-1 ring-electric/20">
+            <BlockGridIcon />
           </span>
           <div className="leading-none">
-            <p className="text-[11px] font-medium text-foreground">Blockchain</p>
+            <p className="text-[11px] font-semibold text-foreground">Blockchain</p>
             <p className="mt-0.5 text-[10px] text-muted-foreground">Registro on-chain</p>
           </div>
         </div>
-      </div>
+      </motion.div>
+
+      {/* Chip flotante: "Token de utilidad" */}
+      <motion.div
+        animate={{ y: [0, 6, 0] }}
+        transition={{
+          duration: 6.5,
+          repeat: Infinity,
+          ease: "easeInOut",
+          delay: 0.2,
+        }}
+        className="absolute left-2 bottom-14 sm:left-0 lg:-left-2"
+      >
+        <div className="glass-card flex items-center gap-2 rounded-xl px-3 py-2">
+          <span className="flex size-7 items-center justify-center rounded-lg bg-gold/15 text-gold ring-1 ring-gold/20">
+            <StarIcon />
+          </span>
+          <div className="leading-none">
+            <p className="text-[11px] font-semibold text-foreground">Token de utilidad</p>
+            <p className="mt-0.5 text-[10px] text-muted-foreground">Ecosistema de pagos</p>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Pequeño punto decorativo dorado */}
+      <div className="absolute right-10 bottom-8 size-1.5 rounded-full bg-gold/70 shadow-[0_0_8px_rgba(212,176,106,0.6)]" />
+      <div className="absolute left-12 top-12 size-1 rounded-full bg-electric-bright/80 shadow-[0_0_8px_rgba(77,133,255,0.6)]" />
     </div>
+  );
+}
+
+/* Icono de cuadrícula blockchain (sólo decorativo) */
+function BlockGridIcon() {
+  return (
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <rect x="3" y="3" width="7" height="7" rx="1.5" />
+      <rect x="14" y="3" width="7" height="7" rx="1.5" />
+      <rect x="3" y="14" width="7" height="7" rx="1.5" />
+      <rect x="14" y="14" width="7" height="7" rx="1.5" />
+    </svg>
+  );
+}
+
+/* Icono estrella para "Token de utilidad" (alineado con la estrella del logo) */
+function StarIcon() {
+  return (
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden="true"
+    >
+      <path d="M12 2.5l2.6 6.5 6.9.5-5.3 4.5 1.7 6.7L12 17.7l-5.9 3.3 1.7-6.7L2.5 9.5l6.9-.5L12 2.5z" />
+    </svg>
   );
 }

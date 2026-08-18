@@ -4,7 +4,7 @@ import { ExternalLink, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SectionHeading, Reveal } from "@/components/landing/section-primitives";
 import { LucideIconByName } from "@/components/landing/lucide-icon";
-import { externalPlatforms } from "@/lib/token-data";
+import { externalPlatforms, platformsSection } from "@/lib/token-data";
 
 export function ExternalPlatformsSection() {
   return (
@@ -14,9 +14,9 @@ export function ExternalPlatformsSection() {
     >
       <div className="mx-auto w-full max-w-7xl px-4 py-20 sm:px-6 sm:py-24 lg:px-8">
         <SectionHeading
-          eyebrow="Plataformas externas"
-          title="Compra desde plataformas externas"
-          description="La adquisición de Servitoken podrá realizarse a través de plataformas y wallets externas. Los enlaces oficiales se habilitarán cuando el cliente los confirme."
+          eyebrow={platformsSection.eyebrow}
+          title={platformsSection.title}
+          description={platformsSection.subtitle}
         />
 
         <div className="mx-auto mt-12 grid max-w-3xl gap-5 sm:grid-cols-2">
