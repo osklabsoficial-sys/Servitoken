@@ -24,18 +24,24 @@ export const display = (value?: string | null) =>
 
 export const project = {
   name: "Servitoken",
+  symbol: "SERVI",
   // Descripción corta para metadatos y subtítulos
   shortDescription:
     "Token de utilidad diseñado para conectar usuarios, servicios y comercios dentro de un ecosistema digital de pagos.",
 
-  // ---- DATOS POR CONFIRMAR (vacío = "Por confirmar") ----
-  contractAddress: "", // Dirección del contrato.
-  network: "", // Red blockchain (ej. "BNB Smart Chain (BEP-20)").
-  totalSupply: "", // Suministro total.
-  decimals: "", // Decimales del token.
-  price: "", // Precio actual.
-  buyUrl: "", // URL oficial de compra (botón deshabilitado si vacío).
-  // URL base del explorador de bloques. Ej: "https://bscscan.com/address/"
+  // ---- DATOS OFICIALES ----
+  contractAddress: "0x07e6CB0876653B914Fc3805283a275b90bF7E443",
+  network: "BNB Smart Chain (BSC)",
+  totalSupply: "500,000,000 SERVI",
+  decimals: "18",
+  tradingPair: "SERVI / USDT",
+  standard: "BEP-20",
+  price: "", // Precio actual (pendiente de confirmación oficial).
+  buyUrl:
+    "https://pancakeswap.finance/swap?inputCurrency=0x55d398326f99059fF775485246999027B3197955&outputCurrency=0x07e6CB0876653B914Fc3805283a275b90bF7E443",
+  marketUrl:
+    "https://dexscreener.com/bsc/0xad48f36f851ce4dca85a07bb3d6a573a4c70ed18",
+  // URL del explorador de bloques (pendiente confirmación del cliente).
   explorerBaseUrl: "",
 } as const;
 
@@ -169,17 +175,17 @@ export type ExternalPlatform = {
 export const externalPlatforms: ExternalPlatform[] = [
   {
     name: "PancakeSwap",
-    description: "DEX para intercambiar tokens de forma descentralizada.",
-    url: "",
+    description: "Compra SERVI directamente desde PancakeSwap con el par SERVI/USDT.",
+    url: "https://pancakeswap.finance/swap?inputCurrency=0x55d398326f99059fF775485246999027B3197955&outputCurrency=0x07e6CB0876653B914Fc3805283a275b90bF7E443",
     icon: "Cookie",
     accent: "bg-amber-400/10 text-amber-300 ring-1 ring-amber-400/20",
   },
   {
-    name: "MetaMask",
-    description: "Wallet compatible para administrar tus Servitoken.",
-    url: "",
-    icon: "Wallet",
-    accent: "bg-orange-400/10 text-orange-300 ring-1 ring-orange-400/20",
+    name: "DexScreener",
+    description: "Consulta el precio, volumen y gráficos de SERVI en tiempo real.",
+    url: "https://dexscreener.com/bsc/0xad48f36f851ce4dca85a07bb3d6a573a4c70ed18",
+    icon: "BarChart3",
+    accent: "bg-emerald-400/10 text-emerald-300 ring-1 ring-emerald-400/20",
   },
 ];
 
@@ -216,32 +222,37 @@ export const faqs: Faq[] = [
   {
     question: "¿Qué es Servitoken?",
     answer:
-      "Servitoken es un token de utilidad creado con la visión de conectar usuarios y proveedores dentro de un ecosistema de servicios digitales, facilitando nuevas formas de pago y beneficios para los usuarios.",
+      "Servitoken (SERVI) es un token de utilidad creado para formar parte de un ecosistema digital orientado a servicios y pagos. Su objetivo es conectar usuarios y comercios mediante nuevas alternativas de pago y beneficios dentro del ecosistema.",
   },
   {
-    question: "¿Para qué sirve Servitoken?",
+    question: "¿Qué red utiliza Servitoken?",
     answer:
-      "Servitoken está diseñado para utilizarse como medio de pago en servicios y comercios participantes, donde también puede ofrecer acceso a beneficios o descuentos. La disponibilidad depende de cada comercio participante.",
+      "Servitoken opera en BNB Smart Chain (BSC) bajo el estándar BEP-20.",
   },
   {
-    question: "¿Dónde puedo adquirirlo?",
-    answer: PENDING_INFO,
+    question: "¿En qué consiste la utilidad del token?",
+    answer:
+      "La utilidad de Servitoken se basa en facilitar pagos digitales y ofrecer la posibilidad de acceder a beneficios o descuentos en comercios participantes dentro del ecosistema.",
   },
   {
-    question: "¿Qué wallet puedo utilizar?",
-    answer: PENDING_INFO,
+    question: "¿Cuál es el supply total?",
+    answer:
+      "El supply total de Servitoken es de 500,000,000 SERVI.",
   },
   {
-    question: "¿Cuál es la red del token?",
-    answer: PENDING_INFO,
+    question: "¿Cuál es la dirección oficial del contrato?",
+    answer:
+      "La dirección oficial del contrato de Servitoken es: 0x07e6CB0876653B914Fc3805283a275b90bF7E443. Puedes copiarla directamente desde esta página y verificarla en BscScan cuando el enlace esté disponible.",
   },
   {
-    question: "¿Dónde puedo consultar el contrato?",
-    answer: PENDING_INFO,
+    question: "¿Cómo puedo comprar Servitoken?",
+    answer:
+      "Puedes comprar Servitoken (SERVI) directamente a través de PancakeSwap usando el par SERVI/USDT. También puedes consultar el mercado en DexScreener. Ambos enlaces están disponibles en la sección 'Precio y compra' de esta página.",
   },
   {
-    question: "¿Qué servicios aceptan Servitoken?",
-    answer: PENDING_INFO,
+    question: "¿Dónde puedo consultar el mercado de SERVI?",
+    answer:
+      "Puedes consultar el precio y la actividad del mercado de SERVI en DexScreener a través del enlace disponible en la sección 'Precio y compra'. El enlace de BscScan para el contrato se agregará próximamente.",
   },
 ];
 
