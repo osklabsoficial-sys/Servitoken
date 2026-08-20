@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Menu, X } from "lucide-react";
+import { Menu, X, BadgeCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -35,8 +35,14 @@ export function SiteHeader() {
     >
       <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Logo */}
-        <Link href="#inicio" className="group shrink-0">
+        <Link href="#inicio" className="group flex shrink-0 items-center gap-2">
           <Logo size="md" />
+          <span className="hidden items-center gap-1.5 rounded-full border border-brand-green/20 bg-brand-green/10 px-2 py-0.5 sm:flex">
+            <BadgeCheck className="size-3 text-brand-green" />
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-brand-green/90">
+              Oficial
+            </span>
+          </span>
         </Link>
 
         {/* Desktop nav */}

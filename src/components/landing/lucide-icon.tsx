@@ -46,6 +46,9 @@ import {
   Sparkles,
   Hash,
   FileText,
+  Scale,
+  FileCheck,
+  AlertTriangle,
   type LucideIcon,
 } from "lucide-react";
 
@@ -95,6 +98,9 @@ const registry: Record<string, LucideIcon> = {
   Sparkles,
   Hash,
   FileText,
+  Scale,
+  FileCheck,
+  AlertTriangle,
 };
 
 export function LucideIconByName({

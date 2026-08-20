@@ -213,3 +213,36 @@ Stage Summary:
 - Modal de CONSULTAR COMPRA muestra el nuevo QR correctamente (verificado visualmente con VLM).
 - Todos los datos del token verificados correctos sin revertir ningún cambio UI previo.
 - Todos los cambios previos del usuario preservados: QR modal, CONSULTAR COMPRA, CONSULTA PRECIO AQUÍ, rel=noopener en plataformas.
+---
+Task ID: legal-section
+Agent: Z.ai Code (main)
+Task: Crear toda la sección legal de la landing page de Servitoken para que sea la presentación oficial de la criptomoneda.
+
+Work Log:
+- Añadí 4 secciones legales completas en `src/lib/token-data.ts`: Aviso Legal (6 artículos), Términos de Uso (7 artículos), Política de Privacidad (9 artículos), Aviso de Riesgo (8 artículos). Todo en español, específico para cripto, con interpolación dinámica de datos del token (SERVI, BNB Smart Chain, BEP-20, contrato, supply).
+- Añadí iconos Scale, FileCheck, AlertTriangle al registro lucide-icon.tsx.
+- Creé `src/components/landing/legal-modal.tsx`: modal reutilizable con header fijo, contenido scrolleable (max-h-70vh), footer fijo, cierre por Escape/backdrop/X/botón Cerrar, lock de scroll del body.
+- Actualicé `src/components/landing/site-footer.tsx`:
+  · Barra de disclaimer amber arriba del footer con enlace al Aviso de Riesgo.
+  · Badge "Sitio Oficial" con checkmark verde centrado.
+  · Sección "Legal" en el footer con 4 enlaces (Aviso Legal, Términos, Privacidad, Riesgos) con iconos.
+  · Bottom bar con los 4 enlaces legales como texto clicable.
+- Añadí badge "OFICIAL" verde al header junto al logo (visible en desktop ≥640px).
+- Lint: 0 errores.
+- Verificación con Agent Browser:
+  · Badge "OFICIAL" visible junto al logo en desktop.
+  · Barra de disclaimer amber visible con enlace funcional.
+  · Los 4 enlaces legales abren modales con contenido completo.
+  · Modal Aviso Legal: 6 secciones (Datos identificativos, Naturaleza del token, Finalidad, PI, Responsabilidad, Legislación).
+  · Modal Términos de Uso: 7 secciones (Aceptación, Usuario, Servicios, Terceros, Wallets, Modificaciones, Indemnidad).
+  · Modal Aviso de Riesgo: 8 secciones (Declaración general, Mercado, Tecnológicos, Regulatorios, Liquidez, Ausencia garantías, No asesoría, Responsabilidad).
+  · Escape cierra modales. Backdrop cierra modales.
+  · Mobile (375px): disclaimer bar visible, Sitio Oficial badge visible, footer responsivo.
+  · Todos los cambios UI previos preservados (QR modal, CONSULTAR COMPRA, CONSULTA PRECIO AQUÍ).
+
+Stage Summary:
+- Estructura legal completa con 4 documentos profesionales integrados como modales.
+- Contenido jurídico crypto-específico: token de utilidad (no valor), no asesoramiento financiero, riesgos de mercado/tecnológicos/regulatorios/liquidez, privacidad GDPR-alineada, propiedad intelectual, términos de uso.
+- Barra de disclaimer amber prominente con enlace al Aviso de Riesgo.
+- Badge "OFICIAL" verde en header y "Sitio Oficial" centrado en footer.
+- La página ahora funciona como la presentación oficial completa de la criptomoneda SERVI.
