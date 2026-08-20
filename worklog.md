@@ -187,3 +187,29 @@ Stage Summary:
 - .env y capturas de verificación desastracados por seguridad/higiene.
 - PAT del cliente NO persistida en .git/config (URL limpia). Recomendación al cliente: revocar/regenerar el PAT en https://github.com/settings/tokens ya que se compartió en el chat.
 - Estructura visible: Next.js 16 + TypeScript + Tailwind 4 + shadcn/ui + Prisma + Caddyfile + mini-services + 12 componentes de landing en src/components/landing/ + logo optimizado en public/ + worklog.md con todo el historial de tareas.
+---
+Task ID: QR-update
+Agent: Z.ai Code (main)
+Task: Reemplazar la imagen QR del modal de CONSULTAR COMPRA con la nueva imagen subida por el usuario. Verificar integridad de datos del token sin revertir cambios UI.
+
+Work Log:
+- Copié `/home/z/my-project/upload/qrcode_pancakeswap.finance.png` a `/home/z/my-project/public/pancakeswap-qr.png` (reemplazando la versión anterior).
+- Verificado: archivo PNG válido (570x570, 8-bit RGB, 9.5KB).
+- Verificado: `pricing-section.tsx` referencia `/pancakeswap-qr.png` en el componente QrModal (línea 63).
+- Verificado: `token-data.ts` contiene datos correctos: contrato 0x07e6CB0876653B914Fc3805283a275b90bF7E443, PancakeSwap URL, DexScreener URL, 500M supply, 18 decimales, BSC, BEP-20.
+- Grep de contrato viejo (0x07e6C808): 0 coincidencias — sin referencias obsoletas.
+- curl a /pancakeswap-qr.png → 200 OK.
+- Verificación con Agent Browser:
+  · Página carga sin errores.
+  · "CONSULTAR COMPRA" botón presente y funcional.
+  · Clic en "CONSULTAR COMPRA" abre el modal QR correctamente con título "Escanear para comprar", subtítulo "PancakeSwap · SERVI/USDT", botón Cerrar.
+  · VLM confirma: QR code visible en modal dark-themed, con logo de PancakeSwap en centro del QR.
+  · "CONSULTA PRECIO AQUÍ" enlace presente.
+  · "Ver mercado" enlace presente.
+  · "Ver contrato ↗" deshabilitado (sin BscScan URL).
+
+Stage Summary:
+- Nueva imagen QR reemplazada exitosamente en /public/pancakeswap-qr.png.
+- Modal de CONSULTAR COMPRA muestra el nuevo QR correctamente (verificado visualmente con VLM).
+- Todos los datos del token verificados correctos sin revertir ningún cambio UI previo.
+- Todos los cambios previos del usuario preservados: QR modal, CONSULTAR COMPRA, CONSULTA PRECIO AQUÍ, rel=noopener en plataformas.
