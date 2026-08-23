@@ -1,0 +1,638 @@
+    40→  buyUrl:
+    41→    "https://pancakeswap.finance/swap?inputCurrency=0x55d398326f99059fF775485246999027B3197955&outputCurrency=0x07e6CB0876653B914Fc3805283a275b90bF7E443",
+    42→  marketUrl:
+    43→    "https://dexscreener.com/bsc/0xad48f36f851ce4dca85a07bb3d6a573a4c70ed18",
+    44→  // URL del explorador de bloques (pendiente confirmación del cliente).
+    45→  explorerBaseUrl: "",
+    46→} as const;
+    47→
+    48→export type NavLink = { label: string; href: string };
+    49→
+    50→export const navLinks: NavLink[] = [
+    51→  { label: "Inicio", href: "#inicio" },
+    52→  { label: "¿Qué es?", href: "#que-es" },
+    53→  { label: "Utilidad", href: "#utilidad" },
+    54→  { label: "Cómo funciona", href: "#como-funciona" },
+    55→  { label: "Precio y compra", href: "#precio" },
+    56→  { label: "Compra", href: "#compra" },
+    57→  { label: "FAQ", href: "#faq" },
+    58→  { label: "Contacto", href: "#contacto" },
+    59→];
+    60→
+    61→export const footerLinks: NavLink[] = [
+    62→  { label: "Inicio", href: "#inicio" },
+    63→  { label: "¿Qué es?", href: "#que-es" },
+    64→  { label: "Utilidad", href: "#utilidad" },
+    65→  { label: "Cómo funciona", href: "#como-funciona" },
+    66→  { label: "Precio y compra", href: "#precio" },
+    67→  { label: "Compra", href: "#compra" },
+    68→  { label: "FAQ", href: "#faq" },
+    69→  { label: "Contacto", href: "#contacto" },
+    70→];
+    71→
+    72→// ---- Indicadores / datos del token (tarjeta horizontal premium) ----
+    73→export type Indicator = {
+    74→  label: string;
+    75→  value: string;
+    76→  // nombre de icono lucide minimalista
+    77→  icon: string;
+    78→  hint: string;
+    79→};
+    80→
+    81→export const tokenStats: Indicator[] = [
+    82→  {
+    83→    label: "Supply total",
+    84→    value: project.totalSupply,
+    85→    icon: "Coins",
+    86→    hint: "Suministro total del token",
+    87→  },
+    88→  {
+    89→    label: "Red",
+    90→    value: project.network,
+    91→    icon: "Network",
+    92→    hint: "Red blockchain del token",
+    93→  },
+    94→  {
+    95→    label: "Decimales",
+    96→    value: project.decimals,
+    97→    icon: "Hash",
+    98→    hint: "Cantidad de decimales",
+    99→  },
+   100→  {
+   101→    label: "Contrato",
+   102→    value: project.contractAddress,
+   103→    icon: "FileText",
+   104→    hint: "Dirección del contrato",
+   105→  },
+   106→];
+   107→
+   108→export type FeatureCard = {
+   109→  icon: string;
+   110→  title: string;
+   111→  description: string;
+   112→};
+   113→
+   114→export const utilityCards: FeatureCard[] = [
+   115→  {
+   116→    icon: "CreditCard",
+   117→    title: "Pagos",
+   118→    description:
+   119→      "Utiliza Servitoken como alternativa de pago en servicios y comercios participantes.",
+   120→  },
+   121→  {
+   122→    icon: "Gift",
+   123→    title: "Beneficios",
+   124→    description:
+   125→      "Los usuarios pueden acceder a beneficios o descuentos ofrecidos por comercios participantes.",
+   126→  },
+   127→  {
+   128→    icon: "Share2",
+   129→    title: "Ecosistema",
+   130→    description:
+   131→      "Conecta usuarios, comercios y proveedores dentro de una experiencia digital.",
+   132→  },
+   133→  {
+   134→    icon: "Boxes",
+   135→    title: "Blockchain",
+   136→    description:
+   137→      "Utiliza tecnología blockchain para registrar las operaciones.",
+   138→  },
+   139→];
+   140→
+   141→export type Step = {
+   142→  step: string;
+   143→  title: string;
+   144→  description: string;
+   145→  icon: string;
+   146→};
+   147→
+   148→export const howItWorks: Step[] = [
+   149→  {
+   150→    step: "01",
+   151→    title: "Adquiere Servitoken",
+   152→    description: "Compra el token mediante las plataformas oficiales disponibles.",
+   153→    icon: "Coins",
+   154→  },
+   155→  {
+   156→    step: "02",
+   157→    title: "Conecta tu wallet",
+   158→    description: "Administra tus tokens utilizando una wallet compatible.",
+   159→    icon: "Wallet",
+   160→  },
+   161→  {
+   162→    step: "03",
+   163→    title: "Utiliza Servitoken",
+   164→    description: "Utiliza el token en servicios y comercios participantes.",
+   165→    icon: "ShoppingBag",
+   166→  },
+   167→];
+   168→
+   169→export type ExternalPlatform = {
+   170→  name: string;
+   171→  description: string;
+   172→  url: string; // Vacío = no disponible todavía (botón deshabilitado).
+   173→  icon: string;
+   174→  accent: string; // clases tailwind para el icono
+   175→};
+   176→
+   177→export const externalPlatforms: ExternalPlatform[] = [
+   178→  {
+   179→    name: "PancakeSwap",
+   180→    description: "Compra SERVI directamente desde PancakeSwap con el par SERVI/USDT.",
+   181→    url: "https://pancakeswap.finance/swap?inputCurrency=0x55d398326f99059fF775485246999027B3197955&outputCurrency=0x07e6CB0876653B914Fc3805283a275b90bF7E443",
+   182→    icon: "Cookie",
+   183→    accent: "bg-amber-400/10 text-amber-300 ring-1 ring-amber-400/20",
+   184→  },
+   185→  {
+   186→    name: "DexScreener",
+   187→    description: "Consulta el precio, volumen y gráficos de SERVI en tiempo real.",
+   188→    url: "https://dexscreener.com/bsc/0xad48f36f851ce4dca85a07bb3d6a573a4c70ed18",
+   189→    icon: "BarChart3",
+   190→    accent: "bg-emerald-400/10 text-emerald-300 ring-1 ring-emerald-400/20",
+   191→  },
+   192→];
+   193→
+   194→export type Benefit = {
+   195→  icon: string;
+   196→  title: string;
+   197→  description: string;
+   198→};
+   199→
+   200→export const benefits: Benefit[] = [
+   201→  {
+   202→    icon: "Zap",
+   203→    title: "Pagos sencillos",
+   204→    description:
+   205→      "Una experiencia de pago pensada para ser clara y accesible.",
+   206→  },
+   207→  {
+   208→    icon: "Gift",
+   209→    title: "Beneficios",
+   210→    description:
+   211→      "Posibles beneficios y descuentos en comercios participantes.",
+   212→  },
+   213→  {
+   214→    icon: "Handshake",
+   215→    title: "Conexiones reales",
+   216→    description:
+   217→      "Un ecosistema que busca conectar usuarios y proveedores.",
+   218→  },
+   219→];
+   220→
+   221→export type Faq = { question: string; answer: string };
+   222→
+   223→export const faqs: Faq[] = [
+   224→  {
+   225→    question: "¿Qué es Servitoken?",
+   226→    answer:
+   227→      "Servitoken (SERVI) es un token de utilidad creado para formar parte de un ecosistema digital orientado a servicios y pagos. Su objetivo es conectar usuarios y comercios mediante nuevas alternativas de pago y beneficios dentro del ecosistema.",
+   228→  },
+   229→  {
+   230→    question: "¿Qué red utiliza Servitoken?",
+   231→    answer:
+   232→      "Servitoken opera en BNB Smart Chain (BSC) bajo el estándar BEP-20.",
+   233→  },
+   234→  {
+   235→    question: "¿En qué consiste la utilidad del token?",
+   236→    answer:
+   237→      "La utilidad de Servitoken se basa en facilitar pagos digitales y ofrecer la posibilidad de acceder a beneficios o descuentos en comercios participantes dentro del ecosistema.",
+   238→  },
+   239→  {
+   240→    question: "¿Cuál es el supply total?",
+   241→    answer:
+   242→      "El supply total de Servitoken es de 500,000,000 SERVI.",
+   243→  },
+   244→  {
+   245→    question: "¿Cuál es la dirección oficial del contrato?",
+   246→    answer:
+   247→      "La dirección oficial del contrato de Servitoken es: 0x07e6CB0876653B914Fc3805283a275b90bF7E443. Puedes copiarla directamente desde esta página y verificarla en BscScan cuando el enlace esté disponible.",
+   248→  },
+   249→  {
+   250→    question: "¿Cómo puedo comprar Servitoken?",
+   251→    answer:
+   252→      "Puedes comprar Servitoken (SERVI) directamente a través de PancakeSwap usando el par SERVI/USDT. También puedes consultar el mercado en DexScreener. Ambos enlaces están disponibles en la sección 'Precio y compra' de esta página.",
+   253→  },
+   254→  {
+   255→    question: "¿Dónde puedo consultar el mercado de SERVI?",
+   256→    answer:
+   257→      "Puedes consultar el precio y la actividad del mercado de SERVI en DexScreener a través del enlace disponible en la sección 'Precio y compra'. El enlace de BscScan para el contrato se agregará próximamente.",
+   258→  },
+   259→];
+   260→
+   261→export type SocialChannel = {
+   262→  name: string;
+   263→  handle: string;
+   264→  // URL oficial. Vacío = canal aún no confirmado (se muestra como "Próximamente").
+   265→  url: string;
+   266→  icon: string;
+   267→};
+   268→
+   269→// Redes sociales y canales de contacto.
+   270→// url = "" significa que el cliente todavía no lo ha confirmado.
+   271→export const socialChannels: SocialChannel[] = [
+   272→  { name: "X / Twitter", handle: "@Servitoken", url: "", icon: "Twitter" },
+   273→  { name: "Telegram", handle: "t.me/Servitoken", url: "", icon: "Send" },
+   274→  { name: "Instagram", handle: "@Servitoken", url: "", icon: "Instagram" },
+   275→  { name: "Facebook", handle: "Servitoken", url: "", icon: "Facebook" },
+   276→  { name: "WhatsApp", handle: "Servitoken", url: "", icon: "MessageCircle" },
+   277→  { name: "Email", handle: "contacto@servitoken.com", url: "", icon: "Mail" },
+   278→];
+   279→
+   280→// Datos del hero
+   281→export const hero = {
+   282→  eyebrow: "Token de utilidad · Ecosistema de pagos",
+   283→  title: "Pagos de servicios, ahora con Servitoken",
+   284→  subtitle:
+   285→    "Un token de utilidad diseñado para conectar usuarios, servicios y comercios dentro de un ecosistema digital.",
+   286→  primaryCta: "Comprar Servitoken",
+   287→  secondaryCta: "Conocer el proyecto",
+   288→};
+   289→
+   290→// Datos "¿Qué es Servitoken?"
+   291→export const whatIs = {
+   292→  eyebrow: "Un token de utilidad",
+   293→  title: "¿Qué es Servitoken?",
+   294→  body: "Servitoken es un token de utilidad creado con la visión de conectar usuarios y proveedores dentro de un ecosistema de servicios digitales, facilitando nuevas formas de pago y beneficios para los usuarios.",
+   295→  cta: "Conocer el proyecto",
+   296→  points: [
+   297→    {
+   298→      icon: "ShieldCheck",
+   299→      title: "Diseñado para la utilidad",
+   300→      text: "Pensado para usarse dentro de un ecosistema de servicios y comercios participantes.",
+   301→    },
+   302→    {
+   303→      icon: "Users",
+   304→      title: "Conecta usuarios y comercios",
+   305→      text: "Une a usuarios, proveedores y comercios dentro de una misma experiencia digital.",
+   306→    },
+   307→    {
+   308→      icon: "Layers",
+   309→      title: "Tecnología blockchain",
+   310→      text: "Las transacciones se registran utilizando tecnología blockchain.",
+   311→    },
+   312→  ],
+   313→};
+   314→
+   315→// Datos "Utilidad"
+   316→export const utility = {
+   317→  eyebrow: "Utilidad",
+   318→  title: "Una nueva forma de conectar servicios",
+   319→  subtitle:
+   320→    "Servitoken busca facilitar la interacción entre usuarios, comercios y proveedores dentro de un ecosistema digital.",
+   321→};
+   322→
+   323→// Datos "Cómo funciona"
+   324→export const howItWorksSection = {
+   325→  eyebrow: "Cómo funciona",
+   326→  title: "¿Cómo funciona?",
+   327→};
+   328→
+   329→// Datos "Precio y compra"
+   330→export const pricingSection = {
+   331→  eyebrow: "Precio y compra",
+   332→  title: "Adquiere Servitoken",
+   333→};
+   334→
+   335→// Datos "Plataformas"
+   336→export const platformsSection = {
+   337→  eyebrow: "Plataformas",
+   338→  title: "Compra desde plataformas oficiales",
+   339→  subtitle:
+   340→    "La adquisición de Servitoken podrá realizarse a través de plataformas y wallets externas. Los enlaces oficiales se habilitarán cuando el cliente los confirme.",
+   341→};
+   342→
+   343→// Datos "Contrato"
+   344→export const contractSection = {
+   345→  eyebrow: "Contrato",
+   346→  title: "Consulta el contrato",
+   347→  subtitle:
+   348→    "Verifica la información oficial del token directamente desde la blockchain.",
+   349→};
+   350→
+   351→// Datos "Beneficios"
+   352→export const benefitsSection = {
+   353→  eyebrow: "Beneficios",
+   354→  title: "Más utilidad. Más posibilidades.",
+   355→};
+   356→
+   357→// Datos "FAQ"
+   358→export const faqSection = {
+   359→  eyebrow: "Preguntas frecuentes",
+   360→  title: "Resolvemos tus dudas",
+   361→  subtitle:
+   362→    "Encuentra respuestas claras sobre Servitoken. Si falta información, se irá actualizando conforme se confirmen los datos oficiales.",
+   363→};
+   364→
+   365→// Datos "Contacto"
+   366→export const contactSection = {
+   367→  eyebrow: "Contacto",
+   368→  title: "Conecta con Servitoken",
+   369→  subtitle:
+   370→    "Conoce las novedades, actualizaciones y próximos desarrollos del proyecto.",
+   371→};
+   372→
+   373→// ============================================================
+   374→//  LEGAL · Contenido jurídico del sitio oficial
+   375→// ============================================================
+   376→
+   377→export type LegalSection = {
+   378→  id: string;
+   379→  title: string;
+   380→  icon: string;
+   381→  content: LegalBlock[];
+   382→};
+   383→
+   384→export type LegalBlock = {
+   385→  heading?: string;
+   386→  body: string;
+   387→};
+   388→
+   389→export const legalSections: LegalSection[] = [
+   390→  {
+   391→    id: "aviso-legal",
+   392→    title: "Aviso Legal",
+   393→    icon: "Scale",
+   394→    content: [
+   395→      {
+   396→        heading: "1. Datos identificativos",
+   397→        body: `Este sitio web (en adelante, el "Sitio") es la presentación oficial del proyecto Servitoken (token con símbolo ${project.symbol}, estándar ${project.standard}, red ${project.network}). El Sitio tiene carácter informativo y constituye el canal oficial de referencia para consultar información del token.
+   398→
+   399→Contrato inteligente (smart contract): ${project.contractAddress}
+   400→Suministro total: ${project.totalSupply}
+   401→Red: ${project.network}
+   402→Estándar: ${project.standard} \(${project.decimals} decimales\)`,
+   403→      },
+   404→      {
+   405→        heading: "2. Naturaleza del token",
+   406→        body: `${project.name} (${project.symbol}) es un token de utilidad diseñado para su uso dentro de un ecosistema de pagos y servicios digitales. ${project.symbol} no es un valor negociable, título valor, acción, bono, derivado ni instrumento financiero regulado. ${project.symbol} no confiere derechos de propiedad, dividendos, voto corporativo ni rendimientos garantizados de ningún tipo.
+   407→
+   408→${project.symbol} se emite bajo la tecnología blockchain y opera exclusivamente mediante contratos inteligentes. Su utilidad se limita a las funciones definidas dentro del ecosistema del proyecto.`,
+   409→      },
+   410→      {
+   411→        heading: "3. Finalidad del Sitio",
+   412→        body: `Este Sitio es la página oficial de presentación del proyecto ${project.name}. Su finalidad exclusiva es proporcionar información general sobre el token, su ecosistema, las plataformas donde se puede adquirir y su contrato inteligente.
+   413→
+   414→El Sitio no ofrece servicios de intermediación financiera, corretaje, asesoría de inversión ni gestión de activos. Las plataformas de compra referenciadas (como PancakeSwap y DexScreener) son servicios de terceros independientes; ${project.name} no tiene control sobre su funcionamiento, disponibilidad ni políticas.`,
+   415→      },
+   416→      {
+   417→        heading: "4. Propiedad intelectual",
+   418→        body: `Todo el contenido del Sitio —incluyendo, sin limitación, textos, diseños, logotipos, marcas, gráficos, código fuente, estructura y composición visual— es propiedad del proyecto ${project.name} o de sus legítimos titulares y está protegido por las leyes de propiedad intelectual aplicables.
+   419→
+   420→Queda expresamente prohibida la reproducción, distribución, modificación, comunicación pública o cualquier otra forma de explotación del contenido del Sitio sin autorización previa y por escrito de los titulares de los derechos.`,
+   421→      },
+   422→      {
+   423→        heading: "5. Exclusión de responsabilidad",
+   424→        body: `El proyecto ${project.name} no se hace responsable de:
+   425→
+   426→• Los daños y perjuicios que puedan derivarse del uso o la imposibilidad de uso del Sitio.
+   427→• Los errores, omisiones o imprecisiones en la información publicada, sin perjuicio de las actualizaciones que se realicen.
+   428→• Las decisiones tomadas por los usuarios con base en la información aquí contenida.
+   429→• El funcionamiento, seguridad o disponibilidad de las plataformas de terceros referenciadas.
+   430→• La pérdida de fondos, tokens o activos digitales derivada de transacciones realizadas en plataformas de terceros.
+   431→• El acceso no autorizado a wallets, cuentas o claves privadas por parte de terceros.`,
+   432→      },
+   433→      {
+   434→        heading: "6. Legislación aplicable",
+   435→        body: `Las presentes condiciones se rigen por las leyes aplicables en la jurisdicción correspondiente al proyecto ${project.name}. Cualquier controversia derivada del acceso o uso del Sitio se someterá a la jurisdicción de los tribunales competentes.
+   436→
+   437→El usuario acepta que el acceso al Sitio y la interacción con el ecosistema ${project.symbol} se realizan bajo su propia responsabilidad y cuenta.`,
+   438→      },
+   439→    ],
+   440→  },
+   441→  {
+   442→    id: "terminos-de-uso",
+   443→    title: "Términos de Uso",
+   444→    icon: "FileCheck",
+   445→    content: [
+   446→      {
+   447→        heading: "1. Aceptación de los términos",
+   448→        body: `Al acceder y/o utilizar este Sitio, el usuario (en adelante, el "Usuario") declara haber leído, comprendido y aceptado los presentes Términos de Uso en su totalidad. En caso de desacuerdo con cualquiera de las condiciones aquí establecidas, el Usuario debe abstenerse de utilizar el Sitio.
+   449→
+   450→El uso continuado del Sitio después de la publicación de modificaciones constituirá la aceptación de dichos cambios.`,
+   451→      },
+   452→      {
+   453→        heading: "2. Usuario del Sitio",
+   454→        body: `El Sitio está dirigido a personas que deseen informarse sobre el proyecto ${project.name} (${project.symbol}). El Usuario debe:
+   455→
+   456→• Tener capacidad legal para aceptar los presentes términos.
+   457→• No utilizar el Sitio con fines ilícitos, fraudulentos o contrarios a la buena fe.
+   458→• No intentar obtener acceso no autorizado a los sistemas, servidores o redes conectados al Sitio.
+   459→• No reproducir, distribuir o modificar el contenido del Sitio sin autorización.
+   460→• Proporcionar información veraz en caso de interactuar con formularios o canales de contacto.`,
+   461→      },
+   462→      {
+   463→        heading: "3. Servicios ofrecidos",
+   464→        body: `Este Sitio proporciona únicamente información sobre el proyecto ${project.name}. Los servicios informativos incluyen:
+   465→
+   466→• Descripción del proyecto y su ecosistema.
+   467→• Datos técnicos del token (contrato, suministro, red, estándar).
+   468→• Enlaces a plataformas de terceros donde el Usuario puede consultar precios o adquirir ${project.symbol}.
+   469→• Canales de contacto oficiales del proyecto.
+   470→
+   471→El Sitio NO ofrece: servicios de exchange, custodia de activos, asesoría financiera, gestión de inversiones ni garantías de rendimiento.`,
+   472→      },
+   473→      {
+   474→        heading: "4. Interacción con plataformas de terceros",
+   475→        body: `El Sitio puede contener enlaces o referencias a plataformas externas (como PancakeSwap, DexScreener u otras). El Usuario reconoce y acepta que:
+   476→
+   477→• ${project.name} no opera, controla ni es responsable del contenido, funcionamiento ni políticas de dichas plataformas.
+   478→• La adquisición de ${project.symbol} se realiza directamente entre el Usuario y la plataforma de terceros.
+   479→• ${project.name} no interviene en la ejecución, confirmación ni resolución de transacciones realizadas en plataformas externas.
+   480→• Los riesgos asociados a la interacción con dichas plataformas son exclusivamente del Usuario.`,
+   481→      },
+   482→      {
+   483→        heading: "5. Wallets y seguridad",
+   484→        body: `El Usuario es el único responsable de la seguridad de sus wallets, claves privadas (private keys), frases de recuperación (seed phrases) y cualquier credencial de acceso a sus activos digitales.
+   485→
+   486→${project.name} NUNCA solicitará la clave privada o frase de recuperación del Usuario. Cualquier comunicación que solicite dicha información es fraudulenta y no proviene del proyecto oficial.
+   487→
+   488→El Usuario debe tomar todas las medidas de seguridad necesarias para proteger sus activos, incluyendo el uso de wallets de confianza, verificación de direcciones de contrato y protección contra phishing.`,
+   489→      },
+   490→      {
+   491→        heading: "6. Modificaciones y suspensión",
+   492→        body: `${project.name} se reserva el derecho de modificar, suspender o discontinuar el Sitio —total o parcialmente— en cualquier momento y sin previo aviso. Asimismo, podrá actualizar el contenido informativo del Sitio para reflejar cambios en el proyecto.
+   493→
+   494→El Usuario no tendrá derecho a reclamación alguna derivada de la modificación, suspensión o discontinuidad del Sitio.`,
+   495→      },
+   496→      {
+   497→        heading: "7. Indemnidad",
+   498→        body: `El Usuario se compromete a mantener indemne al proyecto ${project.name}, sus desarrolladores, colaboradores y afiliados frente a cualquier reclamación, demanda, daño, pérdida o gasto (incluyendo honorarios legales) que se derive de:
+   499→
+   500→• El incumplimiento de los presentes Términos de Uso por parte del Usuario.
+   501→• El uso indebido del Sitio o de la información contenida en él.
+   502→• La violación de derechos de terceros por parte del Usuario.`,
+   503→      },
+   504→    ],
+   505→  },
+   506→  {
+   507→    id: "politica-privacidad",
+   508→    title: "Política de Privacidad",
+   509→    icon: "Lock",
+   510→    content: [
+   511→      {
+   512→        heading: "1. Responsable del tratamiento",
+   513→        body: `El responsable del tratamiento de los datos personales que se recopilen a través de este Sitio es el proyecto ${project.name}. El presente documento informa al Usuario sobre la política de privacidad aplicable al uso del Sitio oficial de ${project.name}.`,
+   514→      },
+   515→      {
+   516→        heading: "2. Datos recopilados",
+   517→        body: `Este Sitio puede recopilar los siguientes tipos de datos:
+   518→
+   519→• Datos de navegación: dirección IP, tipo de navegador, sistema operativo, páginas visitadas, tiempo de permanencia, fuente de tráfico y otros datos analíticos proporcionados por servicios de terceros (como Google Analytics u otros).
+   520→• Datos de interacción: clics en enlaces, apertura de secciones, uso de funcionalidades del Sitio.
+   521→• Datos de contacto: únicamente si el Usuario los proporciona voluntariamente a través de formularios o canales de contacto (nombre, correo electrónico, mensaje).
+   522→
+   523→El Sitio NO recopila datos de wallets, saldos, transacciones ni claves privadas. ${project.name} no tiene acceso ni almacenamiento de los activos digitales del Usuario.`,
+   524→      },
+   525→      {
+   526→        heading: "3. Finalidad del tratamiento",
+   527→        body: `Los datos recopilados se utilizan exclusivamente para:
+   528→
+   529→• Proporcionar y mantener el funcionamiento del Sitio.
+   530→• Mejorar la experiencia del Usuario y el contenido del Sitio.
+   531→• Elaborar estadísticas de uso anónimas.
+   532→• Responder consultas enviadas a través de los canales de contacto.
+   533→• Comunicar novedades relevantes del proyecto, únicamente cuando el Usuario lo haya autorizado expresamente.
+   534→
+   535→Los datos NO se utilizarán para crear perfiles comerciales, vender información a terceros ni con fines de marketing no autorizado.`,
+   536→      },
+   537→      {
+   538→        heading: "4. Base legal del tratamiento",
+   539→        body: `El tratamiento de datos se basa en:
+   540→
+   541→• El consentimiento del Usuario al utilizar el Sitio y aceptar la presente política.
+   542→• El interés legítimo del responsable para mejorar el Sitio y sus servicios.
+   543→• Obligaciones legales aplicables.
+   544→
+   545→El Usuario puede retirar su consentimiento en cualquier momento contactando a los canales oficiales del proyecto.`,
+   546→      },
+   547→      {
+   548→        heading: "5. Destinatarios de los datos",
+   549→        body: `Los datos del Usuario NO se comparten con terceros, salvo en los siguientes supuestos:
+   550→
+   551→• Proveedores de servicios analíticos necesarios para el funcionamiento del Sitio (con datos anonimizados cuando sea posible).
+   552→• Proveedores de infraestructura técnica (hosting, CDN) bajo acuerdos de confidencialidad.
+   553→• Cuando sea requerido por autoridad judicial o administrativa competente.
+   554→• Para la protección de los derechos e intereses legítimos del responsable.`,
+   555→      },
+   556→      {
+   557→        heading: "6. Derechos del Usuario",
+   558→        body: `El Usuario tiene derecho a:
+   559→
+   560→• Acceder a sus datos personales.
+   561→• Rectificar datos inexactos.
+   562→• Solicitar la supresión de sus datos cuando ya no sean necesarios.
+   563→• Oponerse al tratamiento de sus datos en determinadas circunstancias.
+   564→• Solicitar la portabilidad de sus datos.
+   565→• Retirar el consentimiento prestado.
+   566→
+   567→Para ejercer cualquiera de estos derechos, el Usuario puede contactar al proyecto a través de los canales oficiales indicados en el Sitio.`,
+   568→      },
+   569→      {
+   570→        heading: "7. Cookies y tecnologías similares",
+   571→        body: `Este Sitio puede utilizar cookies y tecnologías similares para:
+   572→
+   573→• Garantizar el correcto funcionamiento del Sitio (cookies técnicas).
+   574→• Recopilar datos estadísticos anónimos sobre el uso del Sitio (cookies analíticas).
+   575→
+   576→El Usuario puede configurar su navegador para bloquear o eliminar cookies. Sin embargo, esto podría afectar la funcionalidad del Sitio. Al continuar navegando, el Usuario acepta el uso de cookies según lo descrito en esta política.`,
+   577→      },
+   578→      {
+   579→        heading: "8. Seguridad de los datos",
+   580→        body: `${project.name} adopta las medidas técnicas y organizativas razonablemente necesarias para proteger los datos personales del Usuario contra accesos no autorizados, pérdida, destrucción o alteración.
+   581→
+   582→No obstante, ninguna transmisión de datos por Internet ni sistema de almacenamiento electrónico es completamente seguro. El Usuario asume los riesgos inherentes a la transmisión de información a través de redes públicas.`,
+   583→      },
+   584→      {
+   585→        heading: "9. Modificaciones de la política",
+   586→        body: `${project.name} se reserva el derecho de modificar la presente Política de Privacidad en cualquier momento. Las modificaciones entrarán en vigor desde su publicación en el Sitio.
+   587→
+   588→Se recomienda al Usuario revisar esta página periódicamente para estar al tanto de cualquier actualización.`,
+   589→      },
+   590→    ],
+   591→  },
+   592→  {
+   593→    id: "aviso-de-riesgo",
+   594→    title: "Aviso de Riesgo",
+   595→    icon: "AlertTriangle",
+   596→    content: [
+   597→      {
+   598→        heading: "Declaración general de riesgo",
+   599→        body: `LA INFORMACIÓN CONTENIDA EN ESTE SITIO TIENE EXCLUSIVAMENTE CARÁCTER INFORMATIVO Y NO CONSTITUYE ASESORAMIENTO FINANCIERO, RECOMENDACIÓN DE INVERSIÓN, OFERTA NI SOLICITUD DE COMPRA O VENTA DE NINGÚN ACTIVO DIGITAL.
+   600→
+   601→La adquisición, tenencia y uso de criptomonedas y tokens conlleva riesgos significativos. El Usuario debe comprender plenamente dichos riesgos antes de interactuar con el ecosistema ${project.name} (${project.symbol}).`,
+   602→      },
+   603→      {
+   604→        heading: "Riesgos del mercado",
+   605→        body: `El mercado de criptomonedas es altamente volátil. El precio de ${project.symbol} puede fluctuar de manera significativa en cortos períodos de tiempo, lo que podría resultar en pérdidas sustanciales o totales de la inversión.
+   606→
+   607→• ${project.symbol} puede perder la totalidad o una parte significativa de su valor.
+   608→• No existe garantía de liquidez; puede ser difícil comprar o vender ${project.symbol} en determinados momentos.
+   609→• El historial de precios pasados no es indicativo de resultados futuros.`,
+   610→      },
+   611→      {
+   612→        heading: "Riesgos tecnológicos",
+   613→        body: `La tecnología blockchain, aunque innovadora, conlleva riesgos inherentes:
+   614→
+   615→• Vulnerabilidades en el contrato inteligente (smart contract) que podrían resultar en la pérdida de fondos.
+   616→• Riesgos de seguridad en las plataformas de exchange y wallets digitales.
+   617→• Posibles ataques informáticos, hacking o fraudes dirigidos al ecosistema cripto.
+   618→• Fallos técnicos en la red ${project.network} que podrían afectar las transacciones.
+   619→• Riesgos asociados a actualizaciones de la red (hard forks, cambios de protocolo).`,
+   620→      },
+   621→      {
+   622→        heading: "Riesgos regulatorios",
+   623→        body: `El marco regulatorio aplicable a las criptomonedas varía según la jurisdicción y está en constante evolución:
+   624→
+   625→• Las autoridades competentes podrían implementar regulaciones que afecten la disponibilidad, uso o valor de ${project.symbol}.
+   626→• ${project.symbol} podría ser clasificado como un activo sujeto a regulaciones específicas en determinadas jurisdicciones.
+   627→• El Usuario es responsable de verificar que la adquisición y tenencia de ${project.symbol} sea legal en su jurisdicción de residencia.
+   628→• Cambios regulatorios podrían impactar negativamente en la utilidad o transferibilidad de ${project.symbol}.`,
+   629→      },
+   630→      {
+   631→        heading: "Riesgos de liquidez",
+   632→        body: `${project.symbol} puede no tener liquidez suficiente en los mercados de criptomonedas. Esto significa que:
+   633→
+   634→• Puede ser imposible o muy difícil vender ${project.symbol} en un momento determinado.
+   635→• El Usuario podría no encontrar contrapartes dispuestas a comprar al precio deseado.
+   636→• La falta de liquidez puede amplificar las caídas de precio.
+   637→• No existen garantías de que existirán mercados activos para ${project.symbol} en el futuro.`,
+   638→      },
+   639→      {
+   640→        heading: "Ausencia de garantías",
+   641→        body: `${project.name} NO GARANTIZA:
+   642→
+   643→• Rentabilidad, ganancia, apreciación o preservación del valor de ${project.symbol}.
+   644→• Disponibilidad continua o ininterrumpida de mercados para ${project.symbol}.
+   645→• Estabilidad del precio o resistencia a la volatilidad del mercado.
+   646→• Liquidez presente o futura del token.
+   647→• Que ${project.symbol} tendrá algún valor de mercado en el futuro.
+   648→
+   649→El Usuario reconoce que la adquisición de ${project.symbol} es una decisión voluntaria y que cualquier inversión realizada es irreversiblemente suya.`,
+   650→      },
+   651→      {
+   652→        heading: "No es asesoramiento financiero",
+   653→        body: `Nada en este Sitio debe interpretarse como:
+   654→
+   655→• Asesoramiento financiero, fiscal, legal o de inversión.
+   656→• Recomendación de compra, venta o tenencia de ${project.symbol}.
+   657→• Promesa o garantía de rendimiento futuro.
+   658→• Oferta pública de valores.
+   659→
+   660→El Usuario debe consultar con profesionales calificados (asesores financieros, legales o fiscales) antes de tomar cualquier decisión relacionada con criptomonedas. ${project.name} no se hace responsable de las decisiones de inversión del Usuario.`,
+   661→      },
+   662→      {
+   663→        heading: "Responsabilidad del Usuario",
+   664→        body: `Al interactuar con ${project.name} y el ecosistema ${project.symbol}, el Usuario:
+   665→
+   666→• Asume la totalidad de los riesgos asociados.
+   667→• Declara haber leído y comprendido el presente Aviso de Riesgo.
+   668→• Reconoce que la inversión en criptomonedas puede resultar en la pérdida total del capital invertido.
+   669→• Se compromete a no invertir fondos que no pueda permitirse perder.
+   670→• Es responsable de verificar la información del contrato inteligente y la legitimidad de las plataformas donde interactúe con ${project.symbol}.
+   671→
+   672→Si no comprende o no está de acuerdo con los riesgos descritos, NO debe adquirir ni interactuar con ${project.symbol}.`,
+   673→      },
+   674→    ],
+   675→  },
+   676→];
+   677→
