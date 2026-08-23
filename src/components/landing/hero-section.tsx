@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Smartphone, Monitor, QrCode } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/landing/logo";
 import { hero } from "@/lib/token-data";
+import { HeroWalletConnect } from "@/components/landing/hero-wallet-connect";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 22 },
@@ -106,6 +107,17 @@ export function HeroSection() {
               >
                 <Link href="#que-es">{hero.secondaryCta}</Link>
               </Button>
+            </motion.div>
+
+            {/* ─── Conexión WalletConnect ─── */}
+            <motion.div
+              variants={fadeUp}
+              initial="hidden"
+              animate="show"
+              custom={4}
+              className="mt-8 w-full sm:w-auto"
+            >
+              <HeroWalletConnect />
             </motion.div>
           </div>
 
