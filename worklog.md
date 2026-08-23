@@ -268,3 +268,23 @@ Stage Summary:
 - Wallet system: injected (MetaMask) + WalletConnect (dynamic, ID: 35ee79d215da0d6202df395063db2dcc)
 - Auto-switch to BSC, PRÓXIMAMENTE button disabled
 - All files: wagmi.ts, contracts.ts, wallet-provider.tsx, connect-wallet.tsx, swap-panel.tsx, chart-section.tsx
+---
+Task ID: 1
+Agent: Main
+Task: Fix wallet connection SSR crash + replace purchase section with static swap panel
+
+Work Log:
+- Identified SSR crash: importing `walletConnect` from `wagmi/connectors` barrel triggers `@coinbase/cdp-sdk` → `@x402/evm/exact/client` missing dependency
+- Discovered wagmi v3 has individual subpath exports: `wagmi/connectors/injected` and `wagmi/connectors/walletConnect`
+- These subpaths avoid the coinbase dependency chain entirely
+- Created `client-providers.tsx` — client component wrapping WalletProvider with `next/dynamic({ ssr: false })`
+- Created `wallet-provider-inner.tsx` — uses individual subpath imports to avoid SSR crash
+- Updated `layout.tsx` to use `ClientProviders` instead of direct `WalletProvider` import
+- Replaced `purchase-section.tsx` PancakeSwap iframe with static swap panel (USDT→SERVI display, PRÓXIMAMENTE lock)
+- Removed old unused `wallet-provider.tsx`
+
+Stage Summary:
+- Wallet connection fixed: MetaMask (injected) + WalletConnect both available
+- SSR crash eliminated: zero errors in dev log
+- Purchase section now shows static swap info matching user's spec exactly
+- Page returns 200, all sections render, footer properly positioned

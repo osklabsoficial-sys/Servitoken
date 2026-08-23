@@ -1,14 +1,14 @@
 "use client";
 
-import { type ReactNode, useState, useEffect } from "react";
+import { type ReactNode, useState } from "react";
 import { WagmiProvider, createConfig, http } from "wagmi";
 import { bsc, bscTestnet } from "wagmi/chains";
-import { injected, walletConnect } from "wagmi/connectors";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { injected } from "wagmi/connectors/injected";
+import { walletConnect } from "wagmi/connectors/walletConnect";
 
 const WC_PROJECT_ID = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID ?? "";
 
-export function WalletProvider({ children }: { children: ReactNode }) {
+export function WalletProviderInner({ children }: { children: ReactNode }) {
   const [config] = useState(() =>
     createConfig({
       chains: [bsc, bscTestnet],
@@ -37,16 +37,5 @@ export function WalletProvider({ children }: { children: ReactNode }) {
     }),
   );
 
-  const [queryClient] = useState(
-    () =>
-      new QueryClient({
-        defaultOptions: { queries: { staleTime: 30_000, retry: 1 } },
-      }),
-  );
-
-  return (
-    <WagmiProvider config={config}>
-      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-    </WagmiProvider>
-  );
+  return <WagmiProvider config={config}>{children}</WagmiProvider>;
 }
