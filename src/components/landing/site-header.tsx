@@ -12,6 +12,7 @@ import {
   SheetClose,
 } from "@/components/ui/sheet";
 import { Logo } from "@/components/landing/logo";
+import { ConnectWallet } from "@/components/landing/connect-wallet";
 import { navLinks } from "@/lib/token-data";
 
 export function SiteHeader() {
@@ -60,6 +61,7 @@ export function SiteHeader() {
 
         {/* Desktop CTA */}
         <div className="hidden items-center gap-2 lg:flex">
+          <ConnectWallet />
           <Button
             asChild
             size="sm"
@@ -113,7 +115,8 @@ export function SiteHeader() {
                   </SheetClose>
                 ))}
               </nav>
-              <div className="mt-auto border-t border-white/10 p-4">
+              <div className="mt-auto border-t border-white/10 p-4 space-y-2">
+                <ConnectWallet />
                 <SheetClose asChild>
                   <Button
                     asChild

@@ -5,6 +5,7 @@ import { WhatIsSection } from "@/components/landing/what-is-section";
 import { UtilitySection } from "@/components/landing/utility-section";
 import { HowItWorksSection } from "@/components/landing/how-it-works-section";
 import { PricingSection } from "@/components/landing/pricing-section";
+import { ChartSection } from "@/components/landing/chart-section";
 import { ExternalPlatformsSection } from "@/components/landing/external-platforms-section";
 import { ContractSection } from "@/components/landing/contract-section";
 import { BenefitsSection } from "@/components/landing/benefits-section";
@@ -23,6 +24,7 @@ export default function Home() {
         <UtilitySection />
         <HowItWorksSection />
         <PricingSection />
+        <ChartSection />
         <ExternalPlatformsSection />
         <ContractSection />
         <BenefitsSection />

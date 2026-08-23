@@ -246,3 +246,25 @@ Stage Summary:
 - Barra de disclaimer amber prominente con enlace al Aviso de Riesgo.
 - Badge "OFICIAL" verde en header y "Sitio Oficial" centrado en footer.
 - La página ahora funciona como la presentación oficial completa de la criptomoneda SERVI.
+
+---
+Task ID: 2
+Agent: main
+Task: Activate PM2 + restore chart section + wallet system
+
+Work Log:
+- Installed PM2 globally via bun
+- Created ecosystem.config.cjs for PM2
+- Fixed IndexedDB SSR crash: walletConnect loaded via Function() dynamic import to bypass Turbopack analysis
+- Recreated chart-section.tsx with exact DexScreener embed code (responsive CSS + iframe)
+- Added ChartSection to page.tsx between PricingSection and ExternalPlatformsSection
+- Verified all elements render: Conectar Wallet button, SwapPanel (Conecta tu wallet state), DexScreener iframe, pricing cards
+- Browser verified: 0 console errors, all 200 responses
+- PM2 running, saved process list
+
+Stage Summary:
+- PM2 active managing dev server (servitoken-dev)
+- Chart section restored with exact embed code
+- Wallet system: injected (MetaMask) + WalletConnect (dynamic, ID: 35ee79d215da0d6202df395063db2dcc)
+- Auto-switch to BSC, PRÓXIMAMENTE button disabled
+- All files: wagmi.ts, contracts.ts, wallet-provider.tsx, connect-wallet.tsx, swap-panel.tsx, chart-section.tsx

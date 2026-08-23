@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster as SonnerToaster } from "@/components/ui/sonner";
+import { WalletProvider } from "@/components/landing/wallet-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -53,17 +54,19 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}
       >
-        {children}
-        <SonnerToaster
-          position="top-center"
-          toastOptions={{
-            style: {
-              background: "#0C1426",
-              border: "1px solid rgba(255,255,255,0.1)",
-              color: "#E8EDF6",
-            },
-          }}
-        />
+        <WalletProvider>
+          {children}
+          <SonnerToaster
+            position="top-center"
+            toastOptions={{
+              style: {
+                background: "#0C1426",
+                border: "1px solid rgba(255,255,255,0.1)",
+                color: "#E8EDF6",
+              },
+            }}
+          />
+        </WalletProvider>
       </body>
     </html>
   );
