@@ -53,6 +53,7 @@ export const navLinks: NavLink[] = [
   { label: "Utilidad", href: "#utilidad" },
   { label: "Cómo funciona", href: "#como-funciona" },
   { label: "Precio y compra", href: "#precio" },
+  { label: "Compra", href: "#compra" },
   { label: "FAQ", href: "#faq" },
   { label: "Contacto", href: "#contacto" },
 ];
@@ -63,6 +64,7 @@ export const footerLinks: NavLink[] = [
   { label: "Utilidad", href: "#utilidad" },
   { label: "Cómo funciona", href: "#como-funciona" },
   { label: "Precio y compra", href: "#precio" },
+  { label: "Compra", href: "#compra" },
   { label: "FAQ", href: "#faq" },
   { label: "Contacto", href: "#contacto" },
 ];
