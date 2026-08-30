@@ -66,7 +66,7 @@ export function ContactSection() {
                       active ? "text-brand-green" : "text-muted-foreground/70"
                     }`}
                   >
-                    {active ? "Disponible" : "Próximamente"}
+                    {active ? "Disponible" : "En definición"}
                   </span>
                 </Wrapper>
               </Reveal>
@@ -76,9 +76,7 @@ export function ContactSection() {
 
         <Reveal delay={0.2}>
           <p className="mx-auto mt-10 max-w-2xl text-center text-xs leading-relaxed text-muted-foreground">
-            Los canales oficiales se habilitarán conforme el cliente los
-            confirme. Mientras tanto, solo se muestran los canales confirmados
-            como activos.
+            Canales oficiales de comunicación. Síguenos para actualizaciones y novedades del proyecto.
           </p>
         </Reveal>
       </div>

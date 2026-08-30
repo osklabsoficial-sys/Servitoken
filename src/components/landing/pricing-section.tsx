@@ -15,7 +15,6 @@ import { Button } from "@/components/ui/button";
 import { Reveal, SectionHeading } from "@/components/landing/section-primitives";
 import { project, pricingSection } from "@/lib/token-data";
 import { toast } from "sonner";
-import { SwapPanel } from "@/components/landing/swap-panel";
 
 const PANCAKESWAP_URL =
   "https://pancakeswap.finance/swap?inputCurrency=0x55d398326f99059fF775485246999027B3197955&outputCurrency=0x07e6CB0876653B914Fc3805283a275b90bF7E443";
@@ -199,65 +198,60 @@ export function PricingSection() {
               </div>
             </Reveal>
 
-            {/* Swap panel */}
+            {/* Tarjeta del contrato */}
             <Reveal delay={0.1}>
-              <SwapPanel />
+              <div className="glass-card relative h-full overflow-hidden rounded-3xl p-6 sm:p-8">
+                <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold/50 to-transparent" />
+                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-gold">
+                  Dirección del contrato
+                </p>
+
+                <div className="mt-5">
+                  <div className="flex items-center justify-between rounded-xl border border-white/10 bg-navy/60 px-4 py-3.5">
+                    <code className="truncate font-mono text-xs text-foreground/90 sm:text-sm">
+                      {project.contractAddress}
+                    </code>
+                    <button
+                      type="button"
+                      onClick={copyContract}
+                      aria-label="Copiar contrato"
+                      className="flex shrink-0 items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-gold transition-colors hover:bg-gold/10"
+                    >
+                      {copied ? (
+                        <Check className="size-4 text-brand-green" />
+                      ) : (
+                        <Copy className="size-4" />
+                      )}
+                      <span className="hidden sm:inline">
+                        {copied ? "Copiado" : "Copiar"}
+                      </span>
+                    </button>
+                  </div>
+                </div>
+
+                {project.explorerBaseUrl.trim().length > 0 ? (
+                  <Button
+                    asChild
+                    variant="outline"
+                    className="mt-3 h-11 w-full border-white/15 bg-white/5 text-foreground hover:bg-white/10"
+                  >
+                    <a
+                      href={`${project.explorerBaseUrl}${project.contractAddress}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Ver contrato ↗
+                      <ExternalLink className="size-4" />
+                    </a>
+                  </Button>
+                ) : (
+                  <p className="mt-3 text-center text-[11px] text-muted-foreground">
+                    Enlace a BscScan disponible próximamente.
+                  </p>
+                )}
+              </div>
             </Reveal>
           </div>
-
-          {/* Contract card below */}
-          <Reveal delay={0.2} className="mx-auto mt-5 max-w-5xl">
-            <div className="glass-card relative overflow-hidden rounded-3xl p-6 sm:p-8">
-              <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold/50 to-transparent" />
-              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-gold">
-                Dirección del contrato
-              </p>
-
-              <div className="mt-5">
-                <div className="flex items-center justify-between rounded-xl border border-white/10 bg-navy/60 px-4 py-3.5">
-                  <code className="truncate font-mono text-xs text-foreground/90 sm:text-sm">
-                    {project.contractAddress}
-                  </code>
-                  <button
-                    type="button"
-                    onClick={copyContract}
-                    aria-label="Copiar contrato"
-                    className="flex shrink-0 items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-gold transition-colors hover:bg-gold/10"
-                  >
-                    {copied ? (
-                      <Check className="size-4 text-brand-green" />
-                    ) : (
-                      <Copy className="size-4" />
-                    )}
-                    <span className="hidden sm:inline">
-                      {copied ? "Copiado" : "Copiar"}
-                    </span>
-                  </button>
-                </div>
-              </div>
-
-              {project.explorerBaseUrl.trim().length > 0 ? (
-                <Button
-                  asChild
-                  variant="outline"
-                  className="mt-3 h-11 w-full border-white/15 bg-white/5 text-foreground hover:bg-white/10"
-                >
-                  <a
-                    href={`${project.explorerBaseUrl}${project.contractAddress}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Ver contrato ↗
-                    <ExternalLink className="size-4" />
-                  </a>
-                </Button>
-              ) : (
-                <p className="mt-3 text-center text-[11px] text-muted-foreground">
-                  Enlace a BscScan disponible próximamente.
-                </p>
-              )}
-            </div>
-          </Reveal>
         </div>
       </section>
     </>

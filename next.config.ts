@@ -1,19 +1,18 @@
+import path from "path";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: "standalone",
-  typescript: {
-    ignoreBuildErrors: true,
-  },
+  typescript: { ignoreBuildErrors: true },
   reactStrictMode: false,
-  // Evitar que Turbopack/webpack intenten bundlear
-  // @walletconnect/ethereum-provider durante SSR (usa indexedDB)
-  serverExternalPackages: ["@walletconnect/ethereum-provider"],
+  allowedDevOrigins: [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "https://preview-chat-ec6a6232-901a-4149-b6e4-5416240adb49.space-z.ai",
+  ],
   turbopack: {
     resolveAlias: {
-      // El módulo 'accounts' es interno de @wagmi/core/tempo
-      // Turbopack no lo resuelve en SSR
-      accounts: "./empty-module.js",
+      "@reown/appkit-scaffold-ui": path.join(process.cwd(), "src/empty-modules/appkit-scaffold-ui.js"),
     },
   },
 };

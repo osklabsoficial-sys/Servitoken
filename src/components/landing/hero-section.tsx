@@ -2,11 +2,11 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowRight, Smartphone, Monitor, QrCode } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/landing/logo";
 import { hero } from "@/lib/token-data";
-import { HeroWalletConnect } from "@/components/landing/hero-wallet-connect";
+import { ConnectWallet } from "@/components/landing/connect-wallet";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 22 },
@@ -94,11 +94,12 @@ export function HeroSection() {
                 size="lg"
                 className="h-12 bg-gradient-to-r from-electric to-electric-bright px-7 text-[15px] text-white shadow-[0_12px_36px_-10px_rgba(46,107,255,0.85)] transition-transform hover:-translate-y-0.5 hover:shadow-[0_18px_44px_-10px_rgba(46,107,255,0.9)]"
               >
-                <Link href="#precio">
+                <Link href="#compra">
                   {hero.primaryCta}
                   <ArrowRight className="size-4" />
                 </Link>
               </Button>
+              <ConnectWallet variant="hero" />
               <Button
                 asChild
                 size="lg"
@@ -107,17 +108,6 @@ export function HeroSection() {
               >
                 <Link href="#que-es">{hero.secondaryCta}</Link>
               </Button>
-            </motion.div>
-
-            {/* ─── Conexión WalletConnect ─── */}
-            <motion.div
-              variants={fadeUp}
-              initial="hidden"
-              animate="show"
-              custom={4}
-              className="mt-8 w-full sm:w-auto"
-            >
-              <HeroWalletConnect />
             </motion.div>
           </div>
 

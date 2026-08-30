@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback, useSyncExternalStore } from "react";
 import {
   type DetectedWallet,
   type WalletInfo,
@@ -8,26 +8,30 @@ import {
   getNotInstalledWallets,
 } from "@/lib/wallet-registry";
 
+function getSnapshot(): DetectedWallet[] {
+  return detectInstalledWallets();
+}
+
+function getServerSnapshot(): DetectedWallet[] {
+  return [];
+}
+
+function subscribe(callback: () => void): () => void {
+  window.addEventListener("ethereum#initialized", callback);
+  return () => window.removeEventListener("ethereum#initialized", callback);
+}
+
 /**
  * Hook que detecta wallets EVM instaladas y retorna
  * las detectadas + las no instaladas con links de instalación.
  */
 export function useDetectedWallets() {
-  const [detected, setDetected] = useState<DetectedWallet[]>([]);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    const wallets = detectInstalledWallets();
-    setDetected(wallets);
-    setMounted(true);
-
-    // Re-escanear cuando cambia el proveedor (ej: al instalar una wallet)
-    const handler = () => {
-      setDetected(detectInstalledWallets());
-    };
-    window.addEventListener("ethereum#initialized", handler);
-    return () => window.removeEventListener("ethereum#initialized", handler);
-  }, []);
+  const detected = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+  const mounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
 
   const detectedIds = useMemo(
     () => new Set(detected.map((w) => w.id)),

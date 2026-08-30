@@ -42,7 +42,7 @@ export const project = {
   marketUrl:
     "https://dexscreener.com/bsc/0xad48f36f851ce4dca85a07bb3d6a573a4c70ed18",
   // URL del explorador de bloques (pendiente confirmación del cliente).
-  explorerBaseUrl: "",
+  explorerBaseUrl: "https://bscscan.com/token/",
 } as const;
 
 export type NavLink = { label: string; href: string };
@@ -52,7 +52,7 @@ export const navLinks: NavLink[] = [
   { label: "¿Qué es?", href: "#que-es" },
   { label: "Utilidad", href: "#utilidad" },
   { label: "Cómo funciona", href: "#como-funciona" },
-  { label: "Precio y compra", href: "#precio" },
+  { label: "Estadísticas", href: "#estadisticas" },
   { label: "Compra", href: "#compra" },
   { label: "FAQ", href: "#faq" },
   { label: "Contacto", href: "#contacto" },
@@ -63,7 +63,7 @@ export const footerLinks: NavLink[] = [
   { label: "¿Qué es?", href: "#que-es" },
   { label: "Utilidad", href: "#utilidad" },
   { label: "Cómo funciona", href: "#como-funciona" },
-  { label: "Precio y compra", href: "#precio" },
+  { label: "Estadísticas", href: "#estadisticas" },
   { label: "Compra", href: "#compra" },
   { label: "FAQ", href: "#faq" },
   { label: "Contacto", href: "#contacto" },
@@ -223,38 +223,31 @@ export type Faq = { question: string; answer: string };
 export const faqs: Faq[] = [
   {
     question: "¿Qué es Servitoken?",
-    answer:
-      "Servitoken (SERVI) es un token de utilidad creado para formar parte de un ecosistema digital orientado a servicios y pagos. Su objetivo es conectar usuarios y comercios mediante nuevas alternativas de pago y beneficios dentro del ecosistema.",
+    answer: "Token de utilidad diseñado para conectar usuarios, comercios y servicios dentro de un ecosistema digital.",
   },
   {
     question: "¿Qué red utiliza Servitoken?",
-    answer:
-      "Servitoken opera en BNB Smart Chain (BSC) bajo el estándar BEP-20.",
+    answer: "BNB Smart Chain (BSC - Estándar BEP-20).",
   },
   {
     question: "¿En qué consiste la utilidad del token?",
-    answer:
-      "La utilidad de Servitoken se basa en facilitar pagos digitales y ofrecer la posibilidad de acceder a beneficios o descuentos en comercios participantes dentro del ecosistema.",
+    answer: "La utilidad de Servitoken se basa en facilitar pagos digitales y ofrecer la posibilidad de acceder a beneficios o descuentos en comercios participantes dentro del ecosistema.",
   },
   {
     question: "¿Cuál es el supply total?",
-    answer:
-      "El supply total de Servitoken es de 500,000,000 SERVI.",
+    answer: "500,000,000 SERVI.",
   },
   {
     question: "¿Cuál es la dirección oficial del contrato?",
-    answer:
-      "La dirección oficial del contrato de Servitoken es: 0x07e6CB0876653B914Fc3805283a275b90bF7E443. Puedes copiarla directamente desde esta página y verificarla en BscScan cuando el enlace esté disponible.",
+    answer: "0x07e6CB0876653B914Fc3805283a275b90bF7E443.",
   },
   {
     question: "¿Cómo puedo comprar Servitoken?",
-    answer:
-      "Puedes comprar Servitoken (SERVI) directamente a través de PancakeSwap usando el par SERVI/USDT. También puedes consultar el mercado en DexScreener. Ambos enlaces están disponibles en la sección 'Precio y compra' de esta página.",
+    answer: "Puedes comprar Servitoken (SERVI) directamente a través de PancakeSwap usando el par SERVI/USDT, o conectando tu wallet desde nuestra página. También puedes consultar el mercado en DexScreener.",
   },
   {
     question: "¿Dónde puedo consultar el mercado de SERVI?",
-    answer:
-      "Puedes consultar el precio y la actividad del mercado de SERVI en DexScreener a través del enlace disponible en la sección 'Precio y compra'. El enlace de BscScan para el contrato se agregará próximamente.",
+    answer: "En el gráfico en vivo de DexScreener y BscScan. Los enlaces están disponibles en la sección 'Estadísticas' de esta página.",
   },
 ];
 
@@ -267,14 +260,10 @@ export type SocialChannel = {
 };
 
 // Redes sociales y canales de contacto.
-// url = "" significa que el cliente todavía no lo ha confirmado.
 export const socialChannels: SocialChannel[] = [
-  { name: "X / Twitter", handle: "@Servitoken", url: "", icon: "Twitter" },
-  { name: "Telegram", handle: "t.me/Servitoken", url: "", icon: "Send" },
-  { name: "Instagram", handle: "@Servitoken", url: "", icon: "Instagram" },
-  { name: "Facebook", handle: "Servitoken", url: "", icon: "Facebook" },
-  { name: "WhatsApp", handle: "Servitoken", url: "", icon: "MessageCircle" },
-  { name: "Email", handle: "contacto@servitoken.com", url: "", icon: "Mail" },
+  { name: "X", handle: "@ServiTokenOfici", url: "https://x.com/ServiTokenOfici", icon: "Twitter" },
+  { name: "Telegram", handle: "t.me/ServiTokenOficial", url: "https://t.me/ServiTokenOficial", icon: "Send" },
+  { name: "Email", handle: "contacto@servitoken.com", url: "mailto:contacto@servitoken.com", icon: "Mail" },
 ];
 
 // Datos del hero

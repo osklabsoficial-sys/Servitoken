@@ -166,12 +166,6 @@ export function SiteFooter() {
                 <div className="mt-3 flex flex-wrap gap-2">
                   {socialChannels.map((channel) => {
                     const active = channel.url.trim().length > 0;
-                    const Icon = (
-                      <LucideIconByName
-                        name={channel.icon}
-                        className="size-4 transition-colors group-hover:text-foreground"
-                      />
-                    );
                     return active ? (
                       <a
                         key={channel.name}
@@ -179,23 +173,34 @@ export function SiteFooter() {
                         target="_blank"
                         rel="noopener noreferrer"
                         aria-label={channel.name}
-                        className="group flex size-10 items-center justify-center rounded-lg border border-white/10 bg-white/[0.03] text-muted-foreground transition-all hover:-translate-y-0.5 hover:border-electric/30 hover:text-foreground"
+                        className="group flex items-center gap-2 rounded-lg border border-electric/20 bg-electric/5 px-3 py-2 text-sm text-electric transition-all hover:-translate-y-0.5 hover:border-electric/40 hover:bg-electric/10"
                       >
-                        {Icon}
+                        <LucideIconByName
+                          name={channel.icon}
+                          className="size-4 transition-colors group-hover:text-electric-bright"
+                        />
+                        <span className="font-medium">{channel.handle}</span>
                       </a>
                     ) : (
                       <span
                         key={channel.name}
-                        title={`${channel.name} · Próximamente`}
-                        className="flex size-10 cursor-default items-center justify-center rounded-lg border border-white/[0.06] bg-white/[0.01] text-muted-foreground/40"
+                        title={`${channel.name} · En definición`}
+                        className="flex items-center gap-2 rounded-lg border border-white/[0.06] bg-white/[0.01] px-3 py-2 text-sm text-muted-foreground/50"
                       >
-                        {Icon}
+                        <LucideIconByName
+                          name={channel.icon}
+                          className="size-4"
+                        />
+                        <span>{channel.handle}</span>
+                        <span className="ml-1 rounded bg-amber-500/10 px-1.5 py-0.5 text-[10px] font-medium text-amber-400/80">
+                          En definición
+                        </span>
                       </span>
                     );
                   })}
                 </div>
                 <p className="mt-3 text-xs text-muted-foreground/70">
-                  Los canales se habilitarán conforme se confirmen.
+                  Canales oficiales de Servitoken.
                 </p>
               </div>
             </div>

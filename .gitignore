@@ -55,3 +55,8 @@ server.log
 # Verification screenshots (dev artifacts)
 .verify-shots/
 .env
+tool-results/
+upload/
+logs/
+verify-*.png
+dev.log

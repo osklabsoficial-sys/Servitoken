@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Menu, X, BadgeCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/landing/theme-toggle";
 import {
   Sheet,
   SheetContent,
@@ -12,8 +13,8 @@ import {
   SheetClose,
 } from "@/components/ui/sheet";
 import { Logo } from "@/components/landing/logo";
-import { ConnectWallet } from "@/components/landing/connect-wallet";
 import { navLinks } from "@/lib/token-data";
+import { ConnectWallet } from "@/components/landing/connect-wallet";
 
 export function SiteHeader() {
   const [scrolled, setScrolled] = useState(false);
@@ -61,13 +62,14 @@ export function SiteHeader() {
 
         {/* Desktop CTA */}
         <div className="hidden items-center gap-2 lg:flex">
-          <ConnectWallet />
+          <ThemeToggle />
+          <ConnectWallet variant="default" />
           <Button
             asChild
             size="sm"
             className="bg-gradient-to-r from-electric to-electric-bright text-white shadow-[0_6px_20px_-8px_rgba(46,107,255,0.7)] hover:opacity-95"
           >
-            <Link href="#precio">Comprar Servitoken</Link>
+            <Link href="#compra">Comprar Servitoken</Link>
           </Button>
         </div>
 
@@ -115,14 +117,18 @@ export function SiteHeader() {
                   </SheetClose>
                 ))}
               </nav>
-              <div className="mt-auto border-t border-white/10 p-4 space-y-2">
-                <ConnectWallet />
+              <div className="mt-auto border-t border-white/10 p-4 space-y-3">
+                <div className="flex items-center gap-2">
+                  <ThemeToggle />
+                  <span className="text-xs text-muted-foreground">Tema</span>
+                </div>
+                <ConnectWallet variant="default" />
                 <SheetClose asChild>
                   <Button
                     asChild
                     className="w-full bg-gradient-to-r from-electric to-electric-bright text-white"
                   >
-                    <Link href="#precio">Comprar Servitoken</Link>
+                    <Link href="#compra">Comprar Servitoken</Link>
                   </Button>
                 </SheetClose>
               </div>
