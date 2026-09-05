@@ -1,8 +1,5 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+// ServiToken · Esquema V1
+// Billetera interna centralizada + Ledger + PayPal + Transferencias + Admin
 
 generator client {
   provider = "prisma-client-js"
@@ -13,13 +10,226 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// =====================================================================
+//  USUARIOS Y SESIONES
+// =====================================================================
+
 model User {
+  id           String   @id @default(cuid())
+  username     String   @unique // se guarda en minúsculas
+  email        String   @unique // se guarda en minúsculas
+  passwordHash String
+  name         String?
+  role         String   @default("USER") // USER | ADMIN | SUPER_ADMIN
+  status       String   @default("ACTIVE") // ACTIVE | BLOCKED | SUSPENDED
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  wallet               Wallet?
+  ledgerEntries        LedgerEntry[]
+  purchases            Purchase[]
+  transfersSent        Transfer[]        @relation("TransferSender")
+  transfersReceived    Transfer[]        @relation("TransferReceiver")
+  servicePayments      ServicePayment[]
+  adminAdjustmentsMade AdminAdjustment[] @relation("AdminAdjustmentAdmin")
+  adminAdjustmentsRecv AdminAdjustment[] @relation("AdminAdjustmentTarget")
+  sessions             Session[]
+  auditLogs            AuditLog[]
+}
+
+model Session {
   id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
+  tokenHash String   @unique // sha256 del token de la cookie
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+// =====================================================================
+//  WALLET INTERNA Y LEDGER
+// =====================================================================
+
+model Wallet {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  balance   Float    @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
+
+model LedgerEntry {
+  id            String   @id @default(cuid())
+  userId        String
+  type          String // PURCHASE | TRANSFER_SENT | TRANSFER_RECEIVED | SERVICE_PAYMENT | ADMIN_CREDIT | ADMIN_DEBIT | REFUND | REVERSAL
+  amount        Float // siempre positivo; la dirección la define el tipo
+  balanceBefore Float
+  balanceAfter  Float
+  status        String   @default("COMPLETED")
+  reference     String // id de compra / referencia de transferencia / ajuste
+  description   String
+  adminId       String?
+  createdAt     DateTime @default(now())
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([type])
+  @@index([reference])
+}
+
+// =====================================================================
+//  COMPRAS Y PAGOS PAYPAL
+// =====================================================================
+
+model Purchase {
+  id              String    @id @default(cuid())
+  userId          String
+  tokensAmount    Float
+  usdAmount       Float
+  rateServiPerUsd Float // tasa usada al crear la orden (auditoría)
+  status          String    @default("CREATED") // CREATED | PENDING | APPROVED | COMPLETED | FAILED | CANCELLED | REFUNDED
+  paypalOrderId   String?   @unique
+  creditedAt      DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  paypalPayment   PaypalPayment?
+
+  @@index([userId, createdAt])
+  @@index([status])
+}
+
+model PaypalPayment {
+  id              String   @id @default(cuid())
+  purchaseId      String   @unique
+  paypalOrderId   String   @unique
+  paypalCaptureId String?  @unique // garantiza acreditación única por capture
+  status          String
+  amountUsd       Float
+  currency        String   @default("USD")
+  payerEmail      String?
+  payerName       String?
+  rawPayload      String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  purchase        Purchase @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
+}
+
+model PaypalWebhookEvent {
+  id         String   @id @default(cuid())
+  eventId    String   @unique // id del evento PayPal → idempotencia
+  eventType  String
+  resourceId String?
+  status     String   @default("RECEIVED") // RECEIVED | PROCESSED | DUPLICATE | IGNORED | FAILED
+  payload    String
+  createdAt  DateTime @default(now())
+
+  @@index([eventType])
+  @@index([resourceId])
+}
+
+// =====================================================================
+//  TRANSFERENCIAS ENTRE USUARIOS
+// =====================================================================
+
+model Transfer {
+  id         String   @id @default(cuid())
+  reference  String   @unique // idempotency key generada por el cliente
+  senderId   String
+  receiverId String
+  amount     Float
+  note       String?
+  status     String   @default("COMPLETED")
+  createdAt  DateTime @default(now())
+  sender     User     @relation("TransferSender", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver   User     @relation("TransferReceiver", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  @@index([senderId, createdAt])
+  @@index([receiverId, createdAt])
+}
+
+// =====================================================================
+//  SERVICIOS Y PAGOS DE SERVICIOS
+// =====================================================================
+
+model Service {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  description String
+  priceServi  Float
+  icon        String? // nombre de icono lucide (opcional)
+  status      String   @default("ACTIVE") // ACTIVE | INACTIVE
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  payments    ServicePayment[]
+}
+
+model ServicePayment {
+  id          String   @id @default(cuid())
+  reference   String   @unique // idempotency key generada por el cliente
+  userId      String
+  serviceId   String
+  serviceName String
+  priceServi  Float
+  status      String   @default("COMPLETED")
+  createdAt   DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  service     Service  @relation(fields: [serviceId], references: [id])
+
+  @@index([userId, createdAt])
+}
+
+// =====================================================================
+//  ADMINISTRACIÓN Y AUDITORÍA
+// =====================================================================
+
+model AdminAdjustment {
+  id            String   @id @default(cuid())
+  adminId       String
+  targetUserId  String
+  operation     String // CREDIT | DEBIT
+  amount        Float
+  balanceBefore Float
+  balanceAfter  Float
+  reason        String
+  createdAt     DateTime @default(now())
+  admin         User     @relation("AdminAdjustmentAdmin", fields: [adminId], references: [id])
+  target        User     @relation("AdminAdjustmentTarget", fields: [targetUserId], references: [id])
+
+  @@index([targetUserId, createdAt])
+  @@index([adminId, createdAt])
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  actorId    String?
+  action     String // REGISTER | LOGIN | LOGIN_FAILED | LOGOUT | PURCHASE_CREATED | PAYPAL_CAPTURE_COMPLETED | WEBHOOK_RECEIVED | SERVI_CREDITED | TRANSFER | SERVICE_PAYMENT | ADMIN_ADJUSTMENT | USER_BLOCKED | USER_UNBLOCKED | CONFIG_UPDATED | SERVICE_CREATED | SERVICE_UPDATED
+  entityType String?
+  entityId   String?
+  metadata   String?
+  createdAt  DateTime @default(now())
+  actor      User?    @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([action, createdAt])
+}
+
+// =====================================================================
+//  CONFIGURACIÓN GLOBAL (precio SERVI/USD, etc.)
+// =====================================================================
+
+model AppConfig {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
+}
+
+// =====================================================================
+//  MODELOS PREEXISTENTES (no utilizados por V1, se conservan)
+// =====================================================================
 
 model Post {
   id        String   @id @default(cuid())
@@ -34,7 +244,7 @@ model Post {
 model Referral {
   id         String   @id @default(cuid())
   code       String   @unique
-  referrer   String   // wallet address of the referrer
+  referrer   String // wallet address of the referrer
   clicks     Int      @default(0)
   createdAt  DateTime @default(now())
 }

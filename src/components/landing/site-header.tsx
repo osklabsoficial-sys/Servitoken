@@ -15,6 +15,7 @@ import {
 import { Logo } from "@/components/landing/logo";
 import { navLinks } from "@/lib/token-data";
 import { ConnectWallet } from "@/components/landing/connect-wallet";
+import { LandingAuthButtons } from "@/components/landing/landing-auth-buttons";
 
 export function SiteHeader() {
   const [scrolled, setScrolled] = useState(false);
@@ -63,13 +64,16 @@ export function SiteHeader() {
         {/* Desktop CTA */}
         <div className="hidden items-center gap-2 lg:flex">
           <ThemeToggle />
-          <ConnectWallet variant="default" />
+          <span className="hidden 2xl:block">
+            <ConnectWallet variant="default" />
+          </span>
+          <LandingAuthButtons compact />
           <Button
             asChild
             size="sm"
-            className="bg-gradient-to-r from-electric to-electric-bright text-white shadow-[0_6px_20px_-8px_rgba(46,107,255,0.7)] hover:opacity-95"
+            className="bg-gradient-to-r from-gold to-gold-bright text-navy shadow-[0_6px_20px_-8px_rgba(212,176,106,0.7)] hover:opacity-95"
           >
-            <Link href="#compra">Comprar Servitoken</Link>
+            <Link href="/comprar">Comprar Servitoken</Link>
           </Button>
         </div>
 
@@ -123,12 +127,13 @@ export function SiteHeader() {
                   <span className="text-xs text-muted-foreground">Tema</span>
                 </div>
                 <ConnectWallet variant="default" />
+                <LandingAuthButtons compact />
                 <SheetClose asChild>
                   <Button
                     asChild
-                    className="w-full bg-gradient-to-r from-electric to-electric-bright text-white"
+                    className="w-full bg-gradient-to-r from-gold to-gold-bright text-navy"
                   >
-                    <Link href="#compra">Comprar Servitoken</Link>
+                    <Link href="/comprar">Comprar Servitoken</Link>
                   </Button>
                 </SheetClose>
               </div>
