@@ -27,6 +27,7 @@ import { ConnectWallet } from "@/components/landing/connect-wallet";
 import { SwapPanel } from "@/components/landing/swap-panel";
 import { PancakeSwapLogo } from "@/components/landing/brand-logos";
 import { ServiCard } from "@/components/app/servi-card";
+import { TokenLiveTicker } from "@/components/app/token-pulse";
 import {
   ApplePayFullLogo,
   GooglePayFullLogo,
@@ -884,6 +885,14 @@ export function CompraClient({
 
         {/* Columna derecha: resumen + compras recientes */}
         <div className="flex flex-col gap-6">
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.06 }}
+          >
+            <TokenLiveTicker />
+          </motion.div>
+
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}

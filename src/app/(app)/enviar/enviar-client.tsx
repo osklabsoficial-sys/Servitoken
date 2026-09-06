@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { TokenLiveTicker } from "@/components/app/token-pulse";
 import {
   Dialog,
   DialogContent,
@@ -211,6 +212,9 @@ export function EnviarClient({ username, balance }: { username: string; balance:
 
   return (
     <div className="mx-auto w-full max-w-2xl px-4 py-8 sm:px-6">
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-5">
+        <TokenLiveTicker />
+      </motion.div>
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
         <h1 className="flex items-center gap-2.5 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
           <Send className="size-6 text-electric-bright" aria-hidden />

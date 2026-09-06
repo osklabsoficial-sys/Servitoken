@@ -19,6 +19,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ServiCard } from "@/components/app/servi-card";
+import { TokenPulseCard } from "@/components/app/token-pulse";
 import {
   formatDateTime,
   formatServi,
@@ -183,6 +184,24 @@ export function DashboardClient({
           </div>
         </div>
       </motion.div>
+
+      {/* Mercado del token en vivo (datos reales · refresco 5s) */}
+      <motion.section
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.12 }}
+        className="mt-8"
+        aria-label="Mercado del token SERVI en vivo"
+      >
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="flex items-center gap-2 text-lg font-semibold text-foreground">
+            <TrendingUp className="size-4.5 text-brand-green" aria-hidden />
+            Mercado SERVI en vivo
+          </h2>
+          <span className="text-xs text-muted-foreground">Precios reales · actualizados cada 5s</span>
+        </div>
+        <TokenPulseCard officialRate={rateServiPerUsd} />
+      </motion.section>
 
       {/* Admin quick access */}
       {isAdmin && (

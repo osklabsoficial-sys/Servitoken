@@ -3,13 +3,12 @@ import { ContactlessIcon, EmvChip } from "@/components/brand/payment-logos";
 
 /**
  * ============================================================
- *  TARJETA DE CRÉDITO VIRTUAL SERVI
+ *  TARJETA DE CRÉDITO VIRTUAL SERVI · EDICIÓN METAL
  * ============================================================
- *  Muestra el saldo del usuario como una tarjeta física:
- *  chip EMV, pago sin contacto y el @usuario como identidad
- *  de la tarjeta (sin números — el titular ES la cuenta).
- *  Incluye datos de la cuenta: saldo SERVI, equivalente USD,
- *  estado y año de alta.
+ *  Observidiana + filo metálico dorado, guilloché láser de
+ *  doble trama, sello holográfico iris giratorio, chip EMV
+ *  original y titular en oro metálico. El @usuario ES la
+ *  identidad de la tarjeta (sin números).
  * ============================================================
  */
 
@@ -38,12 +37,18 @@ export function ServiCard({
       {/* Reflejo que recorre la tarjeta */}
       <span className="card-sheen" aria-hidden />
 
+      {/* Sello holográfico iris */}
+      <span
+        className="servi-holo-foil absolute right-14 top-3 size-8 rounded-full ring-1 ring-white/25"
+        aria-hidden
+      />
+
       {/* Logo marca arriba derecha */}
       <div className="absolute right-4 top-4 flex items-center gap-2">
         <span className="text-right text-[10px] font-semibold uppercase leading-tight tracking-[0.2em] text-white/60">
-          Virtual
+          Metal
           <br />
-          Card
+          Edition
         </span>
         <img
           src="/servitoken-logo-sm.png"
@@ -60,20 +65,20 @@ export function ServiCard({
         Servi<span className="text-gold-bright">token</span>
       </p>
 
-      <div className="relative flex h-full flex-col justify-between p-5 pt-11 sm:p-6 sm:pt-12">
-        {/* Chip + NFC */}
+      <div className="relative flex h-full flex-col justify-between p-5 pb-6 pt-11 sm:p-6 sm:pb-7 sm:pt-12">
+        {/* Chip EMV original + NFC */}
         <div className="flex items-center gap-3">
-          <EmvChip className="size-9 sm:size-10" />
+          <EmvChip className="h-auto w-12 sm:w-[52px]" />
           <ContactlessIcon className="size-5 rotate-90 text-white/70" />
         </div>
 
-        {/* Titular — el @usuario sustituye al número de tarjeta */}
+        {/* Titular — oro metálico, sin números */}
         <div className="mt-1 min-w-0">
           <p className="text-[9px] font-semibold uppercase tracking-[0.18em] text-white/55">
             Titular
           </p>
           <p
-            className="truncate text-lg font-bold leading-tight tracking-wide text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.45)] sm:text-xl"
+            className="text-gold-metal truncate text-lg font-bold leading-tight tracking-wide sm:text-xl"
             title={`@${username}`}
           >
             @{username}
@@ -87,7 +92,7 @@ export function ServiCard({
               Saldo
             </p>
             <div className="mt-0.5 flex items-baseline gap-1.5">
-              <span className="text-xl font-bold tabular-nums text-gold-bright drop-shadow-[0_2px_10px_rgba(212,176,106,0.35)] sm:text-2xl">
+              <span className="text-gold-metal text-xl font-bold tabular-nums drop-shadow-[0_2px_10px_rgba(212,176,106,0.35)] sm:text-2xl">
                 {formatServi(balance)}
               </span>
               <span className="text-[10px] font-bold uppercase tracking-wider text-white/70">
@@ -112,6 +117,12 @@ export function ServiCard({
           </div>
         </div>
       </div>
+
+      {/* Micro-texto láser inferior */}
+      <p className="servi-microtext absolute bottom-1.5 left-5 right-5 overflow-hidden text-[5px] font-medium uppercase sm:text-[6px]" aria-hidden>
+        ServiToken · Virtual Card · BNB Smart Chain · Metal Edition · Servi Rewards ·
+        ServiToken · Virtual Card · BNB Smart Chain · Metal Edition ·
+      </p>
     </div>
   );
 }

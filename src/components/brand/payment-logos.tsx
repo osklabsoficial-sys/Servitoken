@@ -149,12 +149,92 @@ export function ContactlessIcon({ className = "size-5" }: { className?: string }
   );
 }
 
-/** Chip EMV de la tarjeta SERVI. */
+/**
+ * ============================================================
+ *  CHIP EMV ORIGINAL SERVI (diseño propio, estilo metal)
+ * ============================================================
+ *  Plataforma de contactos realista: 8 pads (2 columnas × 4),
+ *  pista central en H, trazas hacia los bordes con vías y
+ *  brillo diagonal. Gradientes oro metálico multi-parada.
+ * ============================================================
+ */
 export function EmvChip({ className = "size-10" }: { className?: string }) {
   return (
-    <span
-      className={`servi-chip servi-chip-grid block shrink-0 rounded-md ${className}`}
-      aria-hidden
-    />
+    <svg
+      viewBox="0 0 48 36"
+      className={className}
+      role="img"
+      aria-label="Chip EMV"
+      style={{ filter: "drop-shadow(0 2px 3px rgba(0,0,0,0.45))" }}
+    >
+      <defs>
+        <linearGradient id="sv-chip-gold" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#F7E6B2" />
+          <stop offset="0.35" stopColor="#D9B872" />
+          <stop offset="0.65" stopColor="#B9924E" />
+          <stop offset="1" stopColor="#E9CD8D" />
+        </linearGradient>
+        <linearGradient id="sv-chip-shine" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#ffffff" stopOpacity="0.5" />
+          <stop offset="0.45" stopColor="#ffffff" stopOpacity="0.07" />
+          <stop offset="1" stopColor="#ffffff" stopOpacity="0" />
+        </linearGradient>
+      </defs>
+
+      {/* Cuerpo metálico */}
+      <rect
+        x="1"
+        y="1"
+        width="46"
+        height="34"
+        rx="5.5"
+        fill="url(#sv-chip-gold)"
+        stroke="#8a6a33"
+        strokeOpacity="0.6"
+        strokeWidth="1"
+      />
+      {/* Plataforma de contactos */}
+      <rect
+        x="10"
+        y="6.5"
+        width="28"
+        height="23"
+        rx="3.5"
+        fill="none"
+        stroke="#7d5f2d"
+        strokeOpacity="0.55"
+        strokeWidth="0.8"
+      />
+      {/* Pista central en H + separadores de pads */}
+      <path
+        d="M19.5 6.5 v7 a2 2 0 0 0 2 2 h5 a2 2 0 0 1 2 2 v10"
+        fill="none"
+        stroke="#7d5f2d"
+        strokeOpacity="0.8"
+        strokeWidth="1"
+      />
+      <path
+        d="M28.5 6.5 v5 a2 2 0 0 1 -2 2 h-5 a2 2 0 0 0 -2 2 v13"
+        fill="none"
+        stroke="#7d5f2d"
+        strokeOpacity="0.8"
+        strokeWidth="1"
+      />
+      <path d="M10 17.5 h28" stroke="#7d5f2d" strokeOpacity="0.65" strokeWidth="1" />
+      <path d="M24 6.5 v23" stroke="#7d5f2d" strokeOpacity="0.45" strokeWidth="0.9" />
+      {/* Trazas hacia los bordes + vías */}
+      <path
+        d="M1 11.5 h9 M1 24.5 h9 M38 11.5 h9 M38 24.5 h9"
+        stroke="#7d5f2d"
+        strokeOpacity="0.7"
+        strokeWidth="1"
+      />
+      <circle cx="5" cy="5.5" r="1.1" fill="#7d5f2d" fillOpacity="0.55" />
+      <circle cx="43" cy="5.5" r="1.1" fill="#7d5f2d" fillOpacity="0.55" />
+      <circle cx="5" cy="30.5" r="1.1" fill="#7d5f2d" fillOpacity="0.55" />
+      <circle cx="43" cy="30.5" r="1.1" fill="#7d5f2d" fillOpacity="0.55" />
+      {/* Brillo diagonal */}
+      <path d="M1 1 L17 1 L7 35 L1 35 Z" fill="url(#sv-chip-shine)" />
+    </svg>
   );
 }

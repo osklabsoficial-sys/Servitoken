@@ -18,6 +18,7 @@ import {
   Zap,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { TokenLiveTicker } from "@/components/app/token-pulse";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -127,6 +128,9 @@ export function ServiciosClient() {
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-5">
+        <TokenLiveTicker />
+      </motion.div>
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
         <h1 className="flex items-center gap-2.5 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
           <Sparkles className="size-6 text-gold" aria-hidden />

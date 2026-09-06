@@ -16,8 +16,20 @@ const client = createPublicClient({
   transport: http("https://bsc-dataseed1.binance.org/", { timeout: 10_000 }),
 });
 
-const CACHE_MS = 15_000;
+const CACHE_MS = 5_000;
 let cache: { data: Record<string, unknown>; ts: number } | null = null;
+
+/**
+ * GeckoTerminal (API pública gratuita) tiene límite estricto por IP.
+ * - Los datos de Gecko (variaciones, volumen, txns) se cachean 30s.
+ * - Ante un 429 se pausa el consumo 60s y se sirve el último dato.
+ * - El precio SIEMPRE se recalcula on-chain (BSC RPC) en cada request:
+ *   el refresco de 5s sigue siendo 100% real.
+ */
+const GECKO_TTL_MS = 30_000;
+const GECKO_PAUSE_MS = 60_000;
+let geckoCache: { attr: GeckoPool["attributes"] | null; ts: number } | null = null;
+let geckoPausedUntil = 0;
 
 interface GeckoPool {
   attributes: {
@@ -54,20 +66,33 @@ interface GeckoPool {
   };
 }
 
-async function fetchGeckoTerminal(): Promise<GeckoPool | null> {
+async function fetchGeckoTerminal(): Promise<GeckoPool["attributes"] | null> {
+  if (geckoCache && Date.now() - geckoCache.ts < GECKO_TTL_MS) {
+    return geckoCache.attr;
+  }
+  if (Date.now() < geckoPausedUntil) {
+    return geckoCache?.attr ?? null;
+  }
   try {
     const res = await fetch(
       `https://api.geckoterminal.com/api/v2/networks/bsc/pools/${SERVI_USDT_PAIR}`,
       {
         headers: { Accept: "application/json" },
-        next: { revalidate: 15 },
+        next: { revalidate: 5 },
       }
     );
-    if (!res.ok) return null;
+    if (res.status === 429) {
+      // Rate limit: pausa el consumo y sirve el último dato conocido
+      geckoPausedUntil = Date.now() + GECKO_PAUSE_MS;
+      return geckoCache?.attr ?? null;
+    }
+    if (!res.ok) return geckoCache?.attr ?? null;
     const json = await res.json();
-    return json?.data ?? null;
+    const attr = json?.data?.attributes ?? null;
+    geckoCache = { attr, ts: Date.now() };
+    return attr;
   } catch {
-    return null;
+    return geckoCache?.attr ?? null;
   }
 }
 
@@ -140,9 +165,8 @@ export async function GET() {
     );
     const onChainMarketCap = onChainPrice * supplyFormatted;
 
-    // 2. GeckoTerminal data (price, changes, volume, txns, FDV)
-    const gecko = await fetchGeckoTerminal();
-    const attr = gecko?.attributes;
+    // 2. GeckoTerminal data (price, changes, volume, txns, FDV) — cacheado 30s
+    const attr = await fetchGeckoTerminal();
 
     // Use GeckoTerminal price if available (more accurate), else on-chain
     const geckoPrice = attr ? parseFloat(attr.base_token_price_usd) : 0;

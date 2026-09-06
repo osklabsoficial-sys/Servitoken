@@ -16,6 +16,7 @@ interface OhlcvCandle {
 /**
  * GeckoTerminal provides free, no-auth OHLCV data.
  * Endpoint: /api/v2/networks/{network}/pools/{pool}/ohlcv/{timeframe}
+ * timeframe ∈ {day, hour, minute} (velas de 1d/1h/1m según el rango).
  */
 async function fetchGeckoTerminal(
   timeframe: string,
@@ -70,10 +71,10 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(cache[cacheKey].data);
   }
 
-  // Map range to GeckoTerminal timeframe + limit
+  // Map range to GeckoTerminal timeframe + limit (velas nativas 1m/1h/1d)
   const config: Record<string, { timeframe: string; limit: number }> = {
     "1h": { timeframe: "minute", limit: 60 },
-    "4h": { timeframe: "5m", limit: 48 },
+    "4h": { timeframe: "minute", limit: 240 },
     "1d": { timeframe: "hour", limit: 24 },
     "7d": { timeframe: "hour", limit: 168 },
     "30d": { timeframe: "day", limit: 30 },
@@ -90,7 +91,7 @@ export async function GET(request: NextRequest) {
       candles = await fetchDexScreenerChart();
     }
 
-    // GeckoTerminal returns newest first; reverse for chart (oldest → newest)
+    // GeckoTerminal devuelve las velas más nuevas primero; invertir
     candles.reverse();
 
     const data = {
@@ -104,6 +105,14 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     const msg = error instanceof Error ? error.message : "Unknown error";
     console.error("token-chart error:", msg);
-    return NextResponse.json({ error: msg, candles: [], range }, { status: 500 });
+
+    // Resiliencia: si hay un caché previo (aunque sea stale, hasta 10 min),
+    // se sirve en vez de romper la gráfica (p. ej. 429 de GeckoTerminal).
+    const stale = cache[cacheKey];
+    if (stale && Date.now() - stale.ts < 600_000) {
+      return NextResponse.json(stale.data);
+    }
+
+    return NextResponse.json({ error: msg, candles: [], range }, { status: 502 });
   }
 }

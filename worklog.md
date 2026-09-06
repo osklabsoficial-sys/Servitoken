@@ -145,3 +145,24 @@ Stage Summary:
 - La tarjeta SERVI ya no muestra números: la identidad de la tarjeta es el @usuario (a petición del usuario)
 - El precio real del token (1/rate SERVI_PER_USD desde la BD) es visible en todo el área privada: header global, dashboard, compra y servicios (≈USD preexistente)
 - PayPal sigue PENDIENTE hasta pegar credenciales reales en .env (aparece CONFIGURADO automáticamente, sin cambios de código)
+
+---
+Task ID: premium-card-token-pulse
+Agent: Z.ai Code (main)
+Task: Tarjeta SERVI ultra premium (chip original) + mercado del token en vivo con gráficas y precios actualizándose cada 5s en todo el panel
+
+Work Log:
+- token-live.ts (nuevo): store singleton por pestaña (useSyncExternalStore) que sondea /api/token-stats cada 5s UNA sola vez aunque N componentes se suscriban; pausa con pestaña oculta; useTokenChart(range) con refresco 30s; useNow(1s) para "hace Xs"; formatTinyPrice() con notación cripto de subíndice ($0.0₄2475)
+- token-stats route: caché total 15s→5s; GeckoTerminal ahora con caché propio de 30s + pausa de 60s ante 429 (el precio sigue recalculándose on-chain vía BSC RPC en cada request de 5s — datos 100% reales)
+- token-chart route: FIX bug preexistente (GeckoTerminal 404: el endpoint público no soporta segmento de agregación); rangos mapeados a velas nativas 1m/1h/1d (4h=240 velas de 1min); fallback resiliencia: sirve caché stale hasta 10 min ante fallo/429 en vez de romper la gráfica
+- payment-logos.tsx: EmvChip rediseñado como SVG original — plataforma de contactos 2×4, pista central en H, trazas a bordes con vías, gradiente oro multi-parada + brillo diagonal
+- globals.css: .servi-card premium (obsidiana profunda + destellos gold/electric, filo metálico dorado vía máscara, guilloché láser doble trama + micro-puntos), .text-gold-metal (oro metálico bg-clip), .servi-holo-foil (sello iris cónico girando 14s, respeta reduced-motion), .servi-microtext
+- servi-card.tsx: "METAL EDITION" (antes Virtual Card), sello holográfico iris, titular @usuario y saldo en oro metálico, micro-texto láser inferior, chip EMV original
+- token-pulse.tsx (nuevo): TokenPulseCard (precio en vivo + chips de variación 5m/1h/24h + gráfica de área SVG suavizada con rangos 1H/4H/1D/7D/30D + tiles Cap/Liquidez/Vol24h/Txns24h + reservas del par + supply + contraste precio oficial + enlaces DexScreener/GeckoTerminal/BscScan) y TokenLiveTicker (tira compacta con sparkline 1h)
+- Integrado: /inicio sección "Mercado SERVI en vivo" (tarjeta completa), /compra ticker sobre el resumen, ticker en /enviar /recibir /servicios /historial
+- E2E preview: registro premiumqa → tarjeta METAL con @usuario en oro verificado; gráfica con datos reales (línea roja real del día, máx/mín, hora inicio/fin); contador "HACE 4S"→7s después→"HACE 1S" (polling 5s confirmado); cambio de rango 1D→4H OK; ticker presente en las 5 páginas; móvil 390px sin overflow; usuarios de prueba (premiumqa, finalqa) eliminados; lint 0 errores
+
+Stage Summary:
+- La tarjeta es edición METAL: chip EMV de diseño propio, holograma iris giratorio, guilloché, filo dorado y titular/saldo en oro metálico
+- Todo el panel privado muestra datos REALES del par SERVI/USDT (PancakeSwap BSC): precio actualizándose cada 5s, gráfica con 5 rangos, market cap, liquidez, volumen, transacciones y reservas
+- Infraestructura a prueba de límites: caché gecko 30s + pausa ante 429 + caché stale de gráficas; el precio on-chain nunca deja de refrescarse cada 5s
