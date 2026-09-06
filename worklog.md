@@ -77,3 +77,21 @@ Stage Summary:
 - Pruebas obligatorias ejecutadas: (1) visitante ve toda la landing ✓; (2) clic Conectar Wallet sin sesión → modal "Necesitas una cuenta", NUNCA abre MetaMask/WalletConnect (verificado en header, hero y SwapPanel) ✓; (3) /compra sin sesión → 307 /login?returnTo=%2Fcompra (también /inicio /historial /enviar /recibir /servicios /admin /comprar) ✓; (4) login desde returnTo → regresa a /compra ✓ (probado por UI dos veces); (5) /compra autenticado muestra saldo+presets+métodos+resumen+compras recientes ✓; (6) autenticado abre el modal de wallets ✓; (7) create-order/capture sin sesión → 401 ✓; (8) wallet/transactions/services/quote/transfers/services-pay sin sesión → 401, admin → 403 ✓; (9) userId SIEMPRE de session.id (body solo acepta tokensAmount) ✓; (10) secret solo en src/lib/paypal.ts (server), config endpoint expone solo clientId ✓; (11) creditPurchaseOnce con claim atómico updateMany + capture único = acreditación exactamente una vez ✓; (12) saldo se actualiza vía ledger atómico (acreditación real PayPal pendiente de credenciales válidas); (13) métodos configurados aparecen (BNB Smart Chain) ✓; (14) no configurados NO aparecen (PayPal oculto sin credenciales) ✓
 - BLOCKED aislado en create-order, transfers (emisor/receptor), services/pay ✓; lint 0 errores; responsive móvil 390px sin overflow-x ✓
 - Nota: PayPal se activará solo en /compra cuando se añadan PAYPAL_CLIENT_ID/PAYPAL_CLIENT_SECRET/PAYPAL_WEBHOOK_ID válidos al .env (sin cambios de código); servidor se estabilizó tras un reinicio por OOM puntual
+
+---
+Task ID: fix-registro-gateway
+Agent: Z.ai Code (main)
+Task: Corregir fallo de registro/login "NO SE PUDO REGISTRAR EL USUARIO" desde el panel de preview
+
+Work Log:
+- Reproducido el bug: POST /api/auth/register devolvía 403 ORIGIN_INVALID cuando Origin=https://preview-chat-*.space-z.ai y Host=localhost:3000
+- Causa raíz: el gateway de preview reescribe el Host a localhost:3000 manteniendo el Origin público; isSameOrigin() los comparaba estrictamente y rechazaba TODOS los POST (registro, login, transferencias, compras, admin)
+- Fix central en src/lib/auth.ts isSameOrigin(): (1) usa Sec-Fetch-Site (header prohibido, no falsificable) como señal anti-CSRF primaria; (2) compara contra x-forwarded-host; (3) acepta hosts de confianza (space-z.ai / vercel.app / servitoken.com) cuando el Host local es localhost
+- Verificación con curl: preview Origin → 200 OK; evil.com Origin → 403 (sigue bloqueado); Sec-Fetch-Site cross-site → 403
+- E2E con agent-browser por el dominio de preview real: registro → redirect /inicio OK, logout OK, login → redirect /inicio OK
+- Limpieza: usuarios de prueba (testbro, testbro2, testfix1, bro_test_e2e) eliminados de la BD
+
+Stage Summary:
+- Un solo fix en src/lib/auth.ts::isSameOrigin() desbloquea los 12 endpoints POST del proyecto
+- La protección anti-CSRF se mantiene (orígenes maliciosos siguen en 403)
+- Registro, login y logout verificados end-to-end desde el mismo dominio de preview que usa el usuario

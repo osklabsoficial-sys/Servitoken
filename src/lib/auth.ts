@@ -116,13 +116,54 @@ export async function getSessionUser(): Promise<SessionUser | null> {
   };
 }
 
-/** Garantía anti-CSRF para mutaciones POST: verifica mismo origen. */
+/** Orígenes de confianza del gateway de preview (el panel expone la app vía estos dominios). */
+function isTrustedPreviewHost(host: string): boolean {
+  return (
+    host === "localhost" ||
+    host === "127.0.0.1" ||
+    host.endsWith(".space-z.ai") || // panel de preview z.ai
+    host.endsWith(".vercel.app") || // despliegue oficial
+    host.endsWith(".servitoken.com")
+  );
+}
+
+/**
+ * Garantía anti-CSRF para mutaciones POST: verifica mismo origen.
+ * Consciente del gateway: el panel de preview reescribe Host a localhost:3000
+ * manteniendo el Origin público, por lo que también se comparan
+ * x-forwarded-host, x-forwarded-proto y hosts de confianza conocidos.
+ */
 export function isSameOrigin(req: Request): boolean {
+  // Navegadores modernos envían Sec-Fetch-Site y es un header prohibido
+  // (no se puede falsificar desde JS): es la señal anti-CSRF más fiable.
+  const fetchSite = req.headers.get("sec-fetch-site");
+  if (fetchSite) {
+    return fetchSite !== "cross-site";
+  }
+
   const origin = req.headers.get("origin");
   if (!origin) return true; // cliente no-navegador
+
   try {
+    const originHost = new URL(origin).host; // dominio:puerto
+    const originHostname = new URL(origin).hostname; // solo dominio
+
     const host = req.headers.get("host");
-    return !!host && new URL(origin).host === host;
+    if (host && originHost === host) return true;
+
+    const fwdHost = req.headers.get("x-forwarded-host");
+    if (fwdHost && originHost === fwdHost.split(",")[0].trim()) return true;
+
+    // Tras el gateway: si Host local + Origin público de confianza → OK.
+    if (
+      host &&
+      (host.startsWith("localhost") || host.startsWith("127.0.0.1")) &&
+      isTrustedPreviewHost(originHostname)
+    ) {
+      return true;
+    }
+
+    return false;
   } catch {
     return false;
   }
