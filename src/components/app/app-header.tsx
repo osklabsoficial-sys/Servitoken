@@ -13,6 +13,7 @@ import {
   ShieldCheck,
   ShoppingCart,
   Sparkles,
+  TrendingUp,
   X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -32,7 +33,7 @@ import {
   SheetClose,
 } from "@/components/ui/sheet";
 import { Logo } from "@/components/landing/logo";
-import { formatServi } from "@/lib/format";
+import { formatServi, formatTokenPriceUsd } from "@/lib/format";
 import type { SessionUser } from "@/lib/auth";
 
 const BASE_LINKS = [
@@ -112,6 +113,19 @@ export function AppHeader({ user }: { user: SessionUser }) {
         </nav>
 
         <div className="flex items-center gap-2">
+          {/* Precio real del token (tasa oficial del servidor) */}
+          {me && (
+            <span
+              className="hidden items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 xl:flex"
+              title="Precio oficial del token fijado por el servidor"
+            >
+              <TrendingUp className="size-3.5 text-brand-green" aria-hidden />
+              <span className="whitespace-nowrap text-xs font-semibold text-foreground">
+                1 SERVI = ${formatTokenPriceUsd(1 / me.rateServiPerUsd)}
+              </span>
+            </span>
+          )}
+
           {/* Saldo */}
           <Link
             href="/inicio"

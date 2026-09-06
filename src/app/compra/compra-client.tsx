@@ -16,6 +16,7 @@ import {
   Lock,
   RefreshCw,
   ShieldCheck,
+  TrendingUp,
   XCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -32,7 +33,7 @@ import {
   PayPalFullLogo,
   PayPalMark,
 } from "@/components/brand/payment-logos";
-import { formatServi, formatUsd, formatDateTime } from "@/lib/format";
+import { formatServi, formatUsd, formatDateTime, formatTokenPriceUsd } from "@/lib/format";
 import type { PaymentMethodInfo } from "@/lib/payment-methods";
 
 declare global {
@@ -98,14 +99,12 @@ function MethodBrandLogo({
 
 export function CompraClient({
   username,
-  userId,
   balance: initialBalance,
   rateServiPerUsd,
   memberSince,
   methods,
 }: {
   username: string;
-  userId: string;
   balance: number;
   rateServiPerUsd: number;
   memberSince: Date | null;
@@ -455,6 +454,17 @@ export function CompraClient({
             {formatServi(rateServiPerUsd)} SERVI = $1 USD).
           </p>
 
+          {/* Precio real del token */}
+          <div className="mt-3 inline-flex flex-wrap items-center gap-2 rounded-xl border border-gold/25 bg-gold/[0.07] px-3.5 py-2">
+            <TrendingUp className="size-4 text-brand-green" aria-hidden />
+            <span className="text-sm font-bold tabular-nums text-gold-bright">
+              1 SERVI = ${formatTokenPriceUsd(1 / rateServiPerUsd)} USD
+            </span>
+            <span className="rounded-full border border-brand-green/25 bg-brand-green/10 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wide text-brand-green">
+              Precio oficial
+            </span>
+          </div>
+
           <div className="mt-5 flex flex-wrap items-center gap-3">
             <Button
               asChild
@@ -479,7 +489,6 @@ export function CompraClient({
         >
           <ServiCard
             username={username}
-            userId={userId}
             balance={balance}
             rateServiPerUsd={rateServiPerUsd}
             memberSince={memberSince ?? undefined}
@@ -531,7 +540,7 @@ export function CompraClient({
                           {formatServi(value)}
                         </p>
                         <p className="text-[11px] text-muted-foreground">
-                          SERVI
+                          SERVI · ≈ ${formatUsd(value / rateServiPerUsd)}
                         </p>
                       </button>
                     );
@@ -896,6 +905,12 @@ export function CompraClient({
                   <span className="text-muted-foreground">Método</span>
                   <span className="font-semibold text-foreground">
                     {selectedMethod?.name ?? "—"}
+                  </span>
+                </div>
+                <div className="mt-2 flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">Precio unitario</span>
+                  <span className="font-semibold text-foreground">
+                    1 SERVI = ${formatTokenPriceUsd(1 / rateServiPerUsd)}
                   </span>
                 </div>
                 <div className="mt-2 flex items-center justify-between border-t border-white/5 pt-2 text-sm">

@@ -26,7 +26,6 @@ export default async function InicioPage() {
   return (
     <DashboardClient
       username={user.username}
-      userId={user.id}
       email={user.email}
       isAdmin={user.role === "ADMIN" || user.role === "SUPER_ADMIN"}
       balance={wallet?.balance ?? 0}

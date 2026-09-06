@@ -13,12 +13,19 @@ import {
   ShoppingCart,
   Sparkles,
   Store,
+  TrendingUp,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ServiCard } from "@/components/app/servi-card";
-import { formatDateTime, formatServi, LEDGER_TYPE_LABELS, POSITIVE_TYPES } from "@/lib/format";
+import {
+  formatDateTime,
+  formatServi,
+  formatTokenPriceUsd,
+  LEDGER_TYPE_LABELS,
+  POSITIVE_TYPES,
+} from "@/lib/format";
 
 export interface RecentEntry {
   id: string;
@@ -62,7 +69,6 @@ const ACTIONS = [
 
 export function DashboardClient({
   username,
-  userId,
   email,
   isAdmin,
   balance,
@@ -71,7 +77,6 @@ export function DashboardClient({
   recent,
 }: {
   username: string;
-  userId: string;
   email: string;
   isAdmin: boolean;
   balance: number;
@@ -104,7 +109,6 @@ export function DashboardClient({
         <div className="grid gap-6 lg:grid-cols-[400px_1fr]">
           <ServiCard
             username={username}
-            userId={userId}
             balance={balance}
             rateServiPerUsd={rateServiPerUsd}
             memberSince={memberSince ?? undefined}
@@ -141,10 +145,41 @@ export function DashboardClient({
               })}
             </div>
 
-            <p className="mt-4 flex items-center gap-1.5 text-xs text-muted-foreground">
-              <ShieldCheck className="size-3.5 text-brand-green" aria-hidden />
-              Tasa oficial: {formatServi(rateServiPerUsd)} SERVI = $1 USD
-            </p>
+            {/* Precio real del token (tasa oficial del servidor) */}
+            <div className="glow-card mt-4 rounded-2xl p-5">
+              <div className="flex items-center justify-between gap-3">
+                <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  <TrendingUp className="size-3.5 text-brand-green" aria-hidden />
+                  Precio del token
+                </p>
+                <span className="flex items-center gap-1.5 rounded-full border border-brand-green/25 bg-brand-green/10 px-2 py-0.5">
+                  <span
+                    className="size-1.5 animate-pulse rounded-full bg-brand-green shadow-[0_0_8px_rgba(45,212,167,0.9)]"
+                    aria-hidden
+                  />
+                  <span className="text-[9px] font-bold uppercase tracking-wide text-brand-green">
+                    En vivo · Servidor
+                  </span>
+                </span>
+              </div>
+
+              <div className="mt-3 flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
+                <span className="text-3xl font-bold tabular-nums text-gold-bright drop-shadow-[0_2px_14px_rgba(212,176,106,0.35)]">
+                  ${formatTokenPriceUsd(1 / rateServiPerUsd)}
+                </span>
+                <span className="text-xs font-medium text-muted-foreground">USD / 1 SERVI</span>
+                <span className="rounded-md border border-white/10 bg-white/5 px-2 py-0.5 text-[11px] font-semibold text-foreground">
+                  Tasa oficial: {formatServi(rateServiPerUsd)} SERVI = $1 USD
+                </span>
+              </div>
+
+              <Link
+                href="/compra"
+                className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-electric-bright transition-colors hover:text-electric"
+              >
+                Comprar al precio oficial →
+              </Link>
+            </div>
           </div>
         </div>
       </motion.div>

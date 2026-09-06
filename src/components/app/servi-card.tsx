@@ -6,36 +6,23 @@ import { ContactlessIcon, EmvChip } from "@/components/brand/payment-logos";
  *  TARJETA DE CRÉDITO VIRTUAL SERVI
  * ============================================================
  *  Muestra el saldo del usuario como una tarjeta física:
- *  chip EMV, pago sin contacto, titular, número de cuenta
- *  enmascarado y fecha de alta. El número mostrado es
- *  COSMÉTICO y derivado de forma determinista del id de
- *  cuenta — no expone ningún dato sensible real.
+ *  chip EMV, pago sin contacto y el @usuario como identidad
+ *  de la tarjeta (sin números — el titular ES la cuenta).
+ *  Incluye datos de la cuenta: saldo SERVI, equivalente USD,
+ *  estado y año de alta.
  * ============================================================
  */
-
-function accountNumberFromId(userId: string): string {
-  // Derivación determinista y puramente decorativa a partir del id.
-  let hash = 0;
-  for (let i = 0; i < userId.length; i++) {
-    hash = (hash * 31 + userId.charCodeAt(i)) >>> 0;
-  }
-  const g3 = String((hash >>> 13) % 10000).padStart(4, "0");
-  const g4 = String((hash >>> 19) % 10000).padStart(4, "0");
-  return `•••• •••• ${g3} ${g4}`;
-}
 
 export function ServiCard({
   username,
   balance,
   rateServiPerUsd,
-  userId,
   memberSince,
   className = "",
 }: {
   username: string;
   balance: number;
   rateServiPerUsd: number;
-  userId: string;
   memberSince?: Date | string;
   className?: string;
 }) {
@@ -43,7 +30,11 @@ export function ServiCard({
   const year = memberSince ? new Date(memberSince).getFullYear() : new Date().getFullYear();
 
   return (
-    <div className={`servi-card servi-card-tilt ${className}`} role="img" aria-label={`Tarjeta virtual SERVI de @${username} con saldo de ${formatServi(balance)} SERVI`}>
+    <div
+      className={`servi-card servi-card-tilt ${className}`}
+      role="img"
+      aria-label={`Tarjeta virtual SERVI de @${username} con saldo de ${formatServi(balance)} SERVI`}
+    >
       {/* Reflejo que recorre la tarjeta */}
       <span className="card-sheen" aria-hidden />
 
@@ -76,19 +67,26 @@ export function ServiCard({
           <ContactlessIcon className="size-5 rotate-90 text-white/70" />
         </div>
 
-        {/* Número de cuenta */}
-        <p className="mt-1 font-mono text-[15px] font-semibold tracking-[0.14em] text-white/95 sm:text-lg">
-          {accountNumberFromId(userId)}
-        </p>
+        {/* Titular — el @usuario sustituye al número de tarjeta */}
+        <div className="mt-1 min-w-0">
+          <p className="text-[9px] font-semibold uppercase tracking-[0.18em] text-white/55">
+            Titular
+          </p>
+          <p
+            className="truncate text-lg font-bold leading-tight tracking-wide text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.45)] sm:text-xl"
+            title={`@${username}`}
+          >
+            @{username}
+          </p>
+        </div>
 
         {/* Datos de la cuenta */}
         <div className="flex items-end justify-between gap-3">
           <div className="min-w-0">
             <p className="text-[9px] font-semibold uppercase tracking-[0.18em] text-white/55">
-              Titular
+              Saldo
             </p>
-            <p className="truncate text-sm font-bold text-white">@{username}</p>
-            <div className="mt-1.5 flex items-baseline gap-1.5">
+            <div className="mt-0.5 flex items-baseline gap-1.5">
               <span className="text-xl font-bold tabular-nums text-gold-bright drop-shadow-[0_2px_10px_rgba(212,176,106,0.35)] sm:text-2xl">
                 {formatServi(balance)}
               </span>

@@ -55,7 +55,6 @@ export default async function CompraPage() {
       <main className="flex-1">
         <CompraClient
           username={user.username}
-          userId={user.id}
           balance={wallet?.balance ?? 0}
           rateServiPerUsd={rate}
           memberSince={user.createdAt ?? null}

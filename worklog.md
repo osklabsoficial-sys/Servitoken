@@ -125,3 +125,23 @@ Stage Summary:
 - PayPal aparece PENDIENTE hasta que el dueño pegue sus credenciales reales en .env (regla: no mostrar como disponible lo no configurado); al rellenarlas aparece CONFIGURADO con botón SDK oficial automáticamente
 - Card SERVI reutilizable en /inicio y /compra
 - Issue preexistente detectado: hydration warning de Radix DropdownMenu en AppHeader (dev-only, benigno, el menú funciona) — no se tocó para no romperlo
+
+---
+Task ID: card-username-token-price
+Agent: Z.ai Code (main)
+Task: Nombre de usuario en la tarjeta SERVI (sin números) + precios reales del token en páginas post-login
+
+Work Log:
+- servi-card.tsx: eliminado el número de cuenta enmascarado; el @usuario ahora ocupa el lugar central de la tarjeta (TITULAR) con truncate para nombres largos; datos de cuenta reorganizados: Saldo (SERVI) a la izquierda, Equivalente USD + estado ACTIVA · año a la derecha; prop userId eliminada
+- format.ts: nuevo helper formatTokenPriceUsd() — hasta 4 decimales cuando el precio < $0.01 para que nunca muestre $0.00
+- app-header.tsx: chip "1 SERVI = $X" con TrendingUp en el header de TODAS las páginas privadas (xl+), usando rateServiPerUsd que ya traía /api/auth/me
+- dashboard-client.tsx (/inicio): panel "Precio del token" con precio grande $0.01 USD/1 SERVI, tasa oficial (100 SERVI = $1 USD), badge pulsante EN VIVO · SERVIDOR y link "Comprar al precio oficial →"; sustituye la línea plana de tasa; userId eliminado de props
+- compra-client.tsx (/compra): chip hero "1 SERVI = $0.01 USD" con badge PRECIO OFICIAL; presets 100/500/1000 muestran equivalente real (≈ $1.00 / $5.00 / $10.00); fila "Precio unitario" añadida al Resumen del pedido; userId eliminado de props
+- inicio/page.tsx + compra/page.tsx: dejaron de pasar userId
+- E2E agent-browser (dominio preview real): registro cardqa → redirect /compra (returnTo OK); verificado en snapshot+screenshot: tarjeta con TITULAR @cardqa sin ningún número, chip de precio en header en /compra /inicio /enviar, panel precio en /inicio, resumen con precio unitario, PayPal PENDIENTE (bloqueado) + BNB CONFIGURADO; móvil 390px sin overflow
+- Limpieza: usuario de prueba cardqa eliminado; lint 0 errores
+
+Stage Summary:
+- La tarjeta SERVI ya no muestra números: la identidad de la tarjeta es el @usuario (a petición del usuario)
+- El precio real del token (1/rate SERVI_PER_USD desde la BD) es visible en todo el área privada: header global, dashboard, compra y servicios (≈USD preexistente)
+- PayPal sigue PENDIENTE hasta pegar credenciales reales en .env (aparece CONFIGURADO automáticamente, sin cambios de código)

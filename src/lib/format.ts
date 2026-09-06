@@ -10,6 +10,18 @@ export function formatUsd(n: number): string {
   return n.toLocaleString("es-DO", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
+/**
+ * Precio unitario del token en USD (p. ej. $0.01).
+ * Muestra hasta 4 decimales cuando el precio es menor a un centavo
+ * para que la cifra nunca se vea como $0.00.
+ */
+export function formatTokenPriceUsd(pricePerServi: number): string {
+  return pricePerServi.toLocaleString("es-DO", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: pricePerServi < 0.01 ? 4 : 2,
+  });
+}
+
 export function formatDateTime(d: Date | string): string {
   const date = typeof d === "string" ? new Date(d) : d;
   return date.toLocaleString("es-DO", {
