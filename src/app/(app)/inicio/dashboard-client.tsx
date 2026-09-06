@@ -13,12 +13,12 @@ import {
   ShoppingCart,
   Sparkles,
   Store,
-  Wallet,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { formatDateTime, formatServi, formatUsd, LEDGER_TYPE_LABELS, POSITIVE_TYPES } from "@/lib/format";
+import { ServiCard } from "@/components/app/servi-card";
+import { formatDateTime, formatServi, LEDGER_TYPE_LABELS, POSITIVE_TYPES } from "@/lib/format";
 
 export interface RecentEntry {
   id: string;
@@ -62,21 +62,23 @@ const ACTIONS = [
 
 export function DashboardClient({
   username,
+  userId,
   email,
   isAdmin,
   balance,
   rateServiPerUsd,
+  memberSince,
   recent,
 }: {
   username: string;
+  userId: string;
   email: string;
   isAdmin: boolean;
   balance: number;
   rateServiPerUsd: number;
+  memberSince: Date | null;
   recent: RecentEntry[];
 }) {
-  const usd = balance / rateServiPerUsd;
-
   return (
     <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       {/* Saludo */}
@@ -92,58 +94,59 @@ export function DashboardClient({
         <p className="text-sm text-muted-foreground">{email}</p>
       </motion.div>
 
-      {/* Saldo */}
+      {/* Tarjeta de crédito SERVI + acciones rápidas */}
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.05 }}
+        className="mt-6"
       >
-        <Card className="mt-6 overflow-hidden border-white/10 bg-gradient-to-br from-card via-card to-navy-2">
-          <CardContent className="p-6 sm:p-8">
-            <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-              <div>
-                <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  <Wallet className="size-3.5" aria-hidden />
-                  Saldo disponible
-                </p>
-                <p className="mt-2 flex items-baseline gap-2 text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
-                  <span className="tabular-nums text-gold-bright">{formatServi(balance)}</span>
-                  <span className="text-lg font-semibold text-muted-foreground sm:text-xl">SERVI</span>
-                </p>
-                <p className="mt-1.5 text-sm text-muted-foreground">
-                  ≈ ${formatUsd(usd)} USD · Tasa: {formatServi(rateServiPerUsd)} SERVI = $1 USD
-                </p>
-              </div>
+        <div className="grid gap-6 lg:grid-cols-[400px_1fr]">
+          <ServiCard
+            username={username}
+            userId={userId}
+            balance={balance}
+            rateServiPerUsd={rateServiPerUsd}
+            memberSince={memberSince ?? undefined}
+          />
 
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:max-w-md lg:grid-cols-2 xl:grid-cols-4">
-                {ACTIONS.map((action) => {
-                  const Icon = action.icon;
-                  return (
-                    <Link
-                      key={action.href}
-                      href={action.href}
-                      className={`group flex flex-col gap-1.5 rounded-2xl border p-3.5 transition-all hover:-translate-y-0.5 ${
-                        action.primary
-                          ? "border-transparent bg-gradient-to-br from-electric to-electric-bright text-white shadow-[0_10px_28px_-12px_rgba(46,107,255,0.8)]"
-                          : "border-white/10 bg-white/5 text-foreground hover:bg-white/10"
+          <div className="flex flex-col justify-center">
+            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Acciones rápidas
+            </p>
+            <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4">
+              {ACTIONS.map((action) => {
+                const Icon = action.icon;
+                return (
+                  <Link
+                    key={action.href}
+                    href={action.href}
+                    className={`group flex flex-col gap-1.5 rounded-2xl border p-3.5 transition-all hover:-translate-y-0.5 ${
+                      action.primary
+                        ? "border-transparent bg-gradient-to-br from-electric to-electric-bright text-white shadow-[0_10px_28px_-12px_rgba(46,107,255,0.8)]"
+                        : "border-white/10 bg-white/5 text-foreground hover:bg-white/10"
+                    }`}
+                  >
+                    <Icon className={`size-5 ${action.primary ? "text-white" : "text-electric-bright"}`} aria-hidden />
+                    <span className="text-sm font-semibold leading-tight">{action.label}</span>
+                    <span
+                      className={`text-[11px] leading-tight ${
+                        action.primary ? "text-white/75" : "text-muted-foreground"
                       }`}
                     >
-                      <Icon className={`size-5 ${action.primary ? "text-white" : "text-electric-bright"}`} aria-hidden />
-                      <span className="text-sm font-semibold leading-tight">{action.label}</span>
-                      <span
-                        className={`text-[11px] leading-tight ${
-                          action.primary ? "text-white/75" : "text-muted-foreground"
-                        }`}
-                      >
-                        {action.description}
-                      </span>
-                    </Link>
-                  );
-                })}
-              </div>
+                      {action.description}
+                    </span>
+                  </Link>
+                );
+              })}
             </div>
-          </CardContent>
-        </Card>
+
+            <p className="mt-4 flex items-center gap-1.5 text-xs text-muted-foreground">
+              <ShieldCheck className="size-3.5 text-brand-green" aria-hidden />
+              Tasa oficial: {formatServi(rateServiPerUsd)} SERVI = $1 USD
+            </p>
+          </div>
+        </div>
       </motion.div>
 
       {/* Admin quick access */}
@@ -151,7 +154,7 @@ export function DashboardClient({
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }}>
           <Link
             href="/admin"
-            className="mt-4 flex items-center justify-between rounded-2xl border border-gold/25 bg-gold/5 px-5 py-3.5 transition-colors hover:bg-gold/10"
+            className="glow-card mt-4 flex items-center justify-between rounded-2xl border-gold/25 bg-gold/5 px-5 py-3.5 transition-colors hover:bg-gold/10"
           >
             <span className="flex items-center gap-2.5 text-sm font-medium text-gold-bright">
               <ShieldCheck className="size-4" />
@@ -186,7 +189,7 @@ export function DashboardClient({
         </div>
 
         {recent.length === 0 ? (
-          <Card className="border-dashed border-white/15 bg-card/50">
+          <Card className="glow-card border-dashed border-white/15 bg-card/50">
             <CardContent className="flex flex-col items-center justify-center gap-3 p-10 text-center">
               <span className="flex size-14 items-center justify-center rounded-2xl bg-gold/10 text-gold">
                 <Coins className="size-7" aria-hidden />
@@ -205,7 +208,7 @@ export function DashboardClient({
             </CardContent>
           </Card>
         ) : (
-          <Card className="overflow-hidden border-white/10 bg-card">
+          <Card className="glow-card overflow-hidden border-white/10 bg-card">
             <ul className="divide-y divide-white/5">
               {recent.map((entry) => {
                 const positive = POSITIVE_TYPES.has(entry.type);

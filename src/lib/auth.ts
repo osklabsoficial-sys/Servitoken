@@ -22,6 +22,7 @@ export interface SessionUser {
   email: string;
   role: string;
   status: string;
+  createdAt?: Date;
 }
 
 /* ------------------------- Contraseñas ------------------------- */
@@ -113,6 +114,7 @@ export async function getSessionUser(): Promise<SessionUser | null> {
     email: session.user.email,
     role: session.user.role,
     status: session.user.status,
+    createdAt: session.user.createdAt,
   };
 }
 

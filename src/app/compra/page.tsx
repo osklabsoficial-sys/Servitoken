@@ -3,7 +3,10 @@ import { redirect } from "next/navigation";
 import { getSessionUser } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { getServiPerUsd } from "@/lib/ledger";
-import { getEnabledPaymentMethods } from "@/lib/payment-methods";
+import { getPaymentMethods } from "@/lib/payment-methods";
+import { AppHeader } from "@/components/app/app-header";
+import { AppFooter } from "@/components/app/app-footer";
+import { AuroraBackground } from "@/components/app/aurora-background";
 import { CompraClient } from "./compra-client";
 
 export const metadata: Metadata = {
@@ -45,15 +48,21 @@ export default async function CompraPage() {
     getServiPerUsd(),
   ]);
 
-  // Solo se anuncian los métodos realmente configurados en el servidor.
-  const methods = getEnabledPaymentMethods();
-
   return (
-    <CompraClient
-      username={user.username}
-      balance={wallet?.balance ?? 0}
-      rateServiPerUsd={rate}
-      methods={methods}
-    />
+    <div className="relative flex min-h-screen flex-col bg-background">
+      <AuroraBackground />
+      <AppHeader user={user} />
+      <main className="flex-1">
+        <CompraClient
+          username={user.username}
+          userId={user.id}
+          balance={wallet?.balance ?? 0}
+          rateServiPerUsd={rate}
+          memberSince={user.createdAt ?? null}
+          methods={getPaymentMethods()}
+        />
+      </main>
+      <AppFooter />
+    </div>
   );
 }

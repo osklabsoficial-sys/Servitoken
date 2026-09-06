@@ -13,9 +13,9 @@ import {
   ExternalLink,
   Info,
   Loader2,
+  Lock,
   RefreshCw,
   ShieldCheck,
-  Wallet,
   XCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -25,6 +25,13 @@ import { Badge } from "@/components/ui/badge";
 import { ConnectWallet } from "@/components/landing/connect-wallet";
 import { SwapPanel } from "@/components/landing/swap-panel";
 import { PancakeSwapLogo } from "@/components/landing/brand-logos";
+import { ServiCard } from "@/components/app/servi-card";
+import {
+  ApplePayFullLogo,
+  GooglePayFullLogo,
+  PayPalFullLogo,
+  PayPalMark,
+} from "@/components/brand/payment-logos";
 import { formatServi, formatUsd, formatDateTime } from "@/lib/format";
 import type { PaymentMethodInfo } from "@/lib/payment-methods";
 
@@ -63,18 +70,45 @@ interface RecentPurchase {
 type Phase = "idle" | "processing" | "success" | "cancelled" | "error";
 
 /* ------------------------------------------------------------------ */
+/*  Logo oficial por método                                            */
+/* ------------------------------------------------------------------ */
+
+function MethodBrandLogo({
+  brandKey,
+  className = "size-5",
+}: {
+  brandKey: PaymentMethodInfo["brandKey"];
+  className?: string;
+}) {
+  switch (brandKey) {
+    case "paypal":
+      return <PayPalMark className={className} />;
+    case "onchain":
+      return <Blocks className={className} aria-hidden />;
+    case "googlepay":
+      return <GooglePayFullLogo className="h-5 w-auto" />;
+    case "applepay":
+      return <ApplePayFullLogo className="h-5 w-auto" />;
+  }
+}
+
+/* ------------------------------------------------------------------ */
 /*  Componente principal                                               */
 /* ------------------------------------------------------------------ */
 
 export function CompraClient({
   username,
+  userId,
   balance: initialBalance,
   rateServiPerUsd,
+  memberSince,
   methods,
 }: {
   username: string;
+  userId: string;
   balance: number;
   rateServiPerUsd: number;
+  memberSince: Date | null;
   methods: PaymentMethodInfo[];
 }) {
   const router = useRouter();
@@ -93,14 +127,22 @@ export function CompraClient({
   const [quoteLoading, setQuoteLoading] = useState(false);
 
   /* ---------------------- Método de pago ----------------------- */
-  const paypalMethod = methods.find((m) => m.id === "paypal");
-  const onchainMethod = methods.find((m) => m.id === "onchain");
-  const otherMethods = methods.filter(
+  const enabledMethods = methods.filter((m) => m.enabled);
+  const paypalMethod = enabledMethods.find((m) => m.id === "paypal");
+  const onchainMethod = enabledMethods.find((m) => m.id === "onchain");
+  const otherMethods = enabledMethods.filter(
     (m) => m.id !== "paypal" && m.id !== "onchain"
   );
+
   const [methodId, setMethodId] = useState<string>(
-    paypalMethod ? "paypal" : onchainMethod ? "onchain" : (methods[0]?.id ?? "")
+    paypalMethod
+      ? "paypal"
+      : onchainMethod
+        ? "onchain"
+        : (enabledMethods[0]?.id ?? "")
   );
+  const selectedMethod = methods.find((m) => m.id === methodId);
+  const selectedIsEnabled = selectedMethod?.enabled ?? false;
 
   /* ------------------------ SDK PayPal ------------------------- */
   const [sdkConfig, setSdkConfig] = useState<PaypalSdkConfig | null>(null);
@@ -269,7 +311,7 @@ export function CompraClient({
           color: "gold",
           shape: "rect",
           label: "paypal",
-          height: 46,
+          height: 48,
         },
         createOrder: async () => {
           const tokens = amountRef.current;
@@ -340,7 +382,6 @@ export function CompraClient({
   }
 
   const usdLocal = amount !== null ? amount / rateServiPerUsd : null;
-  const selectedMethod = methods.find((m) => m.id === methodId);
 
   /* --------------------- Pantalla de éxito --------------------- */
 
@@ -351,9 +392,9 @@ export function CompraClient({
           initial={{ opacity: 0, scale: 0.96 }}
           animate={{ opacity: 1, scale: 1 }}
         >
-          <Card className="border-brand-green/30 bg-card">
+          <div className="glow-card rounded-2xl border-brand-green/30">
             <CardContent className="flex flex-col items-center gap-4 p-8 text-center sm:p-10">
-              <span className="flex size-16 items-center justify-center rounded-full bg-brand-green/15 text-brand-green ring-1 ring-brand-green/30">
+              <span className="flex size-16 items-center justify-center rounded-full bg-brand-green/15 text-brand-green ring-1 ring-brand-green/30 shadow-[0_0_30px_-6px_rgba(45,212,167,0.6)]">
                 <BadgeCheck className="size-9" aria-hidden />
               </span>
               <h1 className="text-2xl font-bold text-foreground">
@@ -381,7 +422,7 @@ export function CompraClient({
                 </Button>
               </div>
             </CardContent>
-          </Card>
+          </div>
         </motion.div>
       </div>
     );
@@ -391,67 +432,62 @@ export function CompraClient({
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-      >
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-              Comprar SERVI
-            </h1>
-            <p className="mt-1.5 max-w-2xl text-sm text-muted-foreground">
-              Hola{" "}
-              <span className="font-medium text-foreground">@{username}</span>,
-              elige la cantidad de SERVI que quieres agregar a tu billetera
-              interna. El precio se calcula en el servidor con la tasa oficial (
-              {formatServi(rateServiPerUsd)} SERVI = $1 USD).
+      {/* ==================== HERO: título + tarjeta SERVI ==================== */}
+      <div className="grid items-center gap-8 lg:grid-cols-[1fr_380px]">
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          <Badge
+            variant="outline"
+            className="border-gold/30 bg-gold/10 text-[10px] font-semibold uppercase tracking-wider text-gold-bright"
+          >
+            <Coins className="size-3" /> Billetera interna SERVI
+          </Badge>
+          <h1 className="mt-3 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+            Comprar SERVI
+          </h1>
+          <p className="mt-1.5 max-w-xl text-sm text-muted-foreground">
+            Hola{" "}
+            <span className="font-medium text-foreground">@{username}</span>,
+            elige la cantidad de SERVI que quieres agregar a tu tarjeta. El
+            precio se calcula en el servidor con la tasa oficial (
+            {formatServi(rateServiPerUsd)} SERVI = $1 USD).
+          </p>
+
+          <div className="mt-5 flex flex-wrap items-center gap-3">
+            <Button
+              asChild
+              size="sm"
+              className="bg-gradient-to-r from-electric to-electric-bright text-white shadow-[0_8px_24px_-10px_rgba(46,107,255,0.8)] hover:opacity-95"
+            >
+              <Link href="/inicio">
+                <ArrowRight className="size-4" /> Ir a mi panel
+              </Link>
+            </Button>
+            <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <ShieldCheck className="size-3.5 text-brand-green" aria-hidden />
+              Compra protegida y verificada por el servidor
             </p>
           </div>
-          <Button
-            asChild
-            variant="outline"
-            size="sm"
-            className="border-white/15"
-          >
-            <Link href="/inicio">
-              <ArrowRight className="size-4" /> Ir a mi panel
-            </Link>
-          </Button>
-        </div>
-      </motion.div>
+        </motion.div>
 
-      {/* Saldo actual */}
-      <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.04 }}
-        className="mt-6"
-      >
-        <Card className="border-gold/20 bg-gradient-to-r from-gold/10 via-card to-card">
-          <CardContent className="flex flex-wrap items-center justify-between gap-4 p-5">
-            <div className="flex items-center gap-3">
-              <span className="flex size-11 items-center justify-center rounded-xl bg-gold/15 text-gold ring-1 ring-gold/25">
-                <Coins className="size-5" aria-hidden />
-              </span>
-              <div>
-                <p className="text-xs uppercase tracking-wider text-muted-foreground">
-                  Tu saldo actual
-                </p>
-                <p className="text-xl font-bold text-gold-bright">
-                  {formatServi(balance)} SERVI
-                </p>
-              </div>
-            </div>
-            <p className="text-sm text-muted-foreground">
-              ≈ ${formatUsd(balance / rateServiPerUsd)}{" "}
-              <span className="text-xs">USD</span>
-            </p>
-          </CardContent>
-        </Card>
-      </motion.div>
+        <motion.div
+          initial={{ opacity: 0, y: 16, rotate: -1 }}
+          animate={{ opacity: 1, y: 0, rotate: 0 }}
+          transition={{ delay: 0.08, duration: 0.5 }}
+        >
+          <ServiCard
+            username={username}
+            userId={userId}
+            balance={balance}
+            rateServiPerUsd={rateServiPerUsd}
+            memberSince={memberSince ?? undefined}
+          />
+        </motion.div>
+      </div>
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-[1.1fr_1fr]">
+      <div className="mt-8 grid gap-6 lg:grid-cols-[1.1fr_1fr]">
         {/* Columna izquierda: cantidad + método + checkout */}
         <div className="flex flex-col gap-6">
           {/* Paso 1 · Cantidad */}
@@ -460,7 +496,7 @@ export function CompraClient({
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.06 }}
           >
-            <Card className="border-white/10 bg-card">
+            <div className="glow-card rounded-2xl">
               <CardContent className="p-6">
                 <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
                   1 · Elige tu cantidad
@@ -477,7 +513,7 @@ export function CompraClient({
                         aria-pressed={active}
                         className={`rounded-2xl border p-4 text-center transition-all hover:-translate-y-0.5 ${
                           active
-                            ? "border-gold/60 bg-gold/10 shadow-[0_8px_24px_-10px_rgba(212,176,106,0.5)]"
+                            ? "border-gold/60 bg-gold/10 shadow-[0_8px_24px_-10px_rgba(212,176,106,0.55),0_0_24px_-6px_rgba(212,176,106,0.35)]"
                             : "border-white/10 bg-white/5 hover:bg-white/10"
                         }`}
                       >
@@ -530,16 +566,16 @@ export function CompraClient({
                   )}
                 </div>
               </CardContent>
-            </Card>
+            </div>
           </motion.div>
 
-          {/* Paso 2 · Método de pago (solo métodos configurados) */}
+          {/* Paso 2 · Método de pago (logos oficiales + estado real) */}
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.08 }}
           >
-            <Card className="border-white/10 bg-card">
+            <div className="glow-card rounded-2xl">
               <CardContent className="p-6">
                 <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
                   2 · Método de pago
@@ -548,52 +584,58 @@ export function CompraClient({
                 <div className="mt-4 flex flex-col gap-2.5" role="radiogroup" aria-label="Métodos de pago disponibles">
                   {methods.map((m) => {
                     const active = methodId === m.id;
-                    const isPaypal = m.id === "paypal";
-                    const isOnchain = m.id === "onchain";
+                    const disabled = !m.enabled;
                     return (
                       <button
                         key={m.id}
                         type="button"
                         role="radio"
                         aria-checked={active}
+                        aria-disabled={disabled}
                         onClick={() => {
+                          if (disabled) return;
                           setMethodId(m.id);
                           resetFlow();
                         }}
                         className={`flex items-center gap-3.5 rounded-2xl border p-4 text-left transition-all ${
-                          active
-                            ? "border-electric/60 bg-electric/10"
-                            : "border-white/10 bg-white/5 hover:bg-white/10"
+                          disabled
+                            ? "cursor-not-allowed border-white/[0.06] bg-white/[0.02] opacity-55"
+                            : active
+                              ? "border-electric/60 bg-electric/10 shadow-[0_0_28px_-8px_rgba(46,107,255,0.5)]"
+                              : "border-white/10 bg-white/5 hover:bg-white/10"
                         }`}
                       >
                         <span
                           className={`flex size-10 shrink-0 items-center justify-center rounded-xl ring-1 ${
-                            isPaypal
+                            m.brandKey === "paypal"
                               ? "bg-white text-[#003087] ring-white/20"
-                              : "bg-amber-400/10 text-amber-300 ring-amber-400/20"
+                              : m.brandKey === "googlepay" || m.brandKey === "applepay"
+                                ? "bg-white ring-white/20"
+                                : "bg-amber-400/10 text-amber-300 ring-amber-400/20"
                           }`}
                         >
-                          {isPaypal ? (
-                            <svg viewBox="0 0 24 24" className="size-5" fill="currentColor" aria-hidden>
-                              <path d="M7.076 21.337H2.47a.64.64 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106zm14.146-14.42a3.35 3.35 0 0 0-.607-.541c-.013.076-.026.175-.041.254-.93 4.778-4.005 7.201-9.138 7.201h-2.19a.563.563 0 0 0-.556.479l-1.187 7.527h-.506l-.24 1.516a.56.56 0 0 0 .554.647h3.882c.46 0 .85-.334.922-.788.06-.26.76-4.852.816-5.09a.932.932 0 0 1 .923-.788h.58c3.76 0 6.705-1.528 7.565-5.946.36-1.847.174-3.388-.777-4.471z" />
-                            </svg>
-                          ) : isOnchain ? (
-                            <Blocks className="size-5" aria-hidden />
-                          ) : (
-                            <Wallet className="size-5" aria-hidden />
-                          )}
+                          <MethodBrandLogo brandKey={m.brandKey} />
                         </span>
                         <span className="min-w-0 flex-1">
-                          <span className="flex items-center gap-2">
+                          <span className="flex flex-wrap items-center gap-2">
                             <span className="text-sm font-semibold text-foreground">
                               {m.name}
                             </span>
-                            <Badge
-                              variant="outline"
-                              className="border-brand-green/30 bg-brand-green/10 px-1.5 py-0 text-[9px] font-semibold text-brand-green"
-                            >
-                              <ShieldCheck className="size-2.5" /> Disponible
-                            </Badge>
+                            {m.enabled ? (
+                              <Badge
+                                variant="outline"
+                                className="border-brand-green/30 bg-brand-green/10 px-1.5 py-0 text-[9px] font-bold uppercase tracking-wide text-brand-green"
+                              >
+                                <ShieldCheck className="size-2.5" /> Configurado
+                              </Badge>
+                            ) : (
+                              <Badge
+                                variant="outline"
+                                className="border-gold/30 bg-gold/10 px-1.5 py-0 text-[9px] font-bold uppercase tracking-wide text-gold-bright"
+                              >
+                                <Lock className="size-2.5" /> Pendiente
+                              </Badge>
+                            )}
                           </span>
                           <span className="mt-0.5 block text-xs text-muted-foreground">
                             {m.description}
@@ -612,14 +654,25 @@ export function CompraClient({
                   })}
                 </div>
 
-                {otherMethods.length === 0 && (
+                {enabledMethods.length === 0 && (
+                  <p className="mt-3 flex items-center gap-1.5 rounded-xl border border-gold/25 bg-gold/10 px-3.5 py-2.5 text-xs text-gold-bright">
+                    <Info className="size-3.5 shrink-0" aria-hidden />
+                    Ningún método está configurado todavía en el servidor. El
+                    administrador debe activar sus credenciales.
+                  </p>
+                )}
+                {methods.some((m) => !m.enabled) && (
                   <p className="mt-3 text-[11px] text-muted-foreground">
-                    Solo se muestran los métodos realmente configurados y
-                    disponibles en el servidor.
+                    Los métodos marcados como{" "}
+                    <span className="font-semibold text-gold-bright">
+                      Pendiente
+                    </span>{" "}
+                    se activarán automáticamente cuando el administrador añada
+                    sus credenciales en el servidor.
                   </p>
                 )}
               </CardContent>
-            </Card>
+            </div>
           </motion.div>
 
           {/* Paso 3 · Checkout */}
@@ -628,22 +681,63 @@ export function CompraClient({
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
           >
-            <Card className="border-white/10 bg-card">
+            <div className="glow-card rounded-2xl">
               <CardContent className="p-6">
                 <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
                   3 · Completa el pago
                 </h2>
 
-                {amount === null && (
+                {amount === null && selectedIsEnabled && (
                   <div className="mt-4 flex items-center gap-2 rounded-xl border border-gold/25 bg-gold/10 px-3.5 py-3 text-xs text-gold-bright">
                     <Info className="size-3.5 shrink-0" aria-hidden />
                     Selecciona una cantidad válida para continuar.
                   </div>
                 )}
 
-                {amount !== null && methodId === "paypal" && (
+                {/* --- Método pendiente: nunca seleccionable --- */}
+                {amount !== null && !selectedIsEnabled && (
+                  <div className="mt-4 flex items-start gap-2.5 rounded-xl border border-gold/25 bg-gold/10 px-4 py-3.5 text-sm text-gold-bright">
+                    <Lock className="mt-0.5 size-4 shrink-0" aria-hidden />
+                    <span>
+                      {selectedMethod?.name} está pendiente de configuración.
+                      Solo los métodos con el sello{" "}
+                      <span className="font-semibold">CONFIGURADO</span> pueden
+                      procesar pagos.
+                    </span>
+                  </div>
+                )}
+
+                {/* ==================== PAYPAL ==================== */}
+                {amount !== null && selectedIsEnabled && methodId === "paypal" && (
                   <>
-                    <div className="mt-4 flex items-center gap-2 rounded-xl border border-brand-green/20 bg-brand-green/5 px-3.5 py-2.5 text-xs text-brand-green">
+                    {/* Cabecera oficial PayPal */}
+                    <div className="mt-4 flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3">
+                      <div className="flex items-center gap-3">
+                        <span className="flex size-9 items-center justify-center rounded-lg bg-white ring-1 ring-white/20">
+                          <PayPalMark className="size-5" />
+                        </span>
+                        <div>
+                          <p className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                            Pagar con PayPal
+                            <Badge
+                              variant="outline"
+                              className="border-brand-green/30 bg-brand-green/10 px-1.5 py-0 text-[9px] font-bold uppercase tracking-wide text-brand-green"
+                            >
+                              <ShieldCheck className="size-2.5" /> Configurado
+                            </Badge>
+                          </p>
+                          <p className="text-[11px] text-muted-foreground">
+                            Total a pagar:{" "}
+                            <span className="font-semibold text-foreground">
+                              ${quote ?? (usdLocal !== null ? formatUsd(usdLocal) : "—")} USD
+                            </span>
+                          </p>
+                        </div>
+                      </div>
+                      <PayPalFullLogo className="hidden h-7 w-auto sm:block" />
+                    </div>
+
+                    <div className="mt-3 flex items-center gap-2 rounded-xl border border-brand-green/20 bg-brand-green/5 px-3.5 py-2.5 text-xs text-brand-green">
                       <ShieldCheck className="size-3.5 shrink-0" aria-hidden />
                       Pago real y seguro con PayPal · Protección al comprador
                     </div>
@@ -720,7 +814,7 @@ export function CompraClient({
                           </p>
                         </div>
                       ) : !sdkReady ? (
-                        <div className="flex h-[46px] items-center justify-center rounded-md border border-white/10 bg-white/5 text-sm text-muted-foreground">
+                        <div className="flex h-12 items-center justify-center rounded-md border border-white/10 bg-white/5 text-sm text-muted-foreground">
                           <Loader2
                             className="mr-2 size-4 animate-spin"
                             aria-hidden
@@ -744,7 +838,8 @@ export function CompraClient({
                   </>
                 )}
 
-                {amount !== null && methodId === "onchain" && (
+                {/* ==================== ON-CHAIN ==================== */}
+                {amount !== null && selectedIsEnabled && methodId === "onchain" && (
                   <div className="mt-4">
                     <div className="flex items-start gap-3 rounded-xl border border-amber-400/20 bg-amber-400/5 px-4 py-3.5">
                       <PancakeSwapLogo className="mt-0.5 size-6 shrink-0" />
@@ -773,18 +868,8 @@ export function CompraClient({
                     </Button>
                   </div>
                 )}
-
-                {amount !== null &&
-                  selectedMethod &&
-                  !["paypal", "onchain"].includes(selectedMethod.id) && (
-                    <div className="mt-4 flex items-start gap-2.5 rounded-xl border border-gold/25 bg-gold/10 px-4 py-3.5 text-sm text-gold-bright">
-                      <AlertTriangle className="mt-0.5 size-4 shrink-0" aria-hidden />
-                      El método {selectedMethod.name} aún no tiene checkout
-                      integrado en el servidor.
-                    </div>
-                  )}
               </CardContent>
-            </Card>
+            </div>
           </motion.div>
         </div>
 
@@ -795,7 +880,7 @@ export function CompraClient({
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.08 }}
           >
-            <Card className="border-white/10 bg-card">
+            <div className="glow-card rounded-2xl">
               <CardContent className="p-6">
                 <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
                   Resumen del pedido
@@ -820,7 +905,7 @@ export function CompraClient({
                       <Loader2 className="size-3 animate-spin" aria-hidden />
                     )}
                   </span>
-                  <span className="text-lg font-bold text-gold-bright">
+                  <span className="text-lg font-bold text-gold-bright drop-shadow-[0_2px_12px_rgba(212,176,106,0.35)]">
                     ${quote ?? (usdLocal !== null ? formatUsd(usdLocal) : "—")}{" "}
                     <span className="text-xs font-medium text-muted-foreground">
                       USD
@@ -833,7 +918,7 @@ export function CompraClient({
                   al crear la orden (protección anti manipulación de precios).
                 </p>
               </CardContent>
-            </Card>
+            </div>
           </motion.div>
 
           <motion.div
@@ -841,7 +926,7 @@ export function CompraClient({
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.12 }}
           >
-            <Card className="border-white/10 bg-card">
+            <div className="glow-card rounded-2xl">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
@@ -896,19 +981,19 @@ export function CompraClient({
                   </ul>
                 )}
               </CardContent>
-            </Card>
+            </div>
           </motion.div>
 
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.16 }}
-            className="rounded-2xl border border-white/10 bg-card/60 p-4 text-xs leading-relaxed text-muted-foreground"
+            className="glow-card rounded-2xl p-4 text-xs leading-relaxed text-muted-foreground"
           >
             <p className="font-semibold text-foreground">¿Cómo funciona?</p>
             <ol className="mt-1.5 list-inside list-decimal space-y-1">
               <li>Elige la cantidad de SERVI (mínimo {MIN_TOKENS}).</li>
-              <li>Selecciona un método de pago disponible y completa el checkout.</li>
+              <li>Selecciona un método con sello CONFIGURADO y completa el checkout.</li>
               <li>
                 El servidor verifica el pago con la pasarela y acredita tu saldo
                 al instante — exactamente una vez.

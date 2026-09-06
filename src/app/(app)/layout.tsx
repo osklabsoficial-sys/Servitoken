@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import { getSessionUser } from "@/lib/auth";
 import { AppHeader } from "@/components/app/app-header";
 import { AppFooter } from "@/components/app/app-footer";
+import { AuroraBackground } from "@/components/app/aurora-background";
 
 /**
  * Layout de todas las rutas privadas.
@@ -33,9 +34,10 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-background">
+    <div className="relative flex min-h-screen flex-col bg-background">
+      <AuroraBackground />
       <AppHeader user={user} />
-      <main className="flex-1">{children}</main>
+      <main className="relative z-10 flex-1">{children}</main>
       <AppFooter />
     </div>
   );

@@ -95,3 +95,33 @@ Stage Summary:
 - Un solo fix en src/lib/auth.ts::isSameOrigin() desbloquea los 12 endpoints POST del proyecto
 - La protección anti-CSRF se mantiene (orígenes maliciosos siguen en 403)
 - Registro, login y logout verificados end-to-end desde el mismo dominio de preview que usa el usuario
+
+---
+Task ID: compra-redesign-paypal
+Agent: Z.ai Code (main)
+Task: Botones PAGAR CON PAYPAL con badges CONFIGURADO + logos oficiales en /compra; auroras de fondo; tarjetas con brillo; saldo como tarjeta de crédito SERVI con datos de cuenta
+
+Work Log:
+- globals.css: añadidas utilidades aurora (aurora-scene/blob-a/b/c con keyframes drift), glow-card (borde + glow hover + sheen), servi-card (gradiente navy/electric/gold, chip EMV, holograma, tilt hover), card-sheen, reduced-motion respetado
+- src/components/brand/payment-logos.tsx (nuevo): PayPalMark (monograma bicolor oficial #003087/#009CDE), PayPalFullLogo (con wordmark), GooglePayFullLogo (G oficial 4 colores), ApplePayFullLogo, ContactlessIcon (NFC), EmvChip
+- src/components/app/servi-card.tsx (nuevo): tarjeta de crédito virtual SERVI — chip EMV, NFC, número de cuenta enmascarado derivado del userId (cosmético), titular @usuario, saldo SERVI + equivalente USD, estado ACTIVA + año de alta
+- src/components/app/aurora-background.tsx (nuevo): capa de auroras reutilizable (fixed, pointer-events-none, z-index -10)
+- src/lib/payment-methods.ts: añadido brandKey por método; el frontend puede listar métodos no configurados como PENDIENTE pero jamás seleccionables
+- src/app/compra/page.tsx: ahora envuelta con AppHeader + AppFooter + AuroraBackground; pasa userId/memberSince y TODOS los métodos (con flag enabled)
+- src/app/compra/compra-client.tsx: rediseño completo — hero con tarjeta SERVI, selector de métodos con logos oficiales + badge CONFIGURADO (verde) / PENDIENTE (dorado, bloqueado aria-disabled), paso 3 PayPal con cabecera "Pagar con PayPal" + badge CONFIGURADO + total, SDK oficial PayPal (gold, label paypal), toda la lógica previa conservada (quote, create/capture, success/cancel/error, on-chain PancakeSwap)
+- (app)/layout.tsx + /compra: aurora de fondo en todos los paneles privados
+- (app)/inicio/dashboard-client.tsx: saldo reemplazado por tarjeta SERVI + acciones rápidas; tarjetas con glow-card
+- src/lib/auth.ts: SessionUser ahora incluye createdAt (para "ACTIVA · año" de la tarjeta)
+- src/components/app/app-footer.tsx: bugfix clase rota pb-ax(...) → pb-[max(1.25rem,env(safe-area-inset-bottom))]
+- src/app/layout.tsx: data-scroll-behavior="smooth" en <html> (warning Next.js)
+- .env.example (nuevo) + .env: placeholders PayPal comentados (CLIENT_ID/SECRET/WEBHOOK_ID/ENV/ENABLED) — al rellenar credenciales PayPal aparece CONFIGURADO sin cambios de código
+- Fix infra: el dev server estaba stale (servía CSS viejo sin las clases nuevas); reinicio con (nohup bash scripts/dev.sh &) — PM2 ya no existe como binario global
+- Verificado E2E por dominio preview: /compra con método BNB CONFIGURADO + 3 PENDIENTE; con credenciales dummy PayPal pasa a CONFIGURADO y muestra cabecera oficial "Pagar con PayPal" + total; SDK falso → error elegante; credenciales revertidas a vacío al final
+- Registro→/compra via ?returnTo=%2Fcompra verificado; móvil 390px y desktop 1280px OK; footer sticky OK
+- Limpieza: usuarios de prueba (design_qa) eliminados; lint 0 errores (1 warning preexistente en empty-modules)
+
+Stage Summary:
+- /compra = checkout central con auroras, glow, tarjeta de crédito SERVI y logos oficiales
+- PayPal aparece PENDIENTE hasta que el dueño pegue sus credenciales reales en .env (regla: no mostrar como disponible lo no configurado); al rellenarlas aparece CONFIGURADO con botón SDK oficial automáticamente
+- Card SERVI reutilizable en /inicio y /compra
+- Issue preexistente detectado: hydration warning de Radix DropdownMenu en AppHeader (dev-only, benigno, el menú funciona) — no se tocó para no romperlo

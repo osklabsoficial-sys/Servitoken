@@ -26,10 +26,12 @@ export default async function InicioPage() {
   return (
     <DashboardClient
       username={user.username}
+      userId={user.id}
       email={user.email}
       isAdmin={user.role === "ADMIN" || user.role === "SUPER_ADMIN"}
       balance={wallet?.balance ?? 0}
       rateServiPerUsd={rate}
+      memberSince={user.createdAt ?? null}
       recent={recent.map((e) => ({
         id: e.id,
         type: e.type,

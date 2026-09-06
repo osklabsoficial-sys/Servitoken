@@ -14,6 +14,9 @@
  *      ONCHAIN_ENABLED=false   → oculta la compra on-chain (BSC)
  *      GOOGLEPAY_ENABLED=true  → activa Google Pay (requiere integración)
  *      APPLEPAY_ENABLED=true   → activa Apple Pay (requiere integración)
+ *  - El frontend puede mostrar métodos `knownButDisabled` con el
+ *    badge PENDIENTE, pero JAMÁS se pueden seleccionar ni usar:
+ *    el servidor es la autoridad final en cada endpoint.
  * ============================================================
  */
 
@@ -30,8 +33,10 @@ export interface PaymentMethodInfo {
   provider: string;
   /** Moneda(s) soportadas */
   currency: string;
-  /** true ⇒ aparece en /compra como disponible */
+  /** true ⇒ seleccionable y usable en /compra */
   enabled: boolean;
+  /** Clave de marca para el logo oficial en el frontend */
+  brandKey: "paypal" | "onchain" | "googlepay" | "applepay";
 }
 
 export function getPaymentMethods(): PaymentMethodInfo[] {
@@ -53,6 +58,7 @@ export function getPaymentMethods(): PaymentMethodInfo[] {
       provider: "PayPal",
       currency: "USD",
       enabled: paypalEnabled,
+      brandKey: "paypal",
     },
     {
       id: "onchain",
@@ -62,22 +68,25 @@ export function getPaymentMethods(): PaymentMethodInfo[] {
       provider: "PancakeSwap",
       currency: "BNB · USDT",
       enabled: onchainEnabled,
+      brandKey: "onchain",
     },
     {
       id: "googlepay",
       name: "Google Pay",
-      description: "Pago directo con tu cuenta Google. Próximamente.",
+      description: "Pago directo con tu cuenta Google. Requiere activación del servidor.",
       provider: "Google",
       currency: "USD",
       enabled: googlePayEnabled,
+      brandKey: "googlepay",
     },
     {
       id: "applepay",
       name: "Apple Pay",
-      description: "Pago rápido y seguro con Apple. Próximamente.",
+      description: "Pago rápido y seguro con Apple. Requiere activación del servidor.",
       provider: "Apple",
       currency: "USD",
       enabled: applePayEnabled,
+      brandKey: "applepay",
     },
   ];
 }
