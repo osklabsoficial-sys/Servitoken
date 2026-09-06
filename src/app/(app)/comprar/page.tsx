@@ -1,17 +1,17 @@
 import type { Metadata } from "next";
-import { getSessionUser } from "@/lib/auth";
-import { getServiPerUsd } from "@/lib/ledger";
-import { ComprarClient } from "./comprar-client";
+import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
-  title: "Comprar SERVI",
-  description: "Compra ServiToken (SERVI) con PayPal y recíbelo en tu billetera interna.",
+  title: "Comprar SERVI · Servitoken",
+  description:
+    "Compra ServiToken (SERVI) desde la experiencia centralizada de compra.",
 };
 
-export default async function ComprarPage() {
-  const user = await getSessionUser();
-  if (!user) redirect("/login");
-  const rate = await getServiPerUsd();
-
-  return <ComprarClient rateServiPerUsd={rate} username={user.username} />;
+/**
+ * /comprar ahora redirige a la experiencia centralizada de compra:
+ * /compra (ruta privada protegida por middleware y validación de sesión).
+ * Los enlaces antiguos siguen funcionando sin duplicar sistemas.
+ */
+export default function ComprarRedirectPage() {
+  redirect("/compra");
 }

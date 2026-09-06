@@ -94,7 +94,7 @@ export function HeroSection() {
                 size="lg"
                 className="h-12 bg-gradient-to-r from-electric to-electric-bright px-7 text-[15px] text-white shadow-[0_12px_36px_-10px_rgba(46,107,255,0.85)] transition-transform hover:-translate-y-0.5 hover:shadow-[0_18px_44px_-10px_rgba(46,107,255,0.9)]"
               >
-                <Link href="/comprar">
+                <Link href="/compra">
                   {hero.primaryCta}
                   <ArrowRight className="size-4" />
                 </Link>

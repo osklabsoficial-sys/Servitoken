@@ -27,8 +27,16 @@ function Rule({ ok, label }: { ok: boolean; label: string }) {
   );
 }
 
+/** Evita open-redirect: solo se aceptan rutas internas. */
+function safeReturnTo(raw: string | undefined): string {
+  if (!raw) return "/inicio";
+  if (!raw.startsWith("/") || raw.startsWith("//") || raw.includes("\\")) return "/inicio";
+  return raw;
+}
+
 export function RegistroForm({ next }: { next: string }) {
   const router = useRouter();
+  const target = safeReturnTo(next);
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -64,7 +72,7 @@ export function RegistroForm({ next }: { next: string }) {
         setError(data.message ?? "No se pudo crear la cuenta.");
         return;
       }
-      router.replace(next || "/inicio");
+      router.replace(target);
       router.refresh();
     } catch {
       setError("Error de conexión. Intenta de nuevo.");
@@ -195,7 +203,7 @@ export function RegistroForm({ next }: { next: string }) {
             <p className="mt-6 text-center text-sm text-muted-foreground">
               ¿Ya tienes cuenta?{" "}
               <Link
-                href="/login"
+                href={`/login?returnTo=${encodeURIComponent(target)}`}
                 className="font-semibold text-electric-bright transition-colors hover:text-electric"
               >
                 Inicia sesión

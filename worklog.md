@@ -55,3 +55,25 @@ Stage Summary:
 - V1 completa y verificada: registro/login → /inicio → comprar (PayPal) → saldo interno ledger → transferencias idempotentes → servicios → historial → admin con ajustes y tasa de precio
 - Seguridad: precios server-side, saldo nunca editable por frontend, anti doble acreditación (unique capture + claim atómico), anti-CSRF, rate limiting, auditoría de eventos, estados de cuenta (ACTIVE/BLOCKED/SUSPENDED) aplicados en todos los flujos financieros
 - Credenciales PayPal en .env (gitignored) + .env.example de plantilla; secret nunca expuesta al frontend (solo client ID público vía /api/payments/paypal/config)
+
+---
+Task ID: 4
+Agent: main
+Task: Capa de acceso obligatorio (login requerido) para todas las acciones privadas, financieras y funcionales de ServiToken
+
+Work Log:
+- Fase 1 (análisis): confirmado que auth/sesiones/APIs privadas/middleware/ledger/PayPal de la V1 ya estaban operativos (27 puntos de getSessionUser verificados por grep). Brechas detectadas: /compra pública, wallet-connect sin gate, header público sin saldo/menú, sin capa de configuración de métodos, sin returnTo
+- WP1: creada src/lib/payment-methods.ts (capa central: id/nombre/estado/moneda/proveedor; PayPal activo solo con credenciales + PAYPAL_ENABLED!=false; Google/Apple Pay solo con *_ENABLED=true → hoy ocultos)
+- WP2: /compra reescrita como experiencia central PRIVADA (src/app/compra/page.tsx server-side con getSessionUser + pantalla BLOCKED + saldo + métodos desde la capa central; compra-client.tsx nueva: saldo, presets 100/500/1000 + custom, quote del servidor, selector de métodos, flujo PayPal SDK→create→capture→"✅ Pago completado", sección on-chain con ConnectWallet+SwapPanel conservados, compras recientes). /comprar ahora redirige a /compra (comprar-client.tsx eliminado; lógica migrada)
+- WP3: proxy.ts añade /compra a PROTECTED_PREFIXES+matcher, emite returnTo= y header x-sv-path; (app)/layout.tsx redirige con returnTo leyendo x-sv-path
+- WP4: auth-required-dialog.tsx nuevo (modal "Necesitas una cuenta" con [Iniciar Sesión][Crear Cuenta] + returnTo); connect-wallet.tsx verifica sesión (cache + re-check en clic) ANTES de abrir WalletListModal/WcQrModal/MetaMask; wallet-provider.tsx solo rehidrata la wallet si hay sesión válida y hace disconnect() para visitantes; logout del header también desconecta la wallet
+- WP5: landing-auth-buttons.tsx ampliado: con sesión muestra chip de saldo SERVI en vivo + avatar con menú [Ir a mi panel][Cerrar sesión]; sin sesión [Iniciar Sesión][Crear Cuenta]; reset de estado tras logout
+- WP6: /login y /registro aceptan returnTo (y next retrocompatible) con sanitización anti open-redirect (solo rutas internas); los enlaces cruzados login↔registro preservan returnTo
+- WP7: CTAs unificados a /compra: site-header (2), hero-section, dashboard-client (2), app-header; swap-section con banner informativo "Compra con PayPal" → /compra; purchase-section actualizada (PayPal disponible) aunque era componente muerto
+- create-order: returnUrl/cancelUrl actualizados a /compra
+- Creado .env.example con plantilla PayPal + interruptores de métodos (sin secretos)
+
+Stage Summary:
+- Pruebas obligatorias ejecutadas: (1) visitante ve toda la landing ✓; (2) clic Conectar Wallet sin sesión → modal "Necesitas una cuenta", NUNCA abre MetaMask/WalletConnect (verificado en header, hero y SwapPanel) ✓; (3) /compra sin sesión → 307 /login?returnTo=%2Fcompra (también /inicio /historial /enviar /recibir /servicios /admin /comprar) ✓; (4) login desde returnTo → regresa a /compra ✓ (probado por UI dos veces); (5) /compra autenticado muestra saldo+presets+métodos+resumen+compras recientes ✓; (6) autenticado abre el modal de wallets ✓; (7) create-order/capture sin sesión → 401 ✓; (8) wallet/transactions/services/quote/transfers/services-pay sin sesión → 401, admin → 403 ✓; (9) userId SIEMPRE de session.id (body solo acepta tokensAmount) ✓; (10) secret solo en src/lib/paypal.ts (server), config endpoint expone solo clientId ✓; (11) creditPurchaseOnce con claim atómico updateMany + capture único = acreditación exactamente una vez ✓; (12) saldo se actualiza vía ledger atómico (acreditación real PayPal pendiente de credenciales válidas); (13) métodos configurados aparecen (BNB Smart Chain) ✓; (14) no configurados NO aparecen (PayPal oculto sin credenciales) ✓
+- BLOCKED aislado en create-order, transfers (emisor/receptor), services/pay ✓; lint 0 errores; responsive móvil 390px sin overflow-x ✓
+- Nota: PayPal se activará solo en /compra cuando se añadan PAYPAL_CLIENT_ID/PAYPAL_CLIENT_SECRET/PAYPAL_WEBHOOK_ID válidos al .env (sin cambios de código); servidor se estabilizó tras un reinicio por OOM puntual

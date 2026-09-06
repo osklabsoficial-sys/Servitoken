@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { ChevronDown, Wallet, LogOut, ArrowRightLeft, Copy, Check, WalletMinimal } from "lucide-react";
@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { useWalletStore } from "@/lib/wallet-store";
 import { WalletListModal } from "./wallet-list-modal";
 import { WcQrModal } from "./wc-qr-modal";
+import { AuthRequiredDialog } from "./auth-required-dialog";
 import { useWalletBalances } from "@/hooks/use-wallet-balances";
 
 const BSC_CHAIN_ID = 56;
@@ -23,7 +24,48 @@ export function ConnectWallet({ variant = "default", className = "" }: ConnectWa
 
   const [showWalletList, setShowWalletList] = useState(false);
   const [showWcQr, setShowWcQr] = useState(false);
+  const [showAuthDialog, setShowAuthDialog] = useState(false);
   const [copied, setCopied] = useState(false);
+
+  /* Estado de sesión cacheado: guest | authed | loading */
+  const [authState, setAuthState] = useState<"loading" | "guest" | "authed">("loading");
+
+  useEffect(function () {
+    let cancelled = false;
+    (async function () {
+      try {
+        const res = await fetch("/api/auth/me", { cache: "no-store" });
+        if (!cancelled) setAuthState(res.ok ? "authed" : "guest");
+      } catch {
+        if (!cancelled) setAuthState("guest");
+      }
+    })();
+    return function () { cancelled = true; };
+  }, []);
+
+  /**
+   * CAPA OBLIGATORIA DE AUTENTICACIÓN:
+   * nunca se abre MetaMask/WalletConnect ni ningún popup de conexión
+   * sin una sesión válida verificada en el servidor.
+   */
+  const requestOpenWalletList = useCallback(async function () {
+    if (authState === "authed") {
+      setShowWalletList(true);
+      return;
+    }
+    try {
+      const res = await fetch("/api/auth/me", { cache: "no-store" });
+      if (res.ok) {
+        setAuthState("authed");
+        setShowWalletList(true);
+        return;
+      }
+      setAuthState("guest");
+    } catch {
+      setAuthState("guest");
+    }
+    setShowAuthDialog(true);
+  }, [authState]);
 
   const handleConnectWallet = useCallback(async function () {
     try {
@@ -95,7 +137,7 @@ export function ConnectWallet({ variant = "default", className = "" }: ConnectWa
     );
   }
 
-  /* Not connected — opens Wallet List Modal */
+  /* Not connected — el clic pasa por el gate de sesión antes de abrir */
   const btnClass = variant === "hero"
     ? "w-full h-12 gap-2 text-sm font-medium"
     : "gap-2";
@@ -103,7 +145,7 @@ export function ConnectWallet({ variant = "default", className = "" }: ConnectWa
   return (
     <div className={className}>
       <Button
-        onClick={function () { setShowWalletList(true); }}
+        onClick={function () { void requestOpenWalletList(); }}
         variant={variant === "hero" ? "default" : "outline"}
         className={btnClass}
         disabled={isConnecting}
@@ -119,6 +161,11 @@ export function ConnectWallet({ variant = "default", className = "" }: ConnectWa
         onWalletConnectQR={function () { setShowWcQr(true); }}
       />
       <WcQrModal open={showWcQr} onClose={function () { setShowWcQr(false); }} />
+      <AuthRequiredDialog
+        open={showAuthDialog}
+        onOpenChange={setShowAuthDialog}
+        message="Para conectar una wallet primero debes iniciar sesión o crear una cuenta."
+      />
     </div>
   );
 }

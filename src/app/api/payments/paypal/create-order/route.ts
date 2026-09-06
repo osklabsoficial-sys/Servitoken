@@ -103,8 +103,8 @@ export async function POST(req: Request) {
     const order = await createOrder({
       usdAmount: usdFixed,
       referenceId: purchase.id,
-      returnUrl: `${origin}/comprar?paypal=return`,
-      cancelUrl: `${origin}/comprar?paypal=cancel`,
+      returnUrl: `${origin}/compra?paypal=return`,
+      cancelUrl: `${origin}/compra?paypal=cancel`,
     });
 
     await db.purchase.update({

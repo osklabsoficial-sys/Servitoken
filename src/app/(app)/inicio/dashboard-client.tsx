@@ -49,7 +49,7 @@ function typeAccent(type: string): string {
 
 const ACTIONS = [
   {
-    href: "/comprar",
+    href: "/compra",
     label: "Comprar SERVI",
     description: "Paga con PayPal",
     icon: ShoppingCart,
@@ -200,7 +200,7 @@ export function DashboardClient({
                 size="sm"
                 className="mt-1 bg-gradient-to-r from-electric to-electric-bright text-white hover:opacity-95"
               >
-                <Link href="/comprar">Comprar SERVI</Link>
+                <Link href="/compra">Comprar SERVI</Link>
               </Button>
             </CardContent>
           </Card>

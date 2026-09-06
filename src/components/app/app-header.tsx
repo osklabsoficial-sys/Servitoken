@@ -37,7 +37,7 @@ import type { SessionUser } from "@/lib/auth";
 
 const BASE_LINKS = [
   { href: "/inicio", label: "Inicio", icon: LayoutDashboard },
-  { href: "/comprar", label: "Comprar", icon: ShoppingCart },
+  { href: "/compra", label: "Comprar", icon: ShoppingCart },
   { href: "/enviar", label: "Enviar", icon: Send },
   { href: "/servicios", label: "Usar SERVI", icon: Sparkles },
   { href: "/historial", label: "Historial", icon: History },

@@ -11,6 +11,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Logo } from "@/components/landing/logo";
 
+/** Evita open-redirect: solo se aceptan rutas internas. */
+function safeReturnTo(raw: string | undefined): string {
+  if (!raw) return "/inicio";
+  if (!raw.startsWith("/") || raw.startsWith("//") || raw.includes("\\")) return "/inicio";
+  return raw;
+}
+
 export function LoginForm({ next }: { next: string }) {
   const router = useRouter();
   const [identifier, setIdentifier] = useState("");
@@ -18,7 +25,8 @@ export function LoginForm({ next }: { next: string }) {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [notice] = useState<boolean>(next !== "/inicio");
+  const target = safeReturnTo(next);
+  const [notice] = useState<boolean>(target !== "/inicio");
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -35,7 +43,7 @@ export function LoginForm({ next }: { next: string }) {
         setError(data.message ?? "No se pudo iniciar sesión.");
         return;
       }
-      router.replace(next || "/inicio");
+      router.replace(target);
       router.refresh();
     } catch {
       setError("Error de conexión. Intenta de nuevo.");
@@ -153,7 +161,7 @@ export function LoginForm({ next }: { next: string }) {
             <p className="mt-6 text-center text-sm text-muted-foreground">
               ¿No tienes cuenta?{" "}
               <Link
-                href="/registro"
+                href={`/registro?returnTo=${encodeURIComponent(target)}`}
                 className="font-semibold text-electric-bright transition-colors hover:text-electric"
               >
                 Regístrate gratis

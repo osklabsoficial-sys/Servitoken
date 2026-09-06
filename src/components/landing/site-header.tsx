@@ -73,7 +73,7 @@ export function SiteHeader() {
             size="sm"
             className="bg-gradient-to-r from-gold to-gold-bright text-navy shadow-[0_6px_20px_-8px_rgba(212,176,106,0.7)] hover:opacity-95"
           >
-            <Link href="/comprar">Comprar Servitoken</Link>
+            <Link href="/compra">Comprar Servitoken</Link>
           </Button>
         </div>
 
@@ -133,7 +133,7 @@ export function SiteHeader() {
                     asChild
                     className="w-full bg-gradient-to-r from-gold to-gold-bright text-navy"
                   >
-                    <Link href="/comprar">Comprar Servitoken</Link>
+                    <Link href="/compra">Comprar Servitoken</Link>
                   </Button>
                 </SheetClose>
               </div>

@@ -6,11 +6,16 @@ export const metadata: Metadata = {
   description: "Crea tu cuenta de ServiToken y empieza a usar tu billetera interna de SERVI.",
 };
 
+/**
+ * Ruta de destino tras registrarse: acepta `returnTo` (especificación)
+ * o `next` (retrocompatibilidad). Se sanitiza para evitar open-redirect.
+ */
 export default async function RegistroPage({
   searchParams,
 }: {
-  searchParams: Promise<{ next?: string }>;
+  searchParams: Promise<{ next?: string; returnTo?: string }>;
 }) {
-  const { next } = await searchParams;
-  return <RegistroForm next={next ?? "/inicio"} />;
+  const { next, returnTo } = await searchParams;
+  const target = returnTo ?? next ?? "/inicio";
+  return <RegistroForm next={target} />;
 }
