@@ -183,3 +183,22 @@ Work Log:
 Stage Summary:
 - Proyecto V1 funcionalmente completo: auth, PayPal backend completo, tarjeta METAL, mercado en vivo 5s, admin panel (users/purchases/ledger/services/transfers/config/stats/adjustments), referral
 - Gaps reales detectados: (1) credenciales PayPal reales pendientes de pegar por el dueño; (2) sin prueba E2E sandbox hasta tener credenciales; (3) usuarios de prueba con saldo (juan_test) por limpiar antes de producción; (4) gap de diseño: compras on-chain en PancakeSwap no acreditan saldo interno de la plataforma
+
+---
+Task ID: paypal-live-activation
+Agent: Z.ai Code (main)
+Task: Activar PayPal LIVE con credenciales reales aportadas por el dueño
+
+Work Log:
+- Seguridad verificada ANTES de escribir: .env en .gitignore (líneas 34/57), git no lo trackea ni lista cambios
+- Escritas en .env: PAYPAL_ENV=live, PAYPAL_ENABLED=true, CLIENT_ID + SECRET + WEBHOOK_ID vacío
+- Smoke test OAuth directo contra api-m.paypal.com → 401 invalid_client (3 reintentos en 50s)
+- Diagnóstico: mismas credenciales contra sandbox → 401; longitudes 82/80 (formato PayPal correcto); sin caracteres invisibles → el par ID+Secret no existe en PayPal (copia incorrecta, apps mezcladas o cuenta sin confirmar)
+- Aplicada regla del proyecto: credenciales comentadas en .env para mantener estado honesto PENDIENTE (no anunciar un método que falla)
+- pm2 reinstalado (bun install -g pm2); servidor bajo supervisión: pm2 start bun --name servitoken-dev --log dev.log -- run dev (el proceso muere si se lanza con nohup simple desde las sesiones del shell)
+- E2E: /compra exige login (returnTo OK); registro paypalqa → PayPal PENDIENTE disabled + BNB CONFIGURADO; usuario de prueba eliminado
+
+Stage Summary:
+- PayPal sigue PENDIENTE hasta que el dueño aporte el Secret correcto de la app LIVE (el Client ID actual podría ser válido pero el par no autentica)
+- Al recibir credenciales válidas: descomentar/escribir en .env → pm2 restart servitoken-dev → verificar CONFIGURADO y compra real de $1
+- Servidor ahora robusto bajo pm2 (sobrevive a sesiones de shell)
