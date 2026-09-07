@@ -166,3 +166,20 @@ Stage Summary:
 - La tarjeta es edición METAL: chip EMV de diseño propio, holograma iris giratorio, guilloché, filo dorado y titular/saldo en oro metálico
 - Todo el panel privado muestra datos REALES del par SERVI/USDT (PancakeSwap BSC): precio actualizándose cada 5s, gráfica con 5 rangos, market cap, liquidez, volumen, transacciones y reservas
 - Infraestructura a prueba de límites: caché gecko 30s + pausa ante 429 + caché stale de gráficas; el precio on-chain nunca deja de refrescarse cada 5s
+
+---
+Task ID: audit-post-premium
+Agent: Z.ai Code (main)
+Task: Auditoría de estado tras completar premium-card-token-pulse (consulta "qué me recomiendas hacer")
+
+Work Log:
+- Verificado dev.log limpio: /api/token-stats 200 en polling, /api/auth/me OK, sin errores
+- Verificado /api/token-stats responde con datos on-chain reales (precio $0.0000247463, rate 48589 SERVI/USD)
+- Audited PayPal: lib/paypal.ts completo (OAuth+cache, createOrder, captureOrder, getOrder, verifyWebhookSignature), create-order 143L, capture-order 201L con acreditación idempotente via creditPurchaseOnce + validación de monto en servidor, webhook 231L
+- BD: 5 usuarios (juan_test=500 SERVI, oskar_admin=400, maria_lopez=0, qa_auth=0, oskitar11=0), 1 purchase
+- Env: claves PayPal presentes pero con valores vacíos (PENDIENTE correcto); ONCHAIN_ENABLED activo
+- /compra onchain = redirección a PancakeSwap (swap externo BNB/USDT→SERVI); NO existe puente automático on-chain→saldo interno
+
+Stage Summary:
+- Proyecto V1 funcionalmente completo: auth, PayPal backend completo, tarjeta METAL, mercado en vivo 5s, admin panel (users/purchases/ledger/services/transfers/config/stats/adjustments), referral
+- Gaps reales detectados: (1) credenciales PayPal reales pendientes de pegar por el dueño; (2) sin prueba E2E sandbox hasta tener credenciales; (3) usuarios de prueba con saldo (juan_test) por limpiar antes de producción; (4) gap de diseño: compras on-chain en PancakeSwap no acreditan saldo interno de la plataforma
