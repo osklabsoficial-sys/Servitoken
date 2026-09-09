@@ -417,3 +417,19 @@ Stage Summary:
 - /compra operativa de nuevo para anónimos (307→login) y sesiones válidas (render con PayPal LIVE)
 - Sin cambios de código: el fix fue limpiar .next; no hay nada nuevo que pushear
 - Lección reforzada: tras operaciones git que reescriban el árbol (rebase/checkout), limpiar .next SIEMPRE
+
+---
+Task ID: paypal-no-carga-ux
+Agent: Z.ai Code (principal)
+Task: "PAYPAL NO CARGA" — endurecer la carga del SDK y avisar si estás en el panel de preview
+
+Work Log:
+- Diagnóstico: servidor perfecto (config 200, quote 200 con sesión del usuario); el fallo es del navegador (pestaña vieja tras el reinicio de .next, bloqueo del SDK dentro del iframe del preview, o bloqueador de anuncios)
+- compra-client.tsx endurecido: (1) detección de iframe (window.self!==window.top con try/catch) → aviso dorado con enlace "Abre la app en una pestaña nueva" cuando la app corre embebida; (2) timeout de 15 s → si el SDK no carga se muestra error claro con botón REINTENTAR (limpia el <script> previo con id paypal-sdk-js y reinyecta); (3) mensaje de error menciona bloqueadores de anuncios
+- Lint 0 errores; E2E con usuario nuevo: SDK carga (window.paypal=true), iframe de botones 507×138, 0 errores de página, sin regresión
+- Limpieza: qa_sdk eliminada en cascada
+
+Stage Summary:
+- /compra ahora se autodiagnostica: aviso de preview embebido, reintento manual del SDK y timeout con mensaje accionable
+- La carga normal del SDK sigue funcionando idéntica (verificado E2E)
+- Screenshots: tool-results/paypal-retry-embedded.png

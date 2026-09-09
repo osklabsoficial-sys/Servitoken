@@ -281,6 +281,18 @@ export function CompraClient({
 
   /* ------------------------ SDK PayPal ------------------------- */
 
+  const [sdkAttempt, setSdkAttempt] = useState(0);
+  const [embedded, setEmbedded] = useState(false);
+
+  /* ¿La app está dentro del panel de vista previa (iframe)? */
+  useEffect(() => {
+    try {
+      setEmbedded(window.self !== window.top);
+    } catch {
+      setEmbedded(true);
+    }
+  }, []);
+
   useEffect(() => {
     if (!paypalMethod) return;
     let cancelled = false;
@@ -296,15 +308,24 @@ export function CompraClient({
           if (window.paypal) setSdkReady(true);
           return;
         }
+        // Reintento: limpia el <script> de un intento previo fallido
+        document.getElementById("paypal-sdk-js")?.remove();
         const script = document.createElement("script");
+        script.id = "paypal-sdk-js";
         script.src = `https://www.paypal.com/sdk/js?client-id=${encodeURIComponent(
           data.clientId
         )}&currency=USD&intent=capture&components=buttons`;
         script.async = true;
+        // Red lenta o bloqueador: si en 15 s no hay SDK, error con reintento
+        const timeout = setTimeout(() => {
+          if (!cancelled && !window.paypal) setSdkError(true);
+        }, 15_000);
         script.onload = () => {
+          clearTimeout(timeout);
           if (!cancelled) setSdkReady(true);
         };
         script.onerror = () => {
+          clearTimeout(timeout);
           if (!cancelled) setSdkError(true);
         };
         document.body.appendChild(script);
@@ -315,7 +336,14 @@ export function CompraClient({
     return () => {
       cancelled = true;
     };
-  }, [paypalMethod]);
+  }, [paypalMethod, sdkAttempt]);
+
+  function retryPaypalSdk() {
+    setSdkError(false);
+    setSdkReady(false);
+    buttonsRenderedRef.current = false;
+    setSdkAttempt((a) => a + 1);
+  }
 
   /* ---------------------- Botones PayPal ----------------------- */
 
@@ -822,6 +850,27 @@ export function CompraClient({
                     )}
 
                     <div className={phase === "idle" ? "mt-4" : "hidden"}>
+                      {embedded && !sdkError && (
+                        <div className="mb-3 flex items-start gap-2.5 rounded-xl border border-gold/25 bg-gold/10 px-4 py-3 text-xs text-gold-bright">
+                          <Info
+                            className="mt-0.5 size-3.5 shrink-0"
+                            aria-hidden
+                          />
+                          <span>
+                            Estás viendo ServiToken dentro del panel de vista
+                            previa; PayPal suele bloquearse en marcos anidados.{" "}
+                            <a
+                              href="/compra"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="font-semibold underline underline-offset-2 hover:text-gold"
+                            >
+                              Abre la app en una pestaña nueva
+                            </a>{" "}
+                            para pagar sin problemas.
+                          </span>
+                        </div>
+                      )}
                       {sdkError ? (
                         <div className="flex flex-col items-center gap-2 rounded-xl border border-destructive/25 bg-destructive/5 px-4 py-6 text-center">
                           <AlertTriangle
@@ -832,9 +881,16 @@ export function CompraClient({
                             No se pudo cargar PayPal.
                           </p>
                           <p className="text-xs text-muted-foreground">
-                            Verifica tu conexión y recarga la página para
-                            intentarlo de nuevo.
+                            Revisa tu conexión o desactiva bloqueadores de
+                            anuncios para paypal.com y reintenta.
                           </p>
+                          <Button
+                            onClick={retryPaypalSdk}
+                            variant="outline"
+                            className="mt-1 border-white/15"
+                          >
+                            <RefreshCw className="size-4" /> Reintentar
+                          </Button>
                         </div>
                       ) : sdkConfig && !sdkConfig.configured ? (
                         <div className="flex flex-col items-center gap-2 rounded-xl border border-gold/25 bg-gold/10 px-4 py-6 text-center">
