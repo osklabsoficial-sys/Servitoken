@@ -96,45 +96,15 @@ export function AppHeader({ user }: { user: SessionUser }) {
   }
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-background/80 backdrop-blur-xl">
+    <header className="sticky top-0 z-40 w-full border-b border-white/10 bg-background/80 backdrop-blur-xl">
       <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
-        <Link href="/inicio" className="flex shrink-0 items-center gap-2">
+        {/* Logo solo en móvil/tablet: en desktop la marca vive en la
+            barra lateral (el nav principal ya no está en el header). */}
+        <Link href="/inicio" className="flex shrink-0 items-center gap-2 lg:hidden">
           <Logo size="sm" />
         </Link>
 
-        {/* Nav desktop */}
-        <nav className="hidden items-center gap-0.5 lg:flex" aria-label="Navegación principal">
-          {links.map((link) => {
-            const active = pathname === link.href || pathname.startsWith(link.href + "/");
-            return (
-              <Link
-                key={link.href}
-                href={link.href}
-                aria-current={active ? "page" : undefined}
-                className={`rounded-lg px-3 py-2 text-[13px] font-medium transition-colors ${
-                  active
-                    ? "bg-white/10 text-foreground"
-                    : "text-muted-foreground hover:bg-white/5 hover:text-foreground"
-                }`}
-              >
-                {link.aurora ? (
-                  <span className="flex items-center gap-1.5" title="OSK LLM - ULTRA · Asistente agente en vivo">
-                    <MessageCircle className="size-3.5 text-gold" aria-hidden />
-                    <span className="aurora-text text-xs font-bold tracking-[0.18em]">CHAT</span>
-                    <span
-                      className="size-1.5 animate-pulse rounded-full bg-emerald-400"
-                      aria-hidden
-                    />
-                  </span>
-                ) : (
-                  link.label
-                )}
-              </Link>
-            );
-          })}
-        </nav>
-
-        <div className="flex items-center gap-2">
+        <div className="ml-auto flex items-center gap-2">
           {/* Precio real del token (tasa oficial del servidor) */}
           {me && (
             <span
