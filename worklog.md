@@ -243,3 +243,20 @@ Stage Summary:
 - El widget flotante ServiBot sigue en el resto del panel (mismo cerebro, modo asistente)
 - PayPal LIVE re-verificado funcionando tras la restauración del .env (orden real + botones SDK)
 - Lección: el entorno del sandbox puede resetear .env/binarios entre sesiones; el .env ahora lleva comentario de advertencia
+---
+Task ID: nav-chat-aurora
+Agent: Z.ai Code (main)
+Task: Enlace "CHAT" visible en el navbar al iniciar sesión, con efecto aurora en sus letras
+
+Work Log:
+- Verificado estado previo: .env ya tenía las credenciales PayPal restauradas (par ganador intacto), /api/ai/debug eliminado, usuarios QA (aibotqa/paypalqa/paypalqa2) ya borrados de la BD
+- globals.css: añadida clase .aurora-text — gradiente animado dorado↔menta (#7de8b0)↔eléctrico, PERIÓDICO (periodo 50% de la imagen con bg-size 200%) para loop infinito sin costuras (bg-position 0%→100%), background-clip:text, drop-shadow suave verde, fallback estático con prefers-reduced-motion
+- app-header.tsx: nueva interface NavLink (icon tipado LucideIcon + flag aurora?: boolean); CHAT añadido a BASE_LINKS tras Historial (href /chat, icon MessageCircle); render especial en nav desktop (icono dorado + CHAT en aurora-text tracking 0.18em + punto verde pulsante "en vivo" + title tooltip OSK LLM - ULTRA) y en Sheet móvil (icono dorado + letras aurora)
+- FIX infra: el cambio de CSS no aparecía en el bundle (hasAurora:false en la hoja servida) — touch insuficiente, restart de pm2 insuficiente; la causa fue caché persistente de Turbopack (.next) → solución: pm2 stop + rm -rf .next + pm2 start → regla aurora-text presente y aplicada (bg-clip:text + sv-aurora-text 5s verificados por getComputedStyle)
+- E2E con agent-browser: registro QA navchatqa → navbar muestra Inicio/Comprar/Enviar/Usar SERVI/Historial/CHAT · click en CHAT navega a /chat (OSK LLM - ULTRA) · prueba de agente "quiero comprar token" → tarjeta de acción + cuenta regresiva → AUTO-NAVEGÓ a /compra?destacar=paypal (PayPal visible CONFIGURADO, restauración .env confirmada en producción) · móvil 390px: Sheet muestra CHAT con aurora e icono dorado, click navega a /chat · consola sin errores (solo warning preexistente aria-describedby de DialogContent) · lint 0 errores
+- Limpieza: usuario QA navchatqa eliminado (sesiones + wallet + user); screenshots en tool-results/nav-chat-aurora-ok.png, nav-chat-mobile.png, chat-agent-action.png
+
+Stage Summary:
+- El navbar del panel (logueado) muestra ahora el enlace CHAT con letras aurora animadas (dorado→menta→azul eléctrico, identidad de marca) con icono de chat dorado y punto verde "en vivo" en desktop y móvil
+- Lección crítica del sandbox: si un cambio de CSS global no aparece en el bundle servido, la caché de Turbopack (.next) puede estar rancia → rm -rf .next + restart de pm2 (touch y restart solos NO bastan)
+- PayPal LIVE confirmado funcionando de punta a punta tras la restauración del .env (la página /compra muestra CONFIGURADO)

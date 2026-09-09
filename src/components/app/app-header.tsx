@@ -9,6 +9,7 @@ import {
   LayoutDashboard,
   LogOut,
   Menu,
+  MessageCircle,
   Send,
   ShieldCheck,
   ShoppingCart,
@@ -16,6 +17,7 @@ import {
   TrendingUp,
   X,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -36,12 +38,21 @@ import { Logo } from "@/components/landing/logo";
 import { formatServi, formatTokenPriceUsd } from "@/lib/format";
 import type { SessionUser } from "@/lib/auth";
 
-const BASE_LINKS = [
+interface NavLink {
+  href: string;
+  label: string;
+  icon: LucideIcon;
+  /** Enlace especial con letras aurora animadas (CHAT / OSK LLM - ULTRA) */
+  aurora?: boolean;
+}
+
+const BASE_LINKS: NavLink[] = [
   { href: "/inicio", label: "Inicio", icon: LayoutDashboard },
   { href: "/compra", label: "Comprar", icon: ShoppingCart },
   { href: "/enviar", label: "Enviar", icon: Send },
   { href: "/servicios", label: "Usar SERVI", icon: Sparkles },
   { href: "/historial", label: "Historial", icon: History },
+  { href: "/chat", label: "CHAT", icon: MessageCircle, aurora: true },
 ];
 
 interface MeResponse {
@@ -106,7 +117,18 @@ export function AppHeader({ user }: { user: SessionUser }) {
                     : "text-muted-foreground hover:bg-white/5 hover:text-foreground"
                 }`}
               >
-                {link.label}
+                {link.aurora ? (
+                  <span className="flex items-center gap-1.5" title="OSK LLM - ULTRA · Asistente agente en vivo">
+                    <MessageCircle className="size-3.5 text-gold" aria-hidden />
+                    <span className="aurora-text text-xs font-bold tracking-[0.18em]">CHAT</span>
+                    <span
+                      className="size-1.5 animate-pulse rounded-full bg-emerald-400"
+                      aria-hidden
+                    />
+                  </span>
+                ) : (
+                  link.label
+                )}
               </Link>
             );
           })}
@@ -223,8 +245,17 @@ export function AppHeader({ user }: { user: SessionUser }) {
                           href={link.href}
                           className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-white/5 hover:text-foreground"
                         >
-                          <Icon className="size-4" />
-                          {link.label}
+                          <Icon
+                            className={`size-4 ${link.aurora ? "text-gold" : ""}`}
+                            aria-hidden
+                          />
+                          {link.aurora ? (
+                            <span className="aurora-text text-xs font-bold tracking-[0.18em]">
+                              CHAT
+                            </span>
+                          ) : (
+                            link.label
+                          )}
                         </Link>
                       </SheetClose>
                     );

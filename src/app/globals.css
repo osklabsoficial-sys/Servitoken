@@ -587,3 +587,42 @@
     box-shadow: 0 0 0 2px rgba(232, 201, 138, 0.85);
   }
 }
+
+/* ============================================================
+   NAV · "CHAT" con letras aurora (gradiente animado sin costuras)
+   Gradiente periódico (periodo = 50% de la imagen, bg-size 200%)
+   → el desplazamiento 0%→100% loopea perfectamente.
+   ============================================================ */
+.aurora-text {
+  background-image: linear-gradient(
+    90deg,
+    var(--gold-bright) 0%,
+    #7de8b0 16.66%,
+    var(--electric-bright) 33.33%,
+    var(--gold-bright) 50%,
+    #7de8b0 66.66%,
+    var(--electric-bright) 83.33%,
+    var(--gold-bright) 100%
+  );
+  background-size: 200% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  animation: sv-aurora-text 5s linear infinite;
+  filter: drop-shadow(0 0 7px rgba(125, 232, 176, 0.35));
+}
+@keyframes sv-aurora-text {
+  from {
+    background-position: 0% 50%;
+  }
+  to {
+    background-position: 100% 50%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .aurora-text {
+    animation: none;
+    background-image: linear-gradient(90deg, var(--gold-bright), #7de8b0, var(--electric-bright));
+    filter: none;
+  }
+}
