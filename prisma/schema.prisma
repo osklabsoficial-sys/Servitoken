@@ -218,6 +218,24 @@ model AuditLog {
 }
 
 // =====================================================================
+//  ANALYTICS · Visitas a la aplicación (panel admin)
+// =====================================================================
+
+model PageVisit {
+  id         String   @id @default(cuid())
+  path       String // ruta visitada (sin query strings)
+  visitorKey String // identificador anónimo persistente del navegador (localStorage)
+  userId     String? // id del usuario si tenía sesión activa (sin relación a propósito: las visitas sobreviven al borrado de cuentas)
+  userAgent  String?
+  referrer   String?
+  createdAt  DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([path, createdAt])
+  @@index([visitorKey, createdAt])
+}
+
+// =====================================================================
 //  CONFIGURACIÓN GLOBAL (precio SERVI/USD, etc.)
 // =====================================================================
 

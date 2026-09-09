@@ -260,3 +260,25 @@ Stage Summary:
 - El navbar del panel (logueado) muestra ahora el enlace CHAT con letras aurora animadas (dorado→menta→azul eléctrico, identidad de marca) con icono de chat dorado y punto verde "en vivo" en desktop y móvil
 - Lección crítica del sandbox: si un cambio de CSS global no aparece en el bundle servido, la caché de Turbopack (.next) puede estar rancia → rm -rf .next + restart de pm2 (touch y restart solos NO bastan)
 - PayPal LIVE confirmado funcionando de punta a punta tras la restauración del .env (la página /compra muestra CONFIGURADO)
+---
+Task ID: admin-secreto-osk-ultra
+Agent: Z.ai Code (main)
+Task: Credenciales admin secretas + panel con TODA la info (transacciones, compras, clientes, VISITAS) + OSK LLM - ULTRA modo analista al máximo
+
+Work Log:
+- CREDENCIALES SECRETAS creadas en BD: usuario osk.root (root@servitoken.io), SUPER_ADMIN, ACTIVE, wallet 0, password scrypt fuerte (formato scrypt:salt:hash de lib/auth); AuditLog ADMIN_CREATED registrado; entregadas al dueño por chat con recomendación de cambio
+- ANALYTICS DE VISITAS (nuevo, no existía): modelo PageVisit en schema (path, visitorKey anónimo de localStorage, userId opcional SIN relación a propósito para que las visitas sobrevivan al borrado de cuentas, userAgent, referrer) + índices; bun run db:push OK
+- /api/track/visit (nuevo): público para medir anónimos, same-origin 403, rate limit 240/5min, sanitización estricta (path sin query ≤200, visitorKey regex, referrer http(s) ≤300); userId resuelto SOLO en servidor desde cookie
+- src/components/analytics/visit-tracker.tsx (nuevo): client component en ROOT layout (mide landing + app + /chat + /admin), dedupe <1.5s, keepalive, falla en silencio, visitorKey en localStorage con fallback uuid
+- /api/admin/visits (nuevo, isPrivileged): totales hoy/7d/30d/histórico + únicos 7d, top 10 rutas (groupBy 30d), serie diaria 14 días (bucketizado en JS porque SQLite no trunca fechas), últimas 15 visitas con username resuelto manualmente
+- /api/admin/ai (nuevo, isPrivileged, "AL MÁXIMO"): OSK LLM - ULTRA MODO ANALISTA EXECUTIVE; system prompt con TODA la operación en vivo: clientes (total/bloqueados/top 5 saldos/SERVI circulante), compras (completadas/ingresos USD/tokens/HOY/pendientes con montos/últimas 10 con usuario), transferencias, pagos de servicios, VISITAS (hoy/7/30/histórico/únicos/top rutas), métodos de pago, mercado+tasa, auditoría; historial 20, input 2000, reply 6000, rate 30/5min; PROTOCOLO [[TAB:x]] → salta el panel a la pestaña correcta (validada contra whitelist)
+- UI admin: nueva pestaña VISITAS (admin-visits.tsx: 5 KPIs, gráfico de barras 14 días con hover, rutas top con barras proporcionales, últimas visitas en vivo con usuario) y pestaña OSK ULTRA con letras aurora (admin-ai.tsx: chat analista con 5 atajos ejecutivos, negritas gold en respuestas, copiar, chip "Abriendo pestaña X", toast)
+- FIX UX: Radix Tabs desmontaba el chat al saltar de pestaña ([[TAB:compras]] borraba la conversación) → TabsContent forceMount + hidden CSS → la conversación PERSISTE al navegar entre pestañas
+- Tabs ahora CONTROLADOS (value/onValueChange) para que OSK pueda saltar; triggers anteriores intactos (no se borró nada)
+- E2E agent-browser: login osk.root OK → /admin muestra 9 pestañas; navegación real generó visitas (top paths /admin /inicio /compra /enviar /servicios /historial /login con counts reales, últimas visitas con @osk.root resuelto); quick prompt "Resumen ejecutivo de hoy" → respuesta con DATOS REALES (6 usuarios, 900 SERVI circulante, 2 compras PENDING de @oskitar11, 11 visitas, alerta de concentración de riesgo) + [[TAB:compras]] ejecutado con chip visible; SEGURIDAD: usuario normal (guardqa temporal) recibe 403 en /api/admin/visits + /api/admin/stats + /api/admin/ai; QA users borrados; lint 0 errores
+- Screenshots: tool-results/admin-visitas.png, admin-osk-ultra.png
+
+Stage Summary:
+- El dueño tiene ahora credenciales SECRETAS de SUPER_ADMIN (osk.root) y un panel de mando total: clientes, compras PayPal, transferencias, movimientos del ledger, servicios, config, VISITAS de la app y OSK LLM - ULTRA como analista ejecutivo que ve todo en vivo, alerta riesgos y salta él mismo a la pestaña a revisar
+- El tracking de visitas mide TODO el sitio (incluye anónimos) desde el root layout con userId attribution automática
+- Próximos pasos sugeridos: revisar las 2 compras PENDING de @oskitar11 ($5 c/u) en /admin → Compras, y cambiar la password secreta tras el primer login

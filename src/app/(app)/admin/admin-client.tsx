@@ -4,6 +4,8 @@ import { useCallback, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
   ArrowLeftRight,
+  BarChart3,
+  Bot,
   ClipboardList,
   Coins,
   LayoutDashboard,
@@ -24,6 +26,8 @@ import { AdminTransfers } from "./admin-transfers";
 import { AdminLedger } from "./admin-ledger";
 import { AdminServices } from "./admin-services";
 import { AdminConfig } from "./admin-config";
+import { AdminVisits } from "./admin-visits";
+import { AdminAI } from "./admin-ai";
 
 interface Stats {
   users: { total: number; active: number; blocked: number };
@@ -37,6 +41,7 @@ interface Stats {
 export function AdminClient({ adminRole }: { adminRole: string }) {
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
+  const [tab, setTab] = useState("usuarios");
 
   const loadStats = useCallback(async () => {
     try {
@@ -121,8 +126,8 @@ export function AdminClient({ adminRole }: { adminRole: string }) {
         </div>
       ) : null}
 
-      {/* Tabs */}
-      <Tabs defaultValue="usuarios" className="mt-8">
+      {/* Tabs (controlados: OSK ULTRA puede saltar entre pestañas) */}
+      <Tabs value={tab} onValueChange={setTab} className="mt-8">
         <TabsList className="flex h-auto w-full flex-wrap justify-start gap-1 overflow-x-auto rounded-2xl border border-white/10 bg-card p-1.5">
           <TabsTrigger value="usuarios" className="gap-1.5 data-[state=active]:bg-electric data-[state=active]:text-white">
             <Users className="size-3.5" /> Usuarios
@@ -142,8 +147,18 @@ export function AdminClient({ adminRole }: { adminRole: string }) {
           <TabsTrigger value="servicios" className="gap-1.5 data-[state=active]:bg-electric data-[state=active]:text-white">
             <Sparkles className="size-3.5" /> Servicios
           </TabsTrigger>
+          <TabsTrigger value="visitas" className="gap-1.5 data-[state=active]:bg-electric data-[state=active]:text-white">
+            <BarChart3 className="size-3.5" /> Visitas
+          </TabsTrigger>
           <TabsTrigger value="config" className="gap-1.5 data-[state=active]:bg-electric data-[state=active]:text-white">
             <Settings className="size-3.5" /> Configuración
+          </TabsTrigger>
+          <TabsTrigger
+            value="osk"
+            className="gap-1.5 border border-gold/30 bg-gold/5 data-[state=active]:bg-gradient-to-br data-[state=active]:from-gold data-[state=active]:to-gold-bright data-[state=active]:text-background"
+          >
+            <Bot className="size-3.5 text-gold data-[state=active]:text-background" aria-hidden />
+            <span className="aurora-text text-[11px] font-bold tracking-[0.14em]">OSK ULTRA</span>
           </TabsTrigger>
         </TabsList>
 
@@ -165,8 +180,20 @@ export function AdminClient({ adminRole }: { adminRole: string }) {
         <TabsContent value="servicios" className="mt-4">
           <AdminServices />
         </TabsContent>
+        <TabsContent value="visitas" className="mt-4">
+          <AdminVisits />
+        </TabsContent>
         <TabsContent value="config" className="mt-4">
           <AdminConfig />
+        </TabsContent>
+        {/* forceMount: la conversación con OSK ULTRA NO se pierde al
+            saltar de pestaña; se oculta con CSS cuando está inactiva. */}
+        <TabsContent
+          value="osk"
+          forceMount
+          className="mt-4 hidden data-[state=active]:block"
+        >
+          <AdminAI onSwitchTab={setTab} />
         </TabsContent>
       </Tabs>
 

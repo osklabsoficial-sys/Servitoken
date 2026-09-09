@@ -4,6 +4,7 @@ import "./globals.css";
 import { Toaster as SonnerToaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "next-themes";
 import { WalletProviderLoader } from "@/components/landing/wallet-provider-inner";
+import { VisitTracker } from "@/components/analytics/visit-tracker";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -153,6 +154,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <WalletProviderLoader>
+            <VisitTracker />
             {children}
           </WalletProviderLoader>
           <SonnerToaster
