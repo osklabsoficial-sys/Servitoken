@@ -376,3 +376,26 @@ Stage Summary:
 - El espacio del antiguo navbar ahora muestra mercado real del token en vivo en ambos headers (landing y app), refresco 45s
 - Diseño consistente de píldoras con el resto del header; responsivo (VOL/MC solo xl+)
 - Screenshots: tool-results/landing-header-ticker.png, app-header-ticker.png, app-movil-ticker-oculto.png
+
+---
+Task ID: paypal-live
+Agent: Z.ai Code (principal)
+Task: Implementar los pagos PayPal reales — el usuario entregó las credenciales por chat
+
+Work Log:
+- Diagnóstico: TODO el sistema PayPal ya estaba construido (lib/orders/capture idempotente/webhook/config/payment-methods/UI con SDK); lo único ausente eran las credenciales en .env → pasarela apagada (PAYPAL_NOT_CONFIGURED)
+- El usuario pegó 2 cadenas en el chat ("NO LA HAGAS PERDER", "toma las credenciales"): identificación por formato y prueba OAuth real → la cadena B (82 chars, con _) es el CLIENT_ID y la E es el SECRET; orden ID:SEC correcto
+- Detección de entorno: sandbox 401 / LIVE 200 → credenciales de PRODUCCIÓN; .env actualizado (PAYPAL_CLIENT_ID/SECRET/PAYPAL_ENV=live) — .env está en .gitignore, secretos jamás en código ni logs
+- Smoke test API real: OAuth 200 + orden LIVE creada (7XW46958DK719652H, CREATED, sin cobro — expira sola)
+- db:push OK (Purchase/PaypalPayment/PaypalWebhookEvent en sync); pm2 restart con --update-env
+- /api/payments/paypal/config → configured:true, env:live
+- E2E agent-browser: registro qa_paypal → /compra → PayPal por defecto con badge CONFIGURADO, resumen 500 SERVI=$5.00; botones SDK REALES renderizados (amarillo PayPal + Debit or Credit Card + Powered by PayPal, iframe 507×138, 0 errores JS)
+- Clic en botón amarillo → POST create-order → Purchase en BD (500 SERVI, $5, PENDING, paypalOrderId 8UL20150DA654780H) + popup checkout LIVE paypal.com/checkoutnow "Log in to your PayPal account" (env=production) — mismo order ID en BD y popup
+- Captura NO ejecutada (requiere pagar $5 reales con cuenta PayPal del comprador — no se automatiza); el código de captura ya valida contra la API, monto/moneda y acredita idempotente
+- Limpieza: popup cerrado, usuario qa_paypal eliminado en cascada (session/audit/ledger/purchase/wallet/user); las 2 compras PENDING $5 de @oskitar11 (4W77… y 79V9…) quedaron intactas
+
+Stage Summary:
+- PayPal LIVE 100% operativo en /compra: botones oficiales, orden real en BD, checkout real de PayPal
+- Al aprobar el pago en el popup, capture-order acredita los SERVI automáticamente (idempotente por captureId) y el webhook respalda si el usuario cierra el navegador
+- Recomendaciones al dueño: primera prueba real con 10 SERVI ($0.10); registrar el dominio de producción en la app de PayPal si PayPal restringe el checkout; nunca re-compartir el secret (está en .env, gitignored); opcional PAYPAL_WEBHOOK_ID para verificación por firma
+- Screenshots: tool-results/paypal-panel-live.png, paypal-buttons-live.png, paypal-checkout-live-popup.png
