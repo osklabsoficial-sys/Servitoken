@@ -13,6 +13,7 @@ import {
   SheetClose,
 } from "@/components/ui/sheet";
 import { Logo } from "@/components/landing/logo";
+import { MarketTicker } from "@/components/market/market-ticker";
 import { navLinks } from "@/lib/token-data";
 import { ConnectWallet } from "@/components/landing/connect-wallet";
 import { LandingAuthButtons } from "@/components/landing/landing-auth-buttons";
@@ -48,6 +49,9 @@ export function SiteHeader() {
             </span>
           </span>
         </Link>
+
+        {/* Ticker de mercado en vivo — ocupa el espacio del nav antiguo (desktop) */}
+        <MarketTicker href="#estadisticas" className="hidden lg:flex" />
 
         {/* Desktop CTA */}
         <div className="ml-auto hidden items-center gap-2 lg:flex">

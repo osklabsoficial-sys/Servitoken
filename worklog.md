@@ -359,3 +359,20 @@ Stage Summary:
 - Header de la landing limpio en desktop (solo tema, wallet, auth y CTA Comprar)
 - Móvil sin cambios en ambos contextos (hamburguesa)
 - Screenshots: tool-results/landing-sidebar-colapsada.png, landing-sidebar-expandida.png, landing-scrollspy-faq.png, landing-movil.png
+
+---
+Task ID: header-ticker
+Agent: Z.ai Code (principal)
+Task: Llenar el espacio que dejó el nav antiguo en los headers con un ticker de mercado SERVI en vivo
+
+Work Log:
+- src/components/market/market-ticker.tsx (nuevo, compartido): píldoras con precio on-chain (8 decimales), cambio 24h (verde/rojo/neutro con icono), volumen 24h (xl+) y market cap (xl+); fetch a /api/token-stats cada 45s con cache no-store; skeleton pulse mientras carga; fallos silenciosos; props href/showVolume/showMarketCap; clic lleva al mercado
+- src/components/app/app-header.tsx: MarketTicker href=/inicio con hidden lg:flex en el hueco izquierdo (tras el logo móvil); chips de tasa oficial/saldo/usuario intactos a la derecha
+- src/components/landing/site-header.tsx: MarketTicker href=#estadisticas con hidden lg:flex en el mismo hueco; CTAs intactos
+- Lint 0 errores
+- E2E agent-browser: landing pública muestra SERVI $0.00002475 / 0.00% 24h / VOL $0.00 / MC $12.4K ✓; app logueada (/inicio) igual con chips oficiales a la derecha ✓; móvil 390px ticker display:none (header limpio) ✓
+
+Stage Summary:
+- El espacio del antiguo navbar ahora muestra mercado real del token en vivo en ambos headers (landing y app), refresco 45s
+- Diseño consistente de píldoras con el resto del header; responsivo (VOL/MC solo xl+)
+- Screenshots: tool-results/landing-header-ticker.png, app-header-ticker.png, app-movil-ticker-oculto.png

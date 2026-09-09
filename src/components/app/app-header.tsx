@@ -35,6 +35,7 @@ import {
   SheetClose,
 } from "@/components/ui/sheet";
 import { Logo } from "@/components/landing/logo";
+import { MarketTicker } from "@/components/market/market-ticker";
 import { formatServi, formatTokenPriceUsd } from "@/lib/format";
 import type { SessionUser } from "@/lib/auth";
 
@@ -103,6 +104,9 @@ export function AppHeader({ user }: { user: SessionUser }) {
         <Link href="/inicio" className="flex shrink-0 items-center gap-2 lg:hidden">
           <Logo size="sm" />
         </Link>
+
+        {/* Ticker de mercado en vivo — ocupa el espacio del nav antiguo (desktop) */}
+        <MarketTicker href="/inicio" className="hidden lg:flex" />
 
         <div className="ml-auto flex items-center gap-2">
           {/* Precio real del token (tasa oficial del servidor) */}
