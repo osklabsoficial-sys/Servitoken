@@ -220,3 +220,26 @@ Stage Summary:
 - PayPal LIVE 100% OPERATIVO: credenciales válidas verificadas con orden real, botones oficiales visibles, captura idempotente y acreditación automática listas
 - El dueño ya puede comprar de verdad desde /compra con su cuenta (recomendada primera compra de $1 para validar recepción del dinero en contacto@servitoken.io)
 - Pendiente opcional: PAYPAL_WEBHOOK_ID (redundancia async; requiere dominio público estable) + rotar el Secret si se desea máxima higiene (circuló por chat)
+
+---
+Task ID: osk-llm-ultra-chat
+Agent: Z.ai Code (main)
+Task: Chat completo estilo GPT "/chat" con modelo OSK LLM - ULTRA como agente de página (navega y señala qué hacer) + restauración de credenciales PayPal borradas externamente
+
+Work Log:
+- INCIDENTE: .env fue restaurado externamente a solo DATABASE_URL (las credenciales PayPal se perdieron; el sandbox también borró pm2 y renombró middleware→proxy.ts). Restauradas las credenciales válidas (ID BAAiLM...3uDI + Secret EPIpFm...BD6f) con comentario disuasorio; servidor reiniciado bajo pm2 (reinstalado vía npm -g); debug endpoint confirmó paypalConfigured:true; /compra vuelve a mostrar PayPal CONFIGURADO
+- proxy.ts (nuevo middleware Next 16): añadido /chat a rutas protegidas y matcher
+- src/lib/ai-context.ts (nuevo): constructor único del system prompt con datos EN VIVO (precio on-chain, liquidez, tasa oficial, saldo del usuario, métodos de pago reales, catálogo de servicios de la BD); modos "assistant" (widget) y "agent" (protocolo de acciones [[IR:/ruta]])
+- /api/ai/chat refactorizado para usar la lib; /api/ai/agent (nuevo): modo agente, 30 msg/5min, historial 16, separa [[IR:/ruta]] del texto y devuelve {reply, action}
+- /chat (nuevo, standalone con auth propia): chat-client.tsx estilo ChatGPT — sidebar con historial de conversaciones en localStorage (por usuario, máx 30, títulos auto), nueva conversación, eliminar, volver al panel; header con badge "OSK LLM - ULTRA · EN VIVO"; burbujas usuario oro/derecha, respuestas full-width con avatar robot, botón copiar, indicador de escritura, estado vacío con 4 tarjetas de capacidades; textarea auto-expandible (Enter envía, Shift+Enter salto)
+- ACCIONES DEL AGENTE: tarjeta "Puedo llevarte a X" con barra de progreso + cuenta regresiva 6s (botones "Ir ahora" / "Quedarme aquí"); al llegar a /compra añade ?destacar=paypal
+- compra-client: soporte ?destacar=paypal → scrollIntoView suave a "2 · Método de pago" + animación .agent-highlight (anillo oro pulsante 8s, respeta reduced-motion)
+- servi-bot.tsx: oculto en /chat (usePathname, después de todos los hooks)
+- FIX durante desarrollo: router.push estaba dentro del updater setNav (error React) → efecto dedicado; luego refactor final: countdown con un único efecto setTimeout encadenado (sin refs/intervalos); ReferenceError startNav en deps de send corregido
+- E2E verificado: "quiero comprar token" → pasos numerados + action:/compra; "enviar a juan" → action:/enviar; "¿qué es SERVI?" → action:null (correcto sin navegación); cuenta regresiva observada corriendo (logs) y navegación automática /chat→/compra?destacar=paypal confirmada en URL; "Quedarme aquí" cancela; highlight activo al llegar; móvil 390px sin overflow; consola sin errores React tras fixes; usuarios QA eliminados; lint 0 errores
+
+Stage Summary:
+- ServiToken tiene ahora un chat IA completo estilo GPT: OSK LLM - ULTRA en /chat, con historial local, datos en vivo y modo AGENTE que navega al usuario a la página correcta y resalta visualmente qué hacer
+- El widget flotante ServiBot sigue en el resto del panel (mismo cerebro, modo asistente)
+- PayPal LIVE re-verificado funcionando tras la restauración del .env (orden real + botones SDK)
+- Lección: el entorno del sandbox puede resetear .env/binarios entre sesiones; el .env ahora lleva comentario de advertencia

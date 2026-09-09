@@ -9,17 +9,16 @@ export const maxDuration = 60;
 
 /**
  * ============================================================
- *  SERVIBOT · Asistente IA del widget flotante
+ *  OSK LLM - ULTRA · Agente de página (/chat)
  * ============================================================
- *  - z-ai-web-dev-sdk SOLO en el servidor (nunca en el cliente).
- *  - Requiere sesión activa (usuarios BLOCKED no pueden usarlo).
- *  - El system prompt se construye en @/lib/ai-context con datos
- *    EN VIVO (precio on-chain, saldo real, métodos de pago,
- *    servicios). Modo asistente: conversación sin acciones.
+ *  Igual que /api/ai/chat pero en modo AGENTE: el modelo puede
+ *  emitir acciones de navegación [[IR:/ruta]] que el frontend
+ *  convierte en tarjetas con cuenta regresiva que llevan al
+ *  usuario a la página correcta resaltando qué hacer.
  * ============================================================
  */
 
-const MAX_HISTORY = 8; // últimos 4 intercambios
+const MAX_HISTORY = 16; // últimos 8 intercambios
 const MAX_INPUT_LEN = 1000;
 
 interface ChatMessage {
@@ -39,7 +38,7 @@ export async function POST(req: Request) {
   if (session.status !== "ACTIVE") {
     return NextResponse.json({ error: "ACCOUNT_BLOCKED" }, { status: 403 });
   }
-  if (!rateLimit(clientKey(req, "ai-chat"), 20, 5 * 60 * 1000)) {
+  if (!rateLimit(clientKey(req, "ai-agent"), 30, 5 * 60 * 1000)) {
     return NextResponse.json(
       { error: "RATE_LIMIT", message: "Has enviado muchos mensajes. Espera un momento. 💛" },
       { status: 429 }
@@ -78,7 +77,7 @@ export async function POST(req: Request) {
     userId: session.id,
     username: session.username,
     origin: new URL(req.url).origin,
-    mode: "assistant",
+    mode: "agent",
   });
 
   try {
@@ -94,21 +93,26 @@ export async function POST(req: Request) {
     const reply = completion.choices[0]?.message?.content?.trim();
     if (!reply) {
       return NextResponse.json(
-        { error: "AI_EMPTY", message: "ServiBot no pudo responder. Intenta de nuevo." },
+        { error: "AI_EMPTY", message: "OSK LLM no pudo responder. Intenta de nuevo." },
         { status: 502 }
       );
     }
 
-    return NextResponse.json({ reply: reply.slice(0, 2000) });
+    // Separar la acción [[IR:/ruta]] (si vino) del texto visible.
+    const match = /^\s*\[\[IR:(\/[a-zA-Z]+)\]\]\s*/.exec(reply);
+    const action = match && match[1] ? match[1] : null;
+    const message = (action ? reply.slice(match![0].length) : reply).trim().slice(0, 4000);
+
+    return NextResponse.json({ reply: message, action });
   } catch (error) {
     console.error(
-      "AI_CHAT_ERROR",
+      "AI_AGENT_ERROR",
       error instanceof Error ? error.message : String(error).slice(0, 300)
     );
     return NextResponse.json(
       {
         error: "AI_UNAVAILABLE",
-        message: "ServiBot está dormido ahora mismo. Intenta de nuevo en unos segundos. 😴",
+        message: "OSK LLM está dormido ahora mismo. Intenta de nuevo en unos segundos. 😴",
       },
       { status: 503 }
     );

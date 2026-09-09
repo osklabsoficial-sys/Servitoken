@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import {
   AlertTriangle,
@@ -112,6 +112,28 @@ export function CompraClient({
   methods: PaymentMethodInfo[];
 }) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  /* -------------------- Guía del agente IA --------------------- */
+  /* /compra?destacar=paypal → resalta visualmente el paso 2 (método
+     de pago) cuando OSK LLM trae al usuario desde el chat.          */
+  const [highlightMethod, setHighlightMethod] = useState<boolean>(
+    searchParams.get("destacar") === "paypal"
+  );
+  const methodSectionRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!highlightMethod) return;
+    // Lleva la vista a la sección señalada por el agente IA
+    const t0 = setTimeout(() => {
+      methodSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 600);
+    const t = setTimeout(() => setHighlightMethod(false), 8_000);
+    return () => {
+      clearTimeout(t0);
+      clearTimeout(t);
+    };
+  }, [highlightMethod]);
 
   /* --------------------------- Saldo --------------------------- */
   const [balance, setBalance] = useState<number>(initialBalance);
@@ -584,8 +606,13 @@ export function CompraClient({
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.08 }}
+            ref={highlightMethod ? methodSectionRef : undefined}
           >
-            <div className="glow-card rounded-2xl">
+            <div
+              className={`glow-card rounded-2xl ${
+                highlightMethod ? "agent-highlight" : ""
+              }`}
+            >
               <CardContent className="p-6">
                 <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
                   2 · Método de pago

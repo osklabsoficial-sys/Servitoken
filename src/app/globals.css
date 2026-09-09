@@ -561,3 +561,29 @@
   background: rgba(232, 201, 138, 0.35);
   border-radius: 9999px;
 }
+
+/* ============================================================
+   AGENTE IA · resaltado de sección guiada (ej. /compra?destacar)
+   ============================================================ */
+@keyframes agent-highlight-pulse {
+  0%, 100% {
+    box-shadow:
+      0 0 0 2px rgba(232, 201, 138, 0.85),
+      0 0 34px rgba(232, 201, 138, 0.45);
+  }
+  50% {
+    box-shadow:
+      0 0 0 5px rgba(232, 201, 138, 0.35),
+      0 0 60px rgba(232, 201, 138, 0.6);
+  }
+}
+.agent-highlight {
+  animation: agent-highlight-pulse 1.6s ease-in-out infinite;
+  border-radius: 1rem;
+}
+@media (prefers-reduced-motion: reduce) {
+  .agent-highlight {
+    animation: none;
+    box-shadow: 0 0 0 2px rgba(232, 201, 138, 0.85);
+  }
+}

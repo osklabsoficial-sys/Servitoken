@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import { Bot, Send, Sparkles, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -35,6 +36,7 @@ const SUGGESTIONS = [
 ];
 
 export function ServiBot() {
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Msg[]>([GREETING]);
   const [input, setInput] = useState("");
@@ -105,6 +107,10 @@ export function ServiBot() {
     },
     [messages, loading]
   );
+
+  /* En /chat vive el asistente completo: el widget sobra.
+     (Después de TODOS los hooks, respetando las reglas de React.) */
+  if (pathname?.startsWith("/chat")) return null;
 
   return (
     <>

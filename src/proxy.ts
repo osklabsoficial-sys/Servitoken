@@ -20,6 +20,7 @@ const PROTECTED_PREFIXES = [
   "/historial",
   "/servicios",
   "/admin",
+  "/chat",
 ];
 
 export function proxy(req: NextRequest) {
@@ -55,5 +56,6 @@ export const config = {
     "/historial/:path*",
     "/servicios/:path*",
     "/admin/:path*",
+    "/chat/:path*",
   ],
 };
