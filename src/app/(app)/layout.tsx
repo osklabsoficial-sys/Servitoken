@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { getSessionUser } from "@/lib/auth";
 import { AppHeader } from "@/components/app/app-header";
+import { AppSidebar } from "@/components/app/app-sidebar";
 import { AppFooter } from "@/components/app/app-footer";
 import { AuroraBackground } from "@/components/app/aurora-background";
 import { ServiBot } from "@/components/app/servi-bot";
@@ -37,9 +38,15 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   return (
     <div className="relative flex min-h-screen flex-col bg-background">
       <AuroraBackground />
-      <AppHeader user={user} />
-      <main className="relative z-10 flex-1">{children}</main>
-      <AppFooter />
+      {/* Barra lateral estilo Instagram (solo desktop lg+): carril de
+          68px con iconos permanentes que se expande al hover. El
+          wrapper desplaza el header/main/footer para no quedar debajo. */}
+      <AppSidebar user={user} />
+      <div className="flex min-h-screen flex-col lg:pl-[68px]">
+        <AppHeader user={user} />
+        <main className="relative z-10 flex-1">{children}</main>
+        <AppFooter />
+      </div>
       <ServiBot />
     </div>
   );
