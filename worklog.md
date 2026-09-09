@@ -433,3 +433,21 @@ Stage Summary:
 - /compra ahora se autodiagnostica: aviso de preview embebido, reintento manual del SDK y timeout con mensaje accionable
 - La carga normal del SDK sigue funcionando idéntica (verificado E2E)
 - Screenshots: tool-results/paypal-retry-embedded.png
+
+---
+Task ID: gitpush-token-nuevo
+Agent: Z.ai Code (principal)
+Task: GITPUSH con token GitHub nuevo (el anterior expiró) + confirmación del estado de PayPal
+
+Work Log:
+- Verificado servidor: pm2 online, /api/payments/paypal/config → 200 {configured:true, env:live}
+- Nuevo token validado contra api.github.com/user → 200 antes de usarlo
+- Auditoría de secretos sobre git diff 12421bf..HEAD: 0 coincidencias (sin PAYPAL_CLIENT_SECRET, sin tokens ghp_); commit 4d2f52e inspeccionado (solo db + worklog)
+- Remoto actualizado con el token nuevo (git remote set-url, .git/config no está trackeado); token nunca escrito en archivos del repo
+- Commiteado: estado de BD + esta entrada de worklog; push a origin/main
+- Nota para el dueño: el token se pegó en el chat — si este chat se comparte, regenerarlo en GitHub
+
+Stage Summary:
+- origin/main actualizado con el fix de carga del SDK de PayPal (ceaed0a) y la sincronización de BD
+- PayPal LIVE sigue operativo; el aviso "PAYPAL NO CARGA" quedó cubierto por paypal-no-carga-ux (autodiagnóstico en /compra)
+
