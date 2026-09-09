@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getSessionUser } from "@/lib/auth";
+import { AppSidebar } from "@/components/app/app-sidebar";
 import { ChatClient } from "./chat-client";
 
 export const metadata: Metadata = {
@@ -36,5 +37,15 @@ export default async function ChatPage() {
     );
   }
 
-  return <ChatClient username={user.username} />;
+  return (
+    <div className="relative min-h-screen bg-background">
+      {/* Carril estilo Instagram: iconos permanentes que se expanden
+          al hover. El chat conserva su experiencia inmersiva h-dvh
+          (patrón DM de Instagram: carril + contenido completo). */}
+      <AppSidebar user={user} />
+      <div className="lg:pl-[68px]">
+        <ChatClient username={user.username} />
+      </div>
+    </div>
+  );
 }

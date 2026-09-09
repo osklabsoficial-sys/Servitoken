@@ -320,3 +320,25 @@ Stage Summary:
 - El 429 informa el tiempo exacto de espera en pantalla
 - Dev server ahora corre bajo pm2 (servitoken-dev), estable tras el reinicio
 - Verificado E2E: flujo completo PIN→formulario→creación→login funciona de punta a punta
+
+---
+Task ID: sidebar-instagram
+Agent: Z.ai Code (principal)
+Task: Barra lateral estilo Instagram en el header/nav — carril izquierdo con iconos permanentes que se expande al hover
+
+Work Log:
+- src/components/app/app-sidebar.tsx (ya existía del trabajo previo): carril fijo lg+ de 68px con iconos permanentes; hover/foco expande a 236px con etiquetas (estado JS mouseenter/leave, no :hover CSS); CHAT con aurora + punto "en vivo"; Admin solo para ADMIN/SUPER_ADMIN; perfil + cerrar sesión abajo; ruta activa resaltada
+- src/app/(app)/layout.tsx: integra <AppSidebar/> y desplaza header/main/footer con lg:pl-[68px]
+- src/components/app/app-header.tsx: eliminado el nav duplicado de escritorio (el nav vive en la sidebar); logo solo en móvil/tablet (lg:hidden); cluster derecho con ml-auto; header z-40 bajo la sidebar z-50
+- /compra estaba TOP-LEVEL duplicando el shell sin sidebar → movida al grupo (app): nueva src/app/(app)/compra/page.tsx (solo carga de datos; shell lo pone el layout) + compra-client.tsx copiado; eliminada src/app/compra top-level (conflicto de rutas); /comprar (redirect interno) sigue funcionando
+- /chat (inmersiva h-dvh) → añadido AppSidebar + wrapper lg:pl-[68px] en src/app/chat/page.tsx (patrón DM de Instagram: carril + contenido completo); su hover-expansión verificada dentro del chat
+- Incidencias resueltas: (1) proceso dev huérfano moría al desacoplar → servitoken-dev bajo pm2 (pm2 reinstalado tras desaparecer el binario); (2) crash puntual de Turbopack al coexistir ambas carpetas /compra un instante → reinicio pm2; (3) pestaña con estado HMR rancio no hidrata /chat → recarga fresca lo resolvió
+- E2E agent-browser: /inicio, /compra, /chat, /historial y /admin con carril permanente; ancho 68→236 al hover y vuelta a 68 al salir; estados activos correctos (Inicio/CHAT/Historial); navegación por el carril OK; /comprar→/compra OK; móvil 390px sin sidebar con Sheet de hamburger intacto; lint 0 errores
+
+Stage Summary:
+- Navegación principal ahora vive en la sidebar izquierda estilo Instagram (iconos permanentes, expandida al hover como overlay)
+- Desktop: header sin nav duplicada (solo precio, saldo y usuario); la marca vive en la sidebar
+- /compra y /chat unificadas bajo el carril permanente (antes lo perdían al navegar)
+- Móvil/tablet sin cambios: header con logo + Sheet lateral
+- Servidor estable bajo pm2 (servitoken-dev)
+- Screenshots: tool-results/sidebar-colapsada.png, sidebar-expandida.png, chat-con-sidebar.png, chat-sidebar-expandida-ok.png, movil-menu-sheet.png
