@@ -342,3 +342,20 @@ Stage Summary:
 - Móvil/tablet sin cambios: header con logo + Sheet lateral
 - Servidor estable bajo pm2 (servitoken-dev)
 - Screenshots: tool-results/sidebar-colapsada.png, sidebar-expandida.png, chat-con-sidebar.png, chat-sidebar-expandida-ok.png, movil-menu-sheet.png
+
+---
+Task ID: sidebar-landing
+Agent: Z.ai Code (principal)
+Task: Llevar la barra lateral estilo Instagram también a la landing pública "/"
+
+Work Log:
+- src/components/landing/site-sidebar.tsx (nuevo): carril fijo lg+ de 68px → 236px al hover (mouseenter/leave + foco, mismo patrón que AppSidebar); 8 anclas de la presentación (Inicio, ¿Qué es?, Utilidad, Cómo funciona, Estadísticas, Compra, FAQ, Contacto) con scroll-spy via IntersectionObserver (rootMargin -30%/-60%); abajo Iniciar sesión + Registrarse (dorado); logo con wordmark al expandir; IDs de secciones verificados en los componentes
+- src/app/page.tsx: <SiteSidebar/> + wrapper lg:pl-[68px] alrededor de header/main/footer
+- src/components/landing/site-header.tsx: eliminado nav de anclas duplicado en desktop (vive en el carril); logo solo móvil/tablet (lg:hidden); cluster CTA con ml-auto; Sheet móvil intacto
+- E2E agent-browser: landing con carril permanente; hover expande con etiquetas (Inicio activo); clic FAQ → scroll a la sección (9,987px) y scroll-spy marca FAQ activa; mouse fuera colapsa a 68px; "Iniciar sesión" del carril → /login; móvil 390px sin carril con hamburguesa intacta; lint 0 errores; landing 200
+
+Stage Summary:
+- El carril estilo Instagram ahora es la navegación permanente en TODO el sitio: landing pública (anclas con scroll-spy + acceso login/registro) y app privada (rutas + perfil/logout)
+- Header de la landing limpio en desktop (solo tema, wallet, auth y CTA Comprar)
+- Móvil sin cambios en ambos contextos (hamburguesa)
+- Screenshots: tool-results/landing-sidebar-colapsada.png, landing-sidebar-expandida.png, landing-scrollspy-faq.png, landing-movil.png

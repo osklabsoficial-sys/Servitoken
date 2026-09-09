@@ -1,4 +1,5 @@
 import { SiteHeader } from "@/components/landing/site-header";
+import { SiteSidebar } from "@/components/landing/site-sidebar";
 import { HeroSection } from "@/components/landing/hero-section";
 import { CountersSection } from "@/components/landing/counters-section";
 import { TokenDataSection } from "@/components/landing/token-data-section";
@@ -21,27 +22,32 @@ import { SiteFooter } from "@/components/landing/site-footer";
 export default function Home() {
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <SiteHeader />
-      <main className="flex-1">
-        <HeroSection />
-        <CountersSection />
-        <TokenDataSection />
-        <WhatIsSection />
-        <UtilitySection />
-        <HowItWorksSection />
-        <TokenomicsSection />
-        <LiveStatsSection />
-        <ExternalPlatformsSection />
-        <ContractSection />
-        <SwapSection />
-        <PortfolioDashboard />
-        <PriceAlerts />
-        <BenefitsSection />
-        <ReferralSection />
-        <FaqSection />
-        <ContactSection />
-      </main>
-      <SiteFooter />
+      {/* Carril estilo Instagram (solo desktop lg+): iconos permanentes
+          que se expanden al hover. El wrapper desplaza header/main/footer. */}
+      <SiteSidebar />
+      <div className="flex min-h-screen flex-col lg:pl-[68px]">
+        <SiteHeader />
+        <main className="flex-1">
+          <HeroSection />
+          <CountersSection />
+          <TokenDataSection />
+          <WhatIsSection />
+          <UtilitySection />
+          <HowItWorksSection />
+          <TokenomicsSection />
+          <LiveStatsSection />
+          <ExternalPlatformsSection />
+          <ContractSection />
+          <SwapSection />
+          <PortfolioDashboard />
+          <PriceAlerts />
+          <BenefitsSection />
+          <ReferralSection />
+          <FaqSection />
+          <ContactSection />
+        </main>
+        <SiteFooter />
+      </div>
     </div>
   );
 }

@@ -37,8 +37,9 @@ export function SiteHeader() {
       }`}
     >
       <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        {/* Logo */}
-        <Link href="#inicio" className="group flex shrink-0 items-center gap-2">
+        {/* Logo solo en móvil/tablet: en desktop la marca vive en la
+            barra lateral (el nav de anclas también vive en el carril). */}
+        <Link href="#inicio" className="group flex shrink-0 items-center gap-2 lg:hidden">
           <Logo size="md" />
           <span className="hidden items-center gap-1.5 rounded-full border border-brand-green/20 bg-brand-green/10 px-2 py-0.5 sm:flex">
             <BadgeCheck className="size-3 text-brand-green" />
@@ -48,21 +49,8 @@ export function SiteHeader() {
           </span>
         </Link>
 
-        {/* Desktop nav */}
-        <nav className="hidden items-center gap-0.5 lg:flex">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="rounded-lg px-2.5 py-2 text-[13px] font-medium text-muted-foreground transition-colors hover:bg-white/5 hover:text-foreground"
-            >
-              {link.label}
-            </Link>
-          ))}
-        </nav>
-
         {/* Desktop CTA */}
-        <div className="hidden items-center gap-2 lg:flex">
+        <div className="ml-auto hidden items-center gap-2 lg:flex">
           <ThemeToggle />
           <span className="hidden 2xl:block">
             <ConnectWallet variant="default" />
