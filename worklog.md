@@ -282,3 +282,20 @@ Stage Summary:
 - El dueño tiene ahora credenciales SECRETAS de SUPER_ADMIN (osk.root) y un panel de mando total: clientes, compras PayPal, transferencias, movimientos del ledger, servicios, config, VISITAS de la app y OSK LLM - ULTRA como analista ejecutivo que ve todo en vivo, alerta riesgos y salta él mismo a la pestaña a revisar
 - El tracking de visitas mide TODO el sitio (incluye anónimos) desde el root layout con userId attribution automática
 - Próximos pasos sugeridos: revisar las 2 compras PENDING de @oskitar11 ($5 c/u) en /admin → Compras, y cambiar la password secreta tras el primer login
+---
+Task ID: ruta-secreta-crear-admin
+Agent: Z.ai Code (main)
+Task: Ruta secreta /crear/admin protegida con PIN 0092 para crear cuentas SUPER ADMIN
+
+Work Log:
+- API /api/crear/admin (nuevo): dos acciones — verify-pin y create; PIN "0092" con default en código y rotación vía ADMIN_SETUP_PIN en .env; comparación timingSafeEqual (anti timing attack); rate limit ESTRICTO 6 intentos/15 min por IP en ambas acciones (defensa real contra fuerza bruta de un PIN de 4 dígitos); same-origin 403
+- Creación idéntica en reglas al registro público (USERNAME_RE/EMAIL_RE/PASSWORD_RE de /api/auth/register), rol fijo SUPER_ADMIN + wallet 0 + logAudit ADMIN_CREATED con metadata {role, via:"/crear/admin"} (logAudit serializa metadata él mismo — fix aplicado: no doble JSON.stringify)
+- Página /crear/admin (nueva, standalone fuera del grupo (app)): 3 pasos — cortina de PIN (input password centrado tracking amplio) → formulario (usuario, correo, contraseña con medidor de requisitos en vivo y ojo mostrar/ocultar) → confirmación con resumen y botón "Ir a iniciar sesión"; branding dark+gold consistente; metadata robots noindex/nofollow/nocache; no aparece en ningún menú
+- proxy.ts: /crear/admin NO está en PROTECTED_PREFIXES → pública por diseño (el PIN es su protección); sin conflicto con el matcher /admin/:path*
+- E2E agent-browser verificado: PIN 1111 → 401 "PIN incorrecto"; PIN 0092 → formulario; username con punto ("nuevo.root") correctamente rechazado por validación client-side; nuevoroot creado → BD: SUPER_ADMIN ACTIVE + audit ADMIN_CREATED {via:/crear/admin}; login con la cuenta nueva → /inicio con link Admin visible; fuerza bruta: 7º intento → 429 "Esta ruta queda bloqueada 15 minutos" (6° aún pasaba, límite exacto); GET /crear/admin 200 en dev.log
+- Limpieza: admin QA nuevoroot eliminado (sesiones + wallet + audit); quedan solo oskar_admin (dueño) y osk.root (secreto anterior); lint 0 errores; screenshot tool-results/ruta-secreta-pin.png (directorio recreado tras limpieza del sandbox)
+
+Stage Summary:
+- El dueño puede crear cuentas SUPER ADMIN ilimitadas desde /crear/admin con el PIN 0092, con protección de fuerza bruta real (6/15min) y auditoría de cada creación
+- Para rotar el PIN sin tocar código: añadir ADMIN_SETUP_PIN=<nuevo> en .env y pm2 restart servitoken-dev --update-env
+- La ruta no está enlazada en ninguna parte de la UI ni indexable por buscadores
