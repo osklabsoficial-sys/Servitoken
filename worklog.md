@@ -450,4 +450,6 @@ Work Log:
 Stage Summary:
 - origin/main actualizado con el fix de carga del SDK de PayPal (ceaed0a) y la sincronización de BD
 - PayPal LIVE sigue operativo; el aviso "PAYPAL NO CARGA" quedó cubierto por paypal-no-carga-ux (autodiagnóstico en /compra)
+- Verificación E2E post-push con usuario qa_push: SDK OK (window.paypal), contenedor zoid visible 507×138, botones oficiales (amarillo + Debit or Credit Card + Powered by PayPal), 0 errores de página; usuario eliminado en cascada (AuditLog usa actorId, no userId); screenshot tool-results/paypal-push-verificacion.png
+- El dueño confirmó: "paypal esta redy"
 
