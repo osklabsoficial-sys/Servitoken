@@ -399,3 +399,21 @@ Stage Summary:
 - Al aprobar el pago en el popup, capture-order acredita los SERVI automáticamente (idempotente por captureId) y el webhook respalda si el usuario cierra el navegador
 - Recomendaciones al dueño: primera prueba real con 10 SERVI ($0.10); registrar el dominio de producción en la app de PayPal si PayPal restringe el checkout; nunca re-compartir el secret (está en .env, gitignored); opcional PAYPAL_WEBHOOK_ID para verificación por firma
 - Screenshots: tool-results/paypal-panel-live.png, paypal-buttons-live.png, paypal-checkout-live-popup.png
+
+---
+Task ID: fix-404-compra
+Agent: Z.ai Code (principal)
+Task: /compra devolvía 404 "This page could not be found" tras el git rebase
+
+Work Log:
+- Diagnóstico: con curl limpio /compra daba 307 correcto; con CUALQUIER cookie de sesión (incluso falsa) daba 404; /inicio, /historial, /chat y /admin funcionaban bien con cookie → fallo aislado a la ruta /compra
+- dev.log mostraba GET /compra 404 con render (ningún notFound() existe en el código); proxy.ts (middleware Next 16) comportándose correcto
+- Causa raíz: caché Turbopack rancia — el rebase de las 21:48 reescribió los archivos del árbol y corrompió la entrada de ruta /compra en el manifest de dev (lección previa ya conocida del proyecto)
+- Fix ritual: pm2 stop servitoken-dev && rm -rf .next && pm2 start servitoken-dev
+- Verificado: cookie falsa /compra → 307 (antes 404); sin cookie → 307; landing → 200; cookie vieja en navegador → /login?returnTo=%2Fcompra; usuario nuevo E2E → /compra renderiza con PayPal CONFIGURADO e iframe de botones reales 507×138
+- Limpieza: usuario de prueba qa_fix404 eliminado en cascada
+
+Stage Summary:
+- /compra operativa de nuevo para anónimos (307→login) y sesiones válidas (render con PayPal LIVE)
+- Sin cambios de código: el fix fue limpiar .next; no hay nada nuevo que pushear
+- Lección reforzada: tras operaciones git que reescriban el árbol (rebase/checkout), limpiar .next SIEMPRE
