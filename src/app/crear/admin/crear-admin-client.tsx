@@ -39,6 +39,16 @@ interface CreatedAdmin {
   role: string;
 }
 
+/** Mensaje legible para el bloqueo temporal por intentos fallidos. */
+function rateLimitMsg(data: Record<string, unknown>): string {
+  const s = typeof data.retryAfterSeconds === "number" && data.retryAfterSeconds > 0
+    ? Math.round(data.retryAfterSeconds)
+    : 15 * 60;
+  const min = Math.floor(s / 60);
+  const sec = s % 60;
+  return `Demasiados intentos fallidos. Espera ${min} min ${String(sec).padStart(2, "0")} s y vuelve a intentar.`;
+}
+
 function passwordIssues(pw: string): string[] {
   const issues: string[] = [];
   if (pw.length < 8) issues.push("mínimo 8 caracteres");
@@ -70,7 +80,11 @@ export function CrearAdminClient() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
-    return { ok: res.ok, data: (await res.json().catch(() => ({}))) as Record<string, unknown> };
+    return {
+      ok: res.ok,
+      status: res.status,
+      data: (await res.json().catch(() => ({}))) as Record<string, unknown>,
+    };
   }
 
   async function verifyPin() {
@@ -78,9 +92,11 @@ export function CrearAdminClient() {
     setBusy(true);
     setError(null);
     try {
-      const { ok, data } = await callApi({ action: "verify-pin", pin });
+      const { ok, status, data } = await callApi({ action: "verify-pin", pin });
       if (ok) {
         setStep("form");
+      } else if (status === 429) {
+        setError(rateLimitMsg(data));
       } else {
         setError((data.message as string) ?? "PIN incorrecto.");
         setPin("");
@@ -98,7 +114,7 @@ export function CrearAdminClient() {
     setBusy(true);
     setError(null);
     try {
-      const { ok, data } = await callApi({
+      const { ok, status, data } = await callApi({
         action: "create",
         pin,
         username: username.trim().toLowerCase(),
@@ -108,6 +124,8 @@ export function CrearAdminClient() {
       if (ok && data.admin) {
         setCreated(data.admin as CreatedAdmin);
         setStep("done");
+      } else if (status === 429) {
+        setError(rateLimitMsg(data));
       } else {
         setError((data.message as string) ?? "No se pudo crear la cuenta.");
       }

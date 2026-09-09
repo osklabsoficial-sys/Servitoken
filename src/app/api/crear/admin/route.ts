@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { timingSafeEqual } from "crypto";
 import { db } from "@/lib/db";
 import { hashPassword, isSameOrigin } from "@/lib/auth";
-import { rateLimit, clientKey } from "@/lib/rate-limit";
+import { rateLimit, refundRateLimit, rateLimitRetryAfter, clientKey } from "@/lib/rate-limit";
 import { logAudit } from "@/lib/audit";
 
 export const runtime = "nodejs";
@@ -21,13 +21,17 @@ export const runtime = "nodejs";
  *  Defensas (el PIN es de 4 dígitos, así que el límite de
  *  intentos es la defensa real contra fuerza bruta):
  *   - same-origin obligatorio
- *   - rate limit ESTRICTO: 6 intentos / 15 min por IP
- *     (aplica tanto a verificar PIN como a crear)
+ *   - rate limit estricto SOLO sobre fallos: 10 intentos
+ *     fallidos / 15 min por IP (los aciertos devuelven la
+ *     cuota, así que el uso legítimo nunca se bloquea)
  *   - comparación timing-safe del PIN
  *   - el PIN se puede rotar con ADMIN_SETUP_PIN en .env
  *     (si no existe, se usa el default acordado "0092")
  * ============================================================
  */
+
+const RL_LIMIT = 10;
+const RL_WINDOW_MS = 15 * 60 * 1000;
 
 const USERNAME_RE = /^[a-z0-9_]{3,20}$/;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -47,13 +51,14 @@ function pinMatches(input: string): boolean {
   return a.length === b.length && timingSafeEqual(a, b);
 }
 
-function tooMany() {
+function tooMany(retryAfterSeconds: number) {
   return NextResponse.json(
     {
       error: "RATE_LIMIT",
-      message: "Demasiados intentos fallidos. Esta ruta queda bloqueada 15 minutos.",
+      message: "Demasiados intentos fallidos. Ruta bloqueada temporalmente.",
+      retryAfterSeconds,
     },
-    { status: 429 }
+    { status: 429, headers: { "Retry-After": String(retryAfterSeconds || 900) } }
   );
 }
 
@@ -61,8 +66,9 @@ export async function POST(req: Request) {
   if (!isSameOrigin(req)) {
     return NextResponse.json({ error: "ORIGIN_INVALID" }, { status: 403 });
   }
-  if (!rateLimit(clientKey(req, "crear-admin"), 6, 15 * 60 * 1000)) {
-    return tooMany();
+  const rlKey = clientKey(req, "crear-admin");
+  if (!rateLimit(rlKey, RL_LIMIT, RL_WINDOW_MS)) {
+    return tooMany(rateLimitRetryAfter(rlKey, RL_LIMIT));
   }
 
   let body: unknown;
@@ -75,12 +81,16 @@ export async function POST(req: Request) {
   const { action, pin, username, email, password } = (body ?? {}) as Record<string, unknown>;
 
   // El PIN siempre es el primer filtro, en ambas acciones.
-  if (typeof pin !== "string" || pin.length === 0 || pin.length > 32 || !pinMatches(pin)) {
+  const pinInput = typeof pin === "string" ? pin.trim() : "";
+  if (pinInput.length === 0 || pinInput.length > 32 || !pinMatches(pinInput)) {
     return NextResponse.json(
       { error: "PIN_INVALIDO", message: "PIN incorrecto." },
       { status: 401 }
     );
   }
+
+  // PIN correcto → se devuelve la cuota: solo los fallos cuentan.
+  refundRateLimit(rlKey);
 
   // -------- Acción 1: solo verificar PIN --------
   if (action === "verify-pin") {
