@@ -7,6 +7,7 @@ import { getPaymentMethods } from "@/lib/payment-methods";
 import { AppHeader } from "@/components/app/app-header";
 import { AppFooter } from "@/components/app/app-footer";
 import { AuroraBackground } from "@/components/app/aurora-background";
+import { ServiBot } from "@/components/app/servi-bot";
 import { CompraClient } from "./compra-client";
 
 export const metadata: Metadata = {
@@ -62,6 +63,7 @@ export default async function CompraPage() {
         />
       </main>
       <AppFooter />
+      <ServiBot />
     </div>
   );
 }

@@ -4,6 +4,7 @@ import { getSessionUser } from "@/lib/auth";
 import { AppHeader } from "@/components/app/app-header";
 import { AppFooter } from "@/components/app/app-footer";
 import { AuroraBackground } from "@/components/app/aurora-background";
+import { ServiBot } from "@/components/app/servi-bot";
 
 /**
  * Layout de todas las rutas privadas.
@@ -39,6 +40,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       <AppHeader user={user} />
       <main className="relative z-10 flex-1">{children}</main>
       <AppFooter />
+      <ServiBot />
     </div>
   );
 }

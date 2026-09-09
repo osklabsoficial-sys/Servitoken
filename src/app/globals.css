@@ -533,3 +533,31 @@
     .servi-card-tilt, .servi-card-tilt:hover { transition: none; transform: none; }
   }
 }
+
+/* ============================================================
+   SERVIBOT · animaciones y scrollbar del chat IA
+   ============================================================ */
+@keyframes servibot-bounce {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.9; }
+  30% { transform: translateY(-4px); opacity: 0.4; }
+}
+.servibot-dot {
+  animation: servibot-bounce 1.1s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .servibot-dot { animation: none; }
+}
+.servibot-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(232, 201, 138, 0.35) transparent;
+}
+.servibot-scroll::-webkit-scrollbar {
+  width: 5px;
+}
+.servibot-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.servibot-scroll::-webkit-scrollbar-thumb {
+  background: rgba(232, 201, 138, 0.35);
+  border-radius: 9999px;
+}
